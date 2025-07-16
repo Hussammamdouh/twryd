@@ -1,0 +1,4670 @@
+{
+	"info": {
+		"_postman_id": "290e528d-cb96-47f9-b223-9bbff7f04edc",
+		"name": "Twryd",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46804957",
+		"_collection_link": "https://ashourgroup.postman.co/workspace/bc72c262-73d8-4483-89ce-88428985e4db/collection/40690422-290e528d-cb96-47f9-b223-9bbff7f04edc?action=share&source=collection_link&creator=46804957"
+	},
+	"item": [
+		{
+			"name": "Twryd Admin API",
+			"item": [
+				{
+					"name": "Authentication",
+					"item": [
+						{
+							"name": "Admin Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"if (pm.response.code === 200) {",
+											"    const jsonData = pm.response.json();",
+											"    pm.environment.set('admin_token', jsonData.data.token);",
+											"    pm.environment.set('admin_id', jsonData.data.admin.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"email\": \"it-support@twryd.com\", \"password\": \"password123\"}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Admin Profile",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin Logout",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/logout",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin Management",
+					"item": [
+						{
+							"name": "Get All Admins",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admins",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create New Admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"New Admin User\",\r\n    \"email\": \"newadmin@twryd.com\",\r\n    \"phone\": \"+1234567899\",\r\n    \"password\": \"password123\",\r\n    \"password_confirmation\": \"password123\",\r\n    \"role\": \"admin\",\r\n    \"is_active\": true\r\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admins",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admins"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Admin",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated Admin Name\",\r\n    \"phone\": \"+1234567898\",\r\n    \"is_active\": true\r\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admins/{{admin_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admins",
+										"{{admin_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Admin",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admins/{{admin_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admins",
+										"{{admin_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Available Roles",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Supplier Management",
+					"item": [
+						{
+							"name": "Get All Suppliers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers?per_page=10&status=active",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										},
+										{
+											"key": "status",
+											"value": "active"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Supplier by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Approve Supplier",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}/approve",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}",
+										"approve"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reject Supplier",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}/reject",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}",
+										"reject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Toggle Supplier Status",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}/toggle-status",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}",
+										"toggle-status"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Supplier Email",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}/verify-email",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}",
+										"verify-email"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Supplier",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Supplier Statistics",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/statistics",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"statistics"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd Category API",
+			"item": [
+				{
+					"name": "Public Endpoints",
+					"item": [
+						{
+							"name": "Get Active Categories",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has categories data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.be.an('array');",
+											"});",
+											"",
+											"pm.test(\"All categories are active\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (jsonData.data && jsonData.data.length > 0) {",
+											"        jsonData.data.forEach(category => {",
+											"            pm.expect(category.is_active).to.eql(true);",
+											"        });",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Category structure is correct\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    if (jsonData.data && jsonData.data.length > 0) {",
+											"        const category = jsonData.data[0];",
+											"        pm.expect(category).to.have.property('id');",
+											"        pm.expect(category).to.have.property('name');",
+											"        pm.expect(category).to.have.property('icon');",
+											"        pm.expect(category).to.have.property('is_active');",
+											"        pm.expect(category).to.have.property('created_at');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/categories",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"categories"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin Endpoints",
+					"item": [
+						{
+							"name": "Get All Categories (Admin)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has pagination\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.pagination).to.have.property('current_page');",
+											"    pm.expect(jsonData.pagination).to.have.property('total');",
+											"    pm.expect(jsonData.pagination).to.have.property('per_page');",
+											"});",
+											"",
+											"pm.test(\"Response has categories data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.be.an('array');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/manage-categories",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"manage-categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Categories with Search",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/manage-categories?search=electronics&is_active=true",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"manage-categories"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "electronics"
+										},
+										{
+											"key": "is_active",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has category data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('id');",
+											"    pm.expect(jsonData.data).to.have.property('name');",
+											"    pm.expect(jsonData.data).to.have.property('icon');",
+											"    pm.expect(jsonData.data).to.have.property('is_active');",
+											"});",
+											"",
+											"if (pm.response.code === 201) {",
+											"    const jsonData = pm.response.json();",
+											"    pm.environment.set('category_id', jsonData.data.id);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Electronics",
+											"type": "text"
+										},
+										{
+											"key": "icon",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/dolls logo.png"
+										},
+										{
+											"key": "is_active",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/manage-categories",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"manage-categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Category was updated\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.name).to.eql('Electronics Updated');",
+											"    pm.expect(jsonData.data.icon).to.eql('/icons/electronics-updated.svg');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "icon",
+											"type": "file",
+											"src": [],
+											"disabled": true
+										},
+										{
+											"key": "is_active",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "remove_icon",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/manage-categories/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"manage-categories",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Toggle Category Status",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Category status was toggled\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.is_active).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/manage-categories/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"manage-categories",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/manage-categories/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"manage-categories",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd Client API",
+			"item": [
+				{
+					"name": "Authentication",
+					"item": [
+						{
+							"name": "Client Register",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has client data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('client');",
+											"    pm.expect(jsonData.data.client).to.have.property('id');",
+											"    pm.expect(jsonData.data.client).to.have.property('name');",
+											"    pm.expect(jsonData.data.client).to.have.property('email');",
+											"});",
+											"",
+											"pm.test(\"Client is inactive by default\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.client.is_active).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "ABC Trading Company",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "hamzafottoh74@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+201555156755",
+											"type": "text"
+										},
+										{
+											"key": "whatsapp",
+											"value": "+201555156755",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password123",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "password123",
+											"type": "text"
+										},
+										{
+											"key": "tax_card_number",
+											"value": "123456789",
+											"type": "text"
+										},
+										{
+											"key": "tax_card_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07 (2).pdf"
+										},
+										{
+											"key": "cr_number",
+											"value": "CR123456",
+											"type": "text"
+										},
+										{
+											"key": "cr_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07.pdf"
+										},
+										{
+											"key": "latitude",
+											"value": "31.317",
+											"type": "text"
+										},
+										{
+											"key": "longitude",
+											"value": "31.587",
+											"type": "text"
+										},
+										{
+											"key": "area_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Client",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"identifier\": \"hamzafottoh74@gmail.com\",\n    \"verification_code\": \"865650\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/verify",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"verify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Resend Email Verification",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email_or_phone\": \"hamzafottoh74@gmail.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/email/resend",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"email",
+										"resend"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Client Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has token\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('token');",
+											"    pm.expect(jsonData.data.token).to.be.a('string');",
+											"});",
+											"",
+											"pm.test(\"Response has client data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('client');",
+											"    pm.expect(jsonData.data.client).to.have.property('id');",
+											"    pm.expect(jsonData.data.client).to.have.property('name');",
+											"    pm.expect(jsonData.data.client).to.have.property('email');",
+											"});",
+											"",
+											"if (pm.response.code === 200) {",
+											"    const jsonData = pm.response.json();",
+											"    pm.environment.set('client_token', jsonData.data.token);",
+											"    pm.environment.set('client_id', jsonData.data.client.id);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email_or_phone\": \"hamzafottoh74@gmail.com\",\n    \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Forgot Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email_or_phone\": \"hamzafottoh74@gmail.com\"        // Email or phone number\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/forgot-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"forgot-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reset Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email_or_phone\": \"hamzafottoh74@gmail.com\",        // Email or phone number\n    \"code\": \"631411\",\n    \"password\": \"new_secure_password\",\n    \"password_confirmation\": \"new_secure_password\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/reset-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"reset-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Client Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has client data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('client');",
+											"    pm.expect(jsonData.data.client).to.have.property('id');",
+											"    pm.expect(jsonData.data.client).to.have.property('name');",
+											"    pm.expect(jsonData.data.client).to.have.property('email');",
+											"    pm.expect(jsonData.data.client).to.have.property('phone');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Client Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Profile was updated\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.client.whatsapp).to.eql('+966509876543');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"ABC Trading Company Updated\",\n    \"whatsapp\": \"+966509876543\",\n    \"latitude\": 24.7136,\n    \"longitude\": 46.6753\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Client Logout",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/logout",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Client Management",
+					"item": [
+						{
+							"name": "Get All Clients",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response has success true\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.success).to.eql(true);",
+											"});",
+											"",
+											"pm.test(\"Response has clients data\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.be.an('array');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/get-all",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"get-all"
+									],
+									"query": [
+										{
+											"key": "area_id",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "search",
+											"value": "ahmed",
+											"disabled": true
+										},
+										{
+											"key": "has_verified_contact",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "is_active",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "created_from",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "created_to",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort_by",
+											"value": null,
+											"description": "name,email,phone,created_at,updated_at",
+											"disabled": true
+										},
+										{
+											"key": "sort_order",
+											"value": null,
+											"description": "asc,desc",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "per_page",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd - Invitation Module API",
+			"item": [
+				{
+					"name": "Public Endpoints",
+					"item": [
+						{
+							"name": "View Invitation Details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains invitation details', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitation');",
+											"    pm.expect(response.data).to.have.property('supplier');",
+											"    pm.expect(response.data).to.have.property('is_valid');",
+											"    pm.expect(response.data).to.have.property('is_expired');",
+											"});",
+											"",
+											"pm.test('Invitation has required fields', function () {",
+											"    const invitation = pm.response.json().data.invitation;",
+											"    pm.expect(invitation).to.have.property('id');",
+											"    pm.expect(invitation).to.have.property('token');",
+											"    pm.expect(invitation).to.have.property('status');",
+											"    pm.expect(invitation).to.have.property('supplier_id');",
+											"});",
+											"",
+											"pm.test('Supplier information is present', function () {",
+											"    const supplier = pm.response.json().data.supplier;",
+											"    pm.expect(supplier).to.have.property('id');",
+											"    pm.expect(supplier).to.have.property('name');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/invitations/{{invitation_token}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invitations",
+										"{{invitation_token}}"
+									]
+								},
+								"description": "View invitation details by token (public endpoint, no authentication required)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Supplier Endpoints",
+					"item": [
+						{
+							"name": "Generate Invitation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 201', function () {",
+											"    pm.expect(pm.response.code).to.equal(201);",
+											"});",
+											"",
+											"pm.test('Response contains invitation data', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitation');",
+											"    pm.expect(response.data).to.have.property('invitation_url');",
+											"    pm.expect(response.data).to.have.property('expires_at');",
+											"});",
+											"",
+											"pm.test('Invitation has valid structure', function () {",
+											"    const invitation = pm.response.json().data.invitation;",
+											"    pm.expect(invitation).to.have.property('id');",
+											"    pm.expect(invitation).to.have.property('token');",
+											"    pm.expect(invitation).to.have.property('status');",
+											"    pm.expect(invitation.status).to.equal('pending');",
+											"});",
+											"",
+											"// Store invitation token for later use",
+											"if (pm.response.json().data.invitation) {",
+											"    pm.collectionVariables.set('invitation_token', pm.response.json().data.invitation.token);",
+											"    pm.collectionVariables.set('invitation_id', pm.response.json().data.invitation.id);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"expiration_days\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/generate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"generate"
+									]
+								},
+								"description": "Generate a new invitation link for clients to connect with the supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Supplier Invitations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains invitations array', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitations');",
+											"    pm.expect(response.data.invitations).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Pagination structure is correct', function () {",
+											"    const invitations = pm.response.json().data.invitations;",
+											"    if (invitations.data && invitations.data.length > 0) {",
+											"        pm.expect(invitations.data[0]).to.have.property('id');",
+											"        pm.expect(invitations.data[0]).to.have.property('token');",
+											"        pm.expect(invitations.data[0]).to.have.property('status');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations?per_page=10&paginated=true",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										},
+										{
+											"key": "paginated",
+											"value": "true"
+										}
+									]
+								},
+								"description": "Get all invitations created by the supplier with pagination"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Invitation Statistics",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains statistics', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitation_stats');",
+											"    pm.expect(response.data).to.have.property('relationship_stats');",
+											"});",
+											"",
+											"pm.test('Invitation stats structure', function () {",
+											"    const stats = pm.response.json().data.invitation_stats;",
+											"    pm.expect(stats).to.have.property('total');",
+											"    pm.expect(stats).to.have.property('pending');",
+											"    pm.expect(stats).to.have.property('accepted');",
+											"    pm.expect(stats).to.have.property('rejected');",
+											"});",
+											"",
+											"pm.test('Relationship stats structure', function () {",
+											"    const stats = pm.response.json().data.relationship_stats;",
+											"    pm.expect(stats).to.have.property('total');",
+											"    pm.expect(stats).to.have.property('active');",
+											"    pm.expect(stats).to.have.property('suspended');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"stats"
+									]
+								},
+								"description": "Get invitation and relationship statistics for the supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Revoke Invitation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response indicates success', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.success).to.be.true;",
+											"    pm.expect(response.message).to.include('revoked');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/{{invitation_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"{{invitation_id}}"
+									]
+								},
+								"description": "Revoke/cancel an invitation"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Supplier Relationships",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains relationships', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('relationships');",
+											"    pm.expect(response.data.relationships).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Relationship structure', function () {",
+											"    const relationships = pm.response.json().data.relationships;",
+											"    if (relationships.data && relationships.data.length > 0) {",
+											"        const relationship = relationships.data[0];",
+											"        pm.expect(relationship).to.have.property('id');",
+											"        pm.expect(relationship).to.have.property('supplier_id');",
+											"        pm.expect(relationship).to.have.property('client_id');",
+											"        pm.expect(relationship).to.have.property('status');",
+											"        pm.expect(relationship).to.have.property('connected_at');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/relationships?per_page=10&paginated=true",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"relationships"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										},
+										{
+											"key": "paginated",
+											"value": "true"
+										}
+									]
+								},
+								"description": "Get all client relationships for the supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Connected Clients",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains clients', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('clients');",
+											"    pm.expect(response.data.clients).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Client structure', function () {",
+											"    const clients = pm.response.json().data.clients;",
+											"    if (clients.length > 0) {",
+											"        const client = clients[0];",
+											"        pm.expect(client).to.have.property('id');",
+											"        pm.expect(client).to.have.property('name');",
+											"        pm.expect(client).to.have.property('email');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/clients",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"clients"
+									]
+								},
+								"description": "Get all clients connected to the supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Suspend Client Relationship",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response indicates success', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.success).to.be.true;",
+											"    pm.expect(response.message).to.include('suspended');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/clients/{{client_id}}/suspend",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"clients",
+										"{{client_id}}",
+										"suspend"
+									]
+								},
+								"description": "Suspend a client relationship"
+							},
+							"response": []
+						},
+						{
+							"name": "Reactivate Client Relationship",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response indicates success', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.success).to.be.true;",
+											"    pm.expect(response.message).to.include('reactivated');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/invitations/clients/{{client_id}}/reactivate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"invitations",
+										"clients",
+										"{{client_id}}",
+										"reactivate"
+									]
+								},
+								"description": "Reactivate a suspended client relationship"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Client Endpoints",
+					"item": [
+						{
+							"name": "Accept Invitation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains invitation and relationship', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitation');",
+											"    pm.expect(response.data).to.have.property('relationship');",
+											"    pm.expect(response.data).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Invitation status is accepted', function () {",
+											"    const invitation = pm.response.json().data.invitation;",
+											"    pm.expect(invitation.status).to.equal('accepted');",
+											"});",
+											"",
+											"pm.test('Relationship is created', function () {",
+											"    const relationship = pm.response.json().data.relationship;",
+											"    pm.expect(relationship).to.have.property('id');",
+											"    pm.expect(relationship).to.have.property('supplier_id');",
+											"    pm.expect(relationship).to.have.property('client_id');",
+											"    pm.expect(relationship.status).to.equal('accepted');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"{{invitation_token}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/client/invitations/accept",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"invitations",
+										"accept"
+									]
+								},
+								"description": "Accept an invitation to connect with a supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Reject Invitation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains invitation', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitation');",
+											"    pm.expect(response.data).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Invitation status is rejected', function () {",
+											"    const invitation = pm.response.json().data.invitation;",
+											"    pm.expect(invitation.status).to.equal('rejected');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"{{invitation_token}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/client/invitations/reject",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"client",
+										"invitations",
+										"reject"
+									]
+								},
+								"description": "Reject an invitation from a supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Client Invitations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains invitations', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitations');",
+											"    pm.expect(response.data.invitations).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Invitation structure', function () {",
+											"    const invitations = pm.response.json().data.invitations;",
+											"    if (invitations.length > 0) {",
+											"        const invitation = invitations[0];",
+											"        pm.expect(invitation).to.have.property('id');",
+											"        pm.expect(invitation).to.have.property('token');",
+											"        pm.expect(invitation).to.have.property('status');",
+											"        pm.expect(invitation).to.have.property('supplier_id');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/invitations",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"invitations"
+									]
+								},
+								"description": "Get all invitations received by the client"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Client Relationships",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains relationships', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('relationships');",
+											"    pm.expect(response.data.relationships).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Relationship structure', function () {",
+											"    const relationships = pm.response.json().data.relationships;",
+											"    if (relationships.data && relationships.data.length > 0) {",
+											"        const relationship = relationships.data[0];",
+											"        pm.expect(relationship).to.have.property('id');",
+											"        pm.expect(relationship).to.have.property('supplier_id');",
+											"        pm.expect(relationship).to.have.property('client_id');",
+											"        pm.expect(relationship).to.have.property('status');",
+											"        pm.expect(relationship).to.have.property('connected_at');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/invitations/relationships?per_page=10&paginated=true",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"invitations",
+										"relationships"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										},
+										{
+											"key": "paginated",
+											"value": "true"
+										}
+									]
+								},
+								"description": "Get all supplier relationships for the client"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Connected Suppliers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains suppliers', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('suppliers');",
+											"    pm.expect(response.data.suppliers).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Supplier structure', function () {",
+											"    const suppliers = pm.response.json().data.suppliers;",
+											"    if (suppliers.length > 0) {",
+											"        const supplier = suppliers[0];",
+											"        pm.expect(supplier).to.have.property('id');",
+											"        pm.expect(supplier).to.have.property('name');",
+											"        pm.expect(supplier).to.have.property('logo_url');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/invitations/suppliers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"invitations",
+										"suppliers"
+									]
+								},
+								"description": "Get all suppliers connected to the client"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Client Statistics",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains statistics', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('relationship_stats');",
+											"});",
+											"",
+											"pm.test('Statistics structure', function () {",
+											"    const stats = pm.response.json().data.relationship_stats;",
+											"    pm.expect(stats).to.have.property('total');",
+											"    pm.expect(stats).to.have.property('active');",
+											"    pm.expect(stats).to.have.property('suspended');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/invitations/stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"invitations",
+										"stats"
+									]
+								},
+								"description": "Get relationship statistics for the client"
+							},
+							"response": []
+						},
+						{
+							"name": "Check Access to Supplier",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains access information', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('has_access');",
+											"    pm.expect(response.data).to.have.property('supplier_id');",
+											"});",
+											"",
+											"pm.test('Access check is boolean', function () {",
+											"    const hasAccess = pm.response.json().data.has_access;",
+											"    pm.expect(typeof hasAccess).to.equal('boolean');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client/invitations/access/{{supplier_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client",
+										"invitations",
+										"access",
+										"{{supplier_id}}"
+									]
+								},
+								"description": "Check if client has access to a specific supplier"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd - Location Module API",
+			"item": [
+				{
+					"name": "Public Endpoints",
+					"item": [
+						{
+							"name": "Get All Governorates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains governorates', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('data');",
+											"    pm.expect(response.data.data).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Governorate structure', function () {",
+											"    const governorates = pm.response.json().data.data;",
+											"    if (governorates.length > 0) {",
+											"        const governorate = governorates[0];",
+											"        pm.expect(governorate).to.have.property('id');",
+											"        pm.expect(governorate).to.have.property('name');",
+											"        pm.expect(governorate).to.have.property('areas_count');",
+											"    }",
+											"});",
+											"",
+											"// Store first governorate ID for later use",
+											"const governorates = pm.response.json().data.data;",
+											"if (governorates.length > 0) {",
+											"    pm.collectionVariables.set('governorate_id', governorates[0].id);",
+											"}"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/governorates?per_page=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"governorates"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										}
+									]
+								},
+								"description": "Get all governorates with pagination (public endpoint)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Governorate by ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains governorate', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"});",
+											"",
+											"pm.test('Governorate ID matches', function () {",
+											"    const governorate = pm.response.json().data;",
+											"    pm.expect(governorate.id.toString()).to.equal(pm.collectionVariables.get('governorate_id'));",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/governorates/{{governorate_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"governorates",
+										"{{governorate_id}}"
+									]
+								},
+								"description": "Get specific governorate by ID (public endpoint)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Areas by Governorate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains areas', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('data');",
+											"    pm.expect(response.data.data).to.be.an('array');",
+											"});",
+											"",
+											"pm.test('Area structure', function () {",
+											"    const areas = pm.response.json().data.data;",
+											"    if (areas.length > 0) {",
+											"        const area = areas[0];",
+											"        pm.expect(area).to.have.property('id');",
+											"        pm.expect(area).to.have.property('name');",
+											"        pm.expect(area).to.have.property('governorate_id');",
+											"        pm.expect(area).to.have.property('polygon');",
+											"    }",
+											"});",
+											"",
+											"// Store first area ID for later use",
+											"const areas = pm.response.json().data.data;",
+											"if (areas.length > 0) {",
+											"    pm.collectionVariables.set('area_id', areas[0].id);",
+											"}"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/governorates/{{governorate_id}}/areas?per_page=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"governorates",
+										"{{governorate_id}}",
+										"areas"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										}
+									]
+								},
+								"description": "Get all areas for a specific governorate (public endpoint)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Area by ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains area', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data).to.have.property('governorate_id');",
+											"    pm.expect(response.data).to.have.property('polygon');",
+											"});",
+											"",
+											"pm.test('Area ID matches', function () {",
+											"    const area = pm.response.json().data;",
+											"    pm.expect(area.id.toString()).to.equal(pm.collectionVariables.get('area_id'));",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/areas/{{area_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"areas",
+										"{{area_id}}"
+									]
+								},
+								"description": "Get specific area by ID (public endpoint)"
+							},
+							"response": []
+						},
+						{
+							"name": "Find Area by Coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response structure', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('success');",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response).to.have.property('data');",
+											"});",
+											"",
+											"pm.test('Data is either area object or null', function () {",
+											"    const data = pm.response.json().data;",
+											"    pm.expect(data === null || typeof data === 'object').to.be.true;",
+											"});",
+											"",
+											"pm.test('If area found, has required properties', function () {",
+											"    const data = pm.response.json().data;",
+											"    if (data !== null) {",
+											"        pm.expect(data).to.have.property('id');",
+											"        pm.expect(data).to.have.property('name');",
+											"        pm.expect(data).to.have.property('governorate_id');",
+											"        pm.expect(data).to.have.property('polygon');",
+											"    }",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/areas/find-by-coordinates/30.0444/31.2357",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"areas",
+										"find-by-coordinates",
+										"30.0444",
+										"31.2357"
+									]
+								},
+								"description": "Find area by latitude and longitude coordinates (public endpoint)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin Endpoints - Governorates",
+					"item": [
+						{
+							"name": "Create Governorate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains governorate', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data.name).to.equal('Cairo Governorate');",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('created');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Cairo Governorate\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/governorates",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates"
+									]
+								},
+								"description": "Create a new governorate (admin only)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Governorate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains updated governorate', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data.name).to.equal('Updated Cairo Governorate');",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('updated');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Cairo Governorate\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/governorates/{{governorate_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates",
+										"{{governorate_id}}"
+									]
+								},
+								"description": "Update an existing governorate (admin only)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Governorate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('deleted');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/governorates/{{governorate_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates",
+										"{{governorate_id}}"
+									]
+								},
+								"description": "Delete a governorate (admin only)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin Endpoints - Areas",
+					"item": [
+						{
+							"name": "Create Area",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains area', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data).to.have.property('governorate_id');",
+											"    pm.expect(response.data).to.have.property('polygon');",
+											"    pm.expect(response.data.name).to.equal('Downtown Cairo');",
+											"});",
+											"",
+											"pm.test('Polygon structure', function () {",
+											"    const area = pm.response.json().data;",
+											"    pm.expect(area.polygon).to.be.an('array');",
+											"    pm.expect(area.polygon.length).to.be.at.least(3);",
+											"    pm.expect(area.polygon[0]).to.have.property('lat');",
+											"    pm.expect(area.polygon[0]).to.have.property('lng');",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('created');",
+											"});",
+											"",
+											"// Store area ID for later use",
+											"const area = pm.response.json().data;",
+											"pm.collectionVariables.set('area_id', area.id);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"governorate_id\": {{governorate_id}},\n    \"name\": \"Downtown Cairo\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        },\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas"
+									]
+								},
+								"description": "Create a new area with polygon coordinates (admin only)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Area",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains updated area', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data).to.have.property('governorate_id');",
+											"    pm.expect(response.data).to.have.property('polygon');",
+											"    pm.expect(response.data.name).to.equal('Updated Downtown Cairo');",
+											"});",
+											"",
+											"pm.test('Updated polygon structure', function () {",
+											"    const area = pm.response.json().data;",
+											"    pm.expect(area.polygon).to.be.an('array');",
+											"    pm.expect(area.polygon.length).to.be.at.least(3);",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('updated');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Downtown Cairo\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        },\n        {\n            \"lat\": 30.0744,\n            \"lng\": 31.2657\n        },\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas/{{area_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas",
+										"{{area_id}}"
+									]
+								},
+								"description": "Update an existing area (admin only)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Area",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('deleted');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/areas/{{area_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas",
+										"{{area_id}}"
+									]
+								},
+								"description": "Delete an area (admin only)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Validation Tests",
+					"item": [
+						{
+							"name": "Create Governorate - Missing Name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 422', function () {",
+											"    pm.expect(pm.response.code).to.equal(422);",
+											"});",
+											"",
+											"pm.test('Response contains validation errors', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('errors');",
+											"    pm.expect(response.errors).to.have.property('name');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/governorates",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates"
+									]
+								},
+								"description": "Test validation for missing governorate name"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Governorate - Duplicate Name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 422', function () {",
+											"    pm.expect(pm.response.code).to.equal(422);",
+											"});",
+											"",
+											"pm.test('Response contains validation errors', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('errors');",
+											"    pm.expect(response.errors).to.have.property('name');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Cairo Governorate\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/governorates",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates"
+									]
+								},
+								"description": "Test validation for duplicate governorate name"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Area - Missing Required Fields",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 422', function () {",
+											"    pm.expect(pm.response.code).to.equal(422);",
+											"});",
+											"",
+											"pm.test('Response contains validation errors', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('errors');",
+											"    pm.expect(response.errors).to.have.property('governorate_id');",
+											"    pm.expect(response.errors).to.have.property('polygon');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Test Area\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas"
+									]
+								},
+								"description": "Test validation for missing required fields in area creation"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Area - Invalid Polygon",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 422', function () {",
+											"    pm.expect(pm.response.code).to.equal(422);",
+											"});",
+											"",
+											"pm.test('Response contains validation errors', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('errors');",
+											"    pm.expect(response.errors).to.have.property('polygon');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"governorate_id\": {{governorate_id}},\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas"
+									]
+								},
+								"description": "Test validation for invalid polygon (less than 3 points)"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Area - Invalid Coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 422', function () {",
+											"    pm.expect(pm.response.code).to.equal(422);",
+											"});",
+											"",
+											"pm.test('Response contains validation errors', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('errors');",
+											"    pm.expect(response.errors).to.have.property('polygon.0.lat');",
+											"    pm.expect(response.errors).to.have.property('polygon.0.lng');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"governorate_id\": {{governorate_id}},\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 100,\n            \"lng\": 200\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas"
+									]
+								},
+								"description": "Test validation for invalid coordinates (out of range)"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Area - Non-existent Governorate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 422', function () {",
+											"    pm.expect(pm.response.code).to.equal(422);",
+											"});",
+											"",
+											"pm.test('Response contains validation errors', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('errors');",
+											"    pm.expect(response.errors).to.have.property('governorate_id');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"governorate_id\": 99999,\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas"
+									]
+								},
+								"description": "Test validation for non-existent governorate"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Authentication Tests",
+					"item": [
+						{
+							"name": "Create Governorate - Unauthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 401', function () {",
+											"    pm.expect(pm.response.code).to.equal(401);",
+											"});",
+											"",
+											"pm.test('Response indicates unauthorized', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response.message).to.include('Unauthenticated');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Test Governorate\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/governorates",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates"
+									]
+								},
+								"description": "Test unauthorized access to admin endpoint"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Area - Unauthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 401', function () {",
+											"    pm.expect(pm.response.code).to.equal(401);",
+											"});",
+											"",
+											"pm.test('Response indicates unauthorized', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response.message).to.include('Unauthenticated');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"governorate_id\": 1,\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas"
+									]
+								},
+								"description": "Test unauthorized access to admin area endpoint"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Error Handling Tests",
+					"item": [
+						{
+							"name": "Get Governorate - Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 404', function () {",
+											"    pm.expect(pm.response.code).to.equal(404);",
+											"});",
+											"",
+											"pm.test('Response indicates not found', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response.message).to.include('not found');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/governorates/99999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"governorates",
+										"99999"
+									]
+								},
+								"description": "Test getting non-existent governorate"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Area - Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 404', function () {",
+											"    pm.expect(pm.response.code).to.equal(404);",
+											"});",
+											"",
+											"pm.test('Response indicates not found', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response.message).to.include('not found');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/areas/99999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"areas",
+										"99999"
+									]
+								},
+								"description": "Test getting non-existent area"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Governorate - Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 404', function () {",
+											"    pm.expect(pm.response.code).to.equal(404);",
+											"});",
+											"",
+											"pm.test('Response indicates not found', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response.message).to.include('not found');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Name\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/governorates/99999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"governorates",
+										"99999"
+									]
+								},
+								"description": "Test updating non-existent governorate"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Area - Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 404', function () {",
+											"    pm.expect(pm.response.code).to.equal(404);",
+											"});",
+											"",
+											"pm.test('Response indicates not found', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response).to.have.property('message');",
+											"    pm.expect(response.message).to.include('not found');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Area Name\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/areas/99999",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"areas",
+										"99999"
+									]
+								},
+								"description": "Test updating non-existent area"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd - Supplier Module API",
+			"item": [
+				{
+					"name": "Authentication",
+					"item": [
+						{
+							"name": "Register Supplier",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "ElAraby Group",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "hamzafottoh74@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+201555156755",
+											"type": "text"
+										},
+										{
+											"key": "whatsapp",
+											"value": "+201555156755",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password123A!",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "password123A!",
+											"type": "text"
+										},
+										{
+											"key": "tax_card_number",
+											"value": "123456789",
+											"type": "text"
+										},
+										{
+											"key": "cr_number",
+											"value": "CR123456789",
+											"type": "text"
+										},
+										{
+											"key": "category_ids[0]",
+											"value": "d9e4387b-a1d4-479a-a2bc-9a90b99502c2",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][name]",
+											"value": "John Doe",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][role]",
+											"value": "Management",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][phone]",
+											"value": "+201234567891",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][email]",
+											"value": "john@techsolutions.com",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][name]",
+											"value": "Accounting",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][role]",
+											"value": "Accounting",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][phone]",
+											"value": "+201234567892",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][email]",
+											"value": "jane@techsolutions.com",
+											"type": "text"
+										},
+										{
+											"key": "logo",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/dolls logo.png"
+										},
+										{
+											"key": "tax_card_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07.pdf"
+										},
+										{
+											"key": "cr_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07 (2).pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"register"
+									]
+								},
+								"description": "Register a new supplier with all required information"
+							},
+							"response": []
+						},
+						{
+							"name": "Verify",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains supplier and token', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('supplier');",
+											"    pm.expect(response.data).to.have.property('token');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"contact\": \"hamzafottoh74@gmail.com\",  // or \"phone\"\n    \"type\": \"email\",  // or \"phone\"\n    \"code\": \"557513\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/verify",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"verify"
+									]
+								},
+								"description": "Login with phone number instead of email"
+							},
+							"response": []
+						},
+						{
+							"name": "Resend Verification code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"contact\": \"+201555156755\",  // or \"email\"\n    \"type\": \"phone\"  // or \"email\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/resend-verification",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"resend-verification"
+									]
+								},
+								"description": "Login with phone number instead of email"
+							},
+							"response": []
+						},
+						{
+							"name": "Forget password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"login\": \"hamzafottoh74@gmail.com\",  // or \"phone\"\n    \"type\": \"email_verification\"  // or \"phone\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/forgot-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"forgot-password"
+									]
+								},
+								"description": "Login with phone number instead of email"
+							},
+							"response": []
+						},
+						{
+							"name": "Login Supplier",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains supplier and token', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('supplier');",
+											"    pm.expect(response.data).to.have.property('token');",
+											"    pm.expect(response.data).to.have.property('token_type');",
+											"});",
+											"",
+											"pm.test('Token type is Bearer', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data.token_type).to.equal('Bearer');",
+											"});",
+											"",
+											"pm.test('Supplier has required fields', function () {",
+											"    const supplier = pm.response.json().data.supplier;",
+											"    pm.expect(supplier).to.have.property('id');",
+											"    pm.expect(supplier).to.have.property('name');",
+											"    pm.expect(supplier).to.have.property('email');",
+											"    pm.expect(supplier).to.have.property('phone');",
+											"});",
+											"",
+											"// Store token for authenticated requests",
+											"const token = pm.response.json().data.token;",
+											"pm.collectionVariables.set('supplier_token', token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"identifier\": \"hamzafottoh74@gmail.com\",\n    \"password\": \"password123A!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"login"
+									]
+								},
+								"description": "Login with email or phone and password"
+							},
+							"response": []
+						},
+						{
+							"name": "Logout Supplier",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/logout",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"logout"
+									]
+								},
+								"description": "Logout the authenticated supplier"
+							},
+							"response": []
+						},
+						{
+							"name": "Reset Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"login\": \"supplier@example.com\",\r\n    \"code\": \"123456\",\r\n    \"password\": \"newpassword123\",\r\n    \"password_confirmation\": \"newpassword123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/reset-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"reset-password"
+									]
+								},
+								"description": "Logout the authenticated supplier"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Profile Management",
+					"item": [
+						{
+							"name": "Get Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains supplier profile', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data).to.have.property('email');",
+											"    pm.expect(response.data).to.have.property('phone');",
+											"});",
+											"",
+											"pm.test('Profile has optional fields', function () {",
+											"    const profile = pm.response.json().data;",
+											"    pm.expect(profile).to.have.property('whatsapp');",
+											"    pm.expect(profile).to.have.property('logo_url');",
+											"    pm.expect(profile).to.have.property('tax_card_number');",
+											"    pm.expect(profile).to.have.property('cr_number');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"profile"
+									]
+								},
+								"description": "Get the authenticated supplier's profile"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains updated profile', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('id');",
+											"    pm.expect(response.data).to.have.property('name');",
+											"    pm.expect(response.data.name).to.equal('Updated Tech Solutions Ltd');",
+											"});",
+											"",
+											"pm.test('Success message', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.message).to.include('updated');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Updated Tech Solutions Ltd",
+											"type": "text"
+										},
+										{
+											"key": "whatsapp",
+											"value": "+201234567899",
+											"type": "text"
+										},
+										{
+											"key": "tax_card_number",
+											"value": "987654321",
+											"type": "text"
+										},
+										{
+											"key": "cr_number",
+											"value": "CR987654321",
+											"type": "text"
+										},
+										{
+											"key": "category_ids[]",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "category_ids[]",
+											"value": "4",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][name]",
+											"value": "Updated John Doe",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][type]",
+											"value": "Management",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][phone]",
+											"value": "+201234567893",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][email]",
+											"value": "john.updated@techsolutions.com",
+											"type": "text"
+										},
+										{
+											"key": "logo",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/profile",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"profile"
+									]
+								},
+								"description": "Update the authenticated supplier's profile"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "default"
+		},
+		{
+			"key": "admin_token",
+			"value": "1|HjOB5SEndU3lWNLj8l6rlTmgxiqzGANEg5tEwADu465a5008",
+			"type": "default"
+		},
+		{
+			"key": "client_token",
+			"value": "2|zoRbajnoWwJfw9RfanTV3wguP6LepDJxylNGgm1qf92c4e80",
+			"type": "default"
+		},
+		{
+			"key": "client_id",
+			"value": "28c90996-8510-48a3-bed3-704e152a1e14",
+			"type": "default"
+		},
+		{
+			"key": "supplier_token",
+			"value": ""
+		},
+		{
+			"key": "invitation_token",
+			"value": ""
+		},
+		{
+			"key": "invitation_id",
+			"value": ""
+		}
+	]
+}
