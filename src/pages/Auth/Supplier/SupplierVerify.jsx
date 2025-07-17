@@ -1,26 +1,35 @@
 import React, { useState } from 'react';
 import { post } from '../../../utils/api';
-import toast from 'react-hot-toast';
+import { useToast } from '../../UI/Common/ToastContext';
 
 export default function SupplierVerify({ onVerified, identifier: initialIdentifier }) {
   const [identifier, setIdentifier] = useState(initialIdentifier || '');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const toast = useToast();
 
   const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await post('/api/supplier/verify', { data: { identifier, verification_code: code } });
+      // Determine type based on identifier
+      const type = identifier.includes('@') ? 'email' : 'phone';
+      const data = await post('/api/supplier/verify', {
+        data: {
+          contact: identifier,
+          code,
+          type,
+        },
+      });
       if (data.success) {
-        toast.success('Verification successful!');
+        toast.show('Verification successful!', 'success');
         if (onVerified) onVerified();
       } else {
         throw new Error(data.message || 'Verification failed');
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -30,9 +39,9 @@ export default function SupplierVerify({ onVerified, identifier: initialIdentifi
     setResending(true);
     try {
       await post('/api/supplier/email/resend', { data: { email_or_phone: identifier } });
-      toast.success('Verification code resent!');
+      toast.show('Verification code resent!', 'success');
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setResending(false);
     }

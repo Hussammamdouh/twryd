@@ -7,7 +7,7 @@ export default function RequireGuest({ children }) {
   if (token) {
     if (user?.role === 'admin') return <Navigate to="/admin-dashboard" replace />;
     if (user?.role === 'client') return <Navigate to="/client-dashboard" replace />;
-    if (user?.role === 'supplier') return <Navigate to="/supplier-dashboard" replace />;
+    if (user?.role === 'supplier') return <Navigate to="/supplier/dashboard" replace />;
     return <Navigate to="/" replace />;
   }
   return children;

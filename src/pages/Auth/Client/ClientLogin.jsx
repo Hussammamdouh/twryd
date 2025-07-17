@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
 import { useAuth } from '../../../contexts/AuthContext';
 import { post } from '../../../utils/api';
 import { Link } from 'react-router-dom';
+import { useToast } from '../../UI/Common/ToastContext';
 
 export default function ClientLogin() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,14 +18,12 @@ export default function ClientLogin() {
       const data = await post('/api/client/login', { data: { email_or_phone: emailOrPhone, password } });
       if (data.data && data.data.token && data.data.client) {
         login(data.data.token, { ...data.data.client, role: 'client' });
-        toast.success('Login successful!');
-        // Optionally redirect
-        // setTimeout(() => window.location.href = '/client-dashboard', 1000);
+        toast.show('Login successful!', 'success');
       } else {
         throw new Error(data.message || 'Login failed');
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { useToast } from '../../../UI/Common/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { post } from '../../../utils/api';
 
@@ -8,6 +8,7 @@ export default function LoginAdmin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,14 +17,14 @@ export default function LoginAdmin() {
       const data = await post('/api/v1/login', { data: { email, password } });
       if (data.data && data.data.token && data.data.admin) {
         login(data.data.token, { ...data.data.admin, role: 'admin' });
-        toast.success('Login successful!');
+        toast.show('Login successful!', 'success');
         // Optionally redirect
         // setTimeout(() => window.location.href = '/admin-dashboard', 1000);
       } else {
         throw new Error(data.message || 'Login failed');
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setLoading(false);
     }

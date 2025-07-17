@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { useToast } from '../../../UI/Common/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { post } from '../../../utils/api';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,7 @@ export default function SupplierLogin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,14 +18,13 @@ export default function SupplierLogin() {
       const data = await post('/api/supplier/login', { data: { identifier, password } });
       if (data.data && data.data.token && data.data.supplier) {
         login(data.data.token, { ...data.data.supplier, role: 'supplier' });
-        toast.success('Login successful!');
-        // Optionally redirect
-        // setTimeout(() => window.location.href = '/supplier-dashboard', 1000);
+        toast.show('Login successful!', 'success');
+        setTimeout(() => window.location.href = '/supplier/invitations', 1000);
       } else {
         throw new Error(data.message || 'Login failed');
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setLoading(false);
     }

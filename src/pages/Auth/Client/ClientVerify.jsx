@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { post } from '../../../utils/api';
-import toast from 'react-hot-toast';
+import { useToast } from '../../UI/Common/ToastContext';
 
 export default function ClientVerify({ onVerified, identifier: initialIdentifier }) {
   const [identifier, setIdentifier] = useState(initialIdentifier || '');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const toast = useToast();
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -14,13 +15,13 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
     try {
       const data = await post('/api/client/verify', { data: { identifier, verification_code: code } });
       if (data.success) {
-        toast.success('Verification successful!');
+        toast.show('Verification successful!', 'success');
         if (onVerified) onVerified();
       } else {
         throw new Error(data.message || 'Verification failed');
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -30,9 +31,9 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
     setResending(true);
     try {
       await post('/api/client/email/resend', { data: { email_or_phone: identifier } });
-      toast.success('Verification code resent!');
+      toast.show('Verification code resent!', 'success');
     } catch (err) {
-      toast.error(err.message);
+      toast.show(err.message, 'error');
     } finally {
       setResending(false);
     }

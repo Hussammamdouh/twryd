@@ -21,6 +21,10 @@ const SupplierForgotPassword = lazy(() => import('./pages/Auth/Supplier/Supplier
 const SupplierResetPassword = lazy(() => import('./pages/Auth/Supplier/SupplierResetPassword'));
 const ClientProfile = lazy(() => import('./pages/Auth/Client/ClientProfile'));
 const SupplierProfile = lazy(() => import('./pages/Auth/Supplier/SupplierProfile'));
+const SupplierInvitations = lazy(() => import('./pages/Supplier/SupplierInvitations'));
+const Products = lazy(() => import('./pages/Supplier/Products'));
+const RequireSupplier = lazy(() => import('./UI/supplier/RequireSupplier'));
+const SupplierDashboard = lazy(() => import('./pages/Supplier/SupplierDashboard'));
 
 export default function App() {
   return (
@@ -42,7 +46,8 @@ export default function App() {
             <Route path="/reset-password-supplier" element={<RequireGuest><SupplierResetPassword /></RequireGuest>} />
             <Route path="/admin-dashboard/*" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
             <Route path="/client-profile" element={<RequireAuth><ClientProfile /></RequireAuth>} />
-            <Route path="/supplier-profile" element={<RequireAuth><SupplierProfile /></RequireAuth>} />
+            <Route path="/supplier/dashboard/*" element={<RequireSupplier><SupplierDashboard /></RequireSupplier>} />
+            <Route path="/supplier/invitations" element={<RequireSupplier><SupplierInvitations /></RequireSupplier>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

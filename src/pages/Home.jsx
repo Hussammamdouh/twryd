@@ -1,13 +1,14 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import toast from 'react-hot-toast';
+import { useToast } from '../UI/Common/ToastContext';
 
 export default function Home() {
   const { token, logout } = useAuth();
+  const toast = useToast();
 
   const handleLogout = () => {
     logout();
-    toast.success('Logged out successfully!');
+    toast.show('Logged out successfully!', 'success');
   };
 
   return (
