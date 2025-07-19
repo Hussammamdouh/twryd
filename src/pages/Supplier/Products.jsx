@@ -98,50 +98,50 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
   return (
     <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Product' : 'Add New Product'} className="max-w-lg">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+          <div>
+            <label className="block text-sm font-medium mb-1 text-theme-text">Name</label>
+            <input name="name" value={form.name} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
           {formErrors.name && <div className="text-red-500 text-xs mt-1">{formErrors.name}</div>}
-        </div>
-        <div className="flex gap-2">
-          <div className="w-1/2">
-            <label className="block text-sm font-medium mb-1">Price</label>
-            <input name="price" type="number" min="0" value={form.price} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div className="flex gap-2">
+            <div className="w-1/2">
+              <label className="block text-sm font-medium mb-1 text-theme-text">Price</label>
+              <input name="price" type="number" min="0" value={form.price} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
             {formErrors.price && <div className="text-red-500 text-xs mt-1">{formErrors.price}</div>}
-          </div>
-          <div className="w-1/2">
-            <label className="block text-sm font-medium mb-1">Discount (%)</label>
-            <input name="discount" type="number" min="0" max="100" value={form.discount} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+            </div>
+            <div className="w-1/2">
+              <label className="block text-sm font-medium mb-1 text-theme-text">Discount (%)</label>
+              <input name="discount" type="number" min="0" max="100" value={form.discount} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
             {formErrors.discount && <div className="text-red-500 text-xs mt-1">{formErrors.discount}</div>}
+            </div>
           </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea name="description" value={form.description} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+          <div>
+            <label className="block text-sm font-medium mb-1 text-theme-text">Description</label>
+            <textarea name="description" value={form.description} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
           {formErrors.description && <div className="text-red-500 text-xs mt-1">{formErrors.description}</div>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Product Image URL</label>
-          <input name="product_url" value={form.product_url} onChange={handleChange} className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <select name="category_id" value={form.category_id} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400">
-            <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-theme-text">Product Image URL</label>
+            <input name="product_url" value={form.product_url} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-theme-text">Category</label>
+            <select name="category_id" value={form.category_id} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded">
+              <option value="">Select category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
           {formErrors.category_id && <div className="text-red-500 text-xs mt-1">{formErrors.category_id}</div>}
-        </div>
-        <div className="flex items-center gap-2">
-          <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} />
-          <label htmlFor="is_active" className="text-sm">Active</label>
-        </div>
-        <button type="submit" disabled={loading} className="w-full py-2 font-bold text-white rounded bg-blue-500 hover:bg-blue-600 transition disabled:opacity-60 mt-2">
-          {loading ? <Spinner size={20} /> : (isEdit ? 'Save Changes' : 'Add Product')}
-        </button>
-      </form>
+          </div>
+          <div className="flex items-center gap-2">
+          <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} className="focus:ring-2 focus:ring-primary-400" />
+            <label htmlFor="is_active" className="text-sm text-theme-text">Active</label>
+          </div>
+        <button type="submit" disabled={loading} className="theme-button w-full py-2 font-bold rounded transition disabled:opacity-60 mt-2">
+            {loading ? <Spinner size={20} /> : (isEdit ? 'Save Changes' : 'Add Product')}
+          </button>
+        </form>
     </Modal>
   );
 }
@@ -150,13 +150,13 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
 function ConfirmDeleteModal({ open, onClose, onConfirm, productName, loading }) {
   return (
     <Modal open={open} onClose={onClose} title="Delete Product">
-      <h3 className="text-xl font-bold mb-6">Delete Product</h3>
-      <p className="mb-6">Are you sure you want to delete <span className="font-semibold">{productName}</span>?</p>
-      <div className="flex gap-4 justify-end">
-        <button onClick={onClose} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-        <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60">
-          {loading ? <Spinner size={18} /> : 'Delete'}
-        </button>
+        <h3 className="text-xl font-bold mb-6 text-theme-text">Delete Product</h3>
+        <p className="mb-6 text-theme-text">Are you sure you want to delete <span className="font-semibold">{productName}</span>?</p>
+        <div className="flex gap-4 justify-end">
+        <button onClick={onClose} className="theme-button-secondary px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">Cancel</button>
+        <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 shadow focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2">
+            {loading ? <Spinner size={18} /> : 'Delete'}
+          </button>
       </div>
     </Modal>
   );
@@ -175,7 +175,7 @@ export default function Products() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const toast = useToast();
 
   // Fetch products
@@ -210,26 +210,70 @@ export default function Products() {
 
   // Add product
   const handleAddProduct = async (form) => {
-    await post('/api/supplier-management/products', { token, data: form });
-    await fetchProducts();
+    // Optimistic UI: add product locally
+    const tempId = Math.random().toString(36).slice(2);
+    const newProduct = { ...form, id: tempId };
+    const prevProducts = products;
+    setProducts([newProduct, ...products]);
+    try {
+      // Create FormData as expected by the API
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('price', form.price);
+      formData.append('discount', form.discount || '0');
+      formData.append('description', form.description || '');
+      formData.append('product_url', form.product_url || '');
+      formData.append('category_id', form.category_id);
+      formData.append('supplier_id', user.id); // Add supplier_id from user context
+      formData.append('is_active', form.is_active ? '1' : '0');
+      
+      const res = await post('/api/supplier-management/products', { token, data: formData });
+      setProducts(products => [res.data, ...products.filter(p => p.id !== tempId)]);
+      toast.show('Product added!', 'success');
+    } catch (err) {
+      setProducts(prevProducts);
+      toast.show(err.message || 'Failed to add product', 'error');
+    }
   };
 
   // Edit product
   const handleEditProduct = async (form) => {
-    await put(`/api/supplier-management/products/${editData.id}`, { token, data: form });
-    await fetchProducts();
+    // Optimistic UI: update product locally
+    const prevProducts = products;
+    setProducts(products.map(p => p.id === editData.id ? { ...p, ...form } : p));
+    try {
+      // Create FormData for update
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('price', form.price);
+      formData.append('discount', form.discount || '0');
+      formData.append('description', form.description || '');
+      formData.append('product_url', form.product_url || '');
+      formData.append('category_id', form.category_id);
+      formData.append('supplier_id', user.id);
+      formData.append('is_active', form.is_active ? '1' : '0');
+      
+      await put(`/api/supplier-management/products/${editData.id}`, { token, data: formData });
+      toast.show('Product updated!', 'success');
+    } catch (err) {
+      setProducts(prevProducts);
+      toast.show(err.message || 'Failed to update product', 'error');
+    }
   };
 
   // Delete product
   const handleDeleteProduct = async () => {
     setDeleteLoading(true);
+    // Optimistic UI: remove product locally
+    const prevProducts = products;
+    setProducts(products.filter(p => p.id !== deleteTarget.id));
     try {
       await del(`/api/supplier-management/products/${deleteTarget.id}`, { token });
       toast.show('Product deleted!', 'success');
       setDeleteModalOpen(false);
       setDeleteTarget(null);
-      await fetchProducts();
     } catch (err) {
+      setProducts(prevProducts);
       toast.show(err.message || 'Failed to delete', 'error');
     } finally {
       setDeleteLoading(false);
@@ -238,13 +282,16 @@ export default function Products() {
 
   // Status toggle
   const handleToggleStatus = async (product) => {
+    // Optimistic UI: toggle status locally
+    const prevProducts = products;
+    setProducts(products.map(p => p.id === product.id ? { ...p, is_active: !p.is_active } : p));
     try {
       await put(`/api/supplier-management/products/${product.id}`, {
         token,
         data: { is_active: !product.is_active },
       });
-      await fetchProducts();
     } catch (err) {
+      setProducts(prevProducts);
       toast.show(err.message || 'Failed to update status', 'error');
     }
   };
@@ -263,7 +310,7 @@ export default function Products() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">My Products</h1>
+      <h1 className="text-2xl font-bold mb-4 text-theme-text">My Products</h1>
       <div className="flex flex-col md:flex-row md:items-end gap-4 mb-6">
         <div className="flex gap-2 flex-1">
           <input
@@ -271,12 +318,14 @@ export default function Products() {
             placeholder="Search by name or SKU..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400 w-full"
+            className="theme-input px-3 py-2 rounded w-full"
+            aria-label="Search products"
           />
           <select
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400"
+            className="theme-input px-3 py-2 rounded"
+            aria-label="Filter by category"
           >
             <option value="">All Categories</option>
             {categories.map(cat => (
@@ -286,7 +335,8 @@ export default function Products() {
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400"
+            className="theme-input px-3 py-2 rounded"
+            aria-label="Filter by status"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -295,7 +345,7 @@ export default function Products() {
         </div>
         <button
           onClick={() => { setEditData(null); setModalOpen(true); }}
-          className="px-5 py-2 rounded bg-blue-600 text-white font-bold hover:bg-blue-700"
+          className="theme-button px-5 py-2 rounded font-bold"
         >
           + Add Product
         </button>

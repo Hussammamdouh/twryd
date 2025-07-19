@@ -101,32 +101,32 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   return (
     <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Category' : 'Add New Category'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+          <div>
+            <label className="block text-sm font-medium mb-1 text-theme-text">Name</label>
+            <input name="name" value={form.name} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
           {formErrors.name && <div className="text-red-500 text-xs mt-1">{formErrors.name}</div>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Icon {isEdit ? '(optional)' : '(required)'}</label>
-          <input name="icon" type="file" accept="image/*" onChange={handleChange} className="w-full" required={!isEdit} />
-          {isEdit && initialData?.icon && (
-            <div className="flex items-center gap-2 mt-2">
-              <img src={getIconUrl(initialData.icon)} alt="icon" className="w-8 h-8 object-cover rounded" />
-              <label className="flex items-center gap-1 text-xs">
-                <input type="checkbox" name="remove_icon" checked={form.remove_icon} onChange={handleChange} /> Remove icon
-              </label>
-            </div>
-          )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-theme-text">Icon {isEdit ? '(optional)' : '(required)'}</label>
+            <input name="icon" type="file" accept="image/*" onChange={handleChange} className="w-full" required={!isEdit} />
+            {isEdit && initialData?.icon && (
+              <div className="flex items-center gap-2 mt-2">
+                <img src={getIconUrl(initialData.icon)} alt="icon" className="w-8 h-8 object-cover rounded" />
+                <label className="flex items-center gap-1 text-xs text-theme-text">
+                  <input type="checkbox" name="remove_icon" checked={form.remove_icon} onChange={handleChange} /> Remove icon
+                </label>
+              </div>
+            )}
           {formErrors.icon && <div className="text-red-500 text-xs mt-1">{formErrors.icon}</div>}
-        </div>
-        <div className="flex items-center gap-2">
-          <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} />
-          <label htmlFor="is_active" className="text-sm">Active</label>
-        </div>
-        <button type="submit" disabled={loading} className="w-full py-2 font-bold text-white rounded bg-blue-500 hover:bg-blue-600 transition disabled:opacity-60 mt-2">
-          {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Category')}
-        </button>
-      </form>
+          </div>
+          <div className="flex items-center gap-2">
+          <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} className="focus:ring-2 focus:ring-primary-400" />
+            <label htmlFor="is_active" className="text-sm text-theme-text">Active</label>
+          </div>
+        <button type="submit" disabled={loading} className="theme-button w-full py-2 font-bold rounded transition disabled:opacity-60 mt-2">
+            {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Category')}
+          </button>
+        </form>
     </Modal>
   );
 }
@@ -134,13 +134,13 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
 function ConfirmDeleteModal({ open, onClose, onConfirm, categoryName, loading }) {
   return (
     <Modal open={open} onClose={onClose} title="Delete Category">
-      <h3 className="text-xl font-bold mb-6">Delete Category</h3>
-      <p className="mb-6">Are you sure you want to delete <span className="font-semibold">{categoryName}</span>?</p>
-      <div className="flex gap-4 justify-end">
-        <button onClick={onClose} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-        <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60">
-          {loading ? 'Deleting...' : 'Delete'}
-        </button>
+        <h3 className="text-xl font-bold mb-6 text-theme-text">Delete Category</h3>
+        <p className="mb-6 text-theme-text">Are you sure you want to delete <span className="font-semibold">{categoryName}</span>?</p>
+        <div className="flex gap-4 justify-end">
+        <button onClick={onClose} className="theme-button-secondary px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">Cancel</button>
+        <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2">
+            {loading ? 'Deleting...' : 'Delete'}
+          </button>
       </div>
     </Modal>
   );
@@ -223,71 +223,86 @@ export default function Categories() {
   return (
     <div className="flex justify-center items-start min-h-[80vh] w-full py-8 px-2">
       <div className="w-full max-w-5xl flex flex-col gap-4">
-        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-8 text-blue-700 flex items-center gap-2">
-          <span className="inline-block bg-blue-100 text-blue-600 rounded-full px-2 sm:px-3 py-1 text-base sm:text-lg">Categories</span>
-          <span className="text-gray-400 font-normal text-base sm:text-lg">Management</span>
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-8 text-primary-700 flex items-center gap-2">
+          <span className="inline-block bg-primary-100 text-primary-600 rounded-full px-2 sm:px-3 py-1 text-base sm:text-lg">Categories</span>
+          <span className="text-theme-text-secondary font-normal text-base sm:text-lg">Management</span>
         </h1>
         <div className="flex justify-end mb-2 sm:mb-4">
           <button
-            className="flex items-center gap-2 px-3 sm:px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow transition text-sm sm:text-base"
+            className="theme-button flex items-center gap-2 px-3 sm:px-5 py-2 font-bold rounded-lg shadow transition text-sm sm:text-base"
             onClick={() => { setEditData(null); setModalOpen(true); }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
             Add Category
           </button>
         </div>
-        <div className="bg-white rounded-2xl shadow-lg p-3 sm:p-6 overflow-x-auto border border-gray-100">
-          {isLoading ? (
-            <div className="flex flex-col items-center py-8 sm:py-16 text-blue-500">
+        <div className="theme-card p-3 sm:p-6 overflow-x-auto">
+        {isLoading ? (
+            <div className="flex flex-col items-center py-8 sm:py-16 text-primary-500">
               <svg className="animate-spin h-6 w-6 sm:h-8 sm:w-8 mb-2" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg>
               <span className="text-base sm:text-lg font-semibold">Loading categories...</span>
             </div>
-          ) : error ? (
+        ) : error ? (
             <div className="text-red-500 text-center py-8 sm:py-12">{error.message || error}</div>
-          ) : filteredCategories.length === 0 ? (
-            <div className="flex flex-col items-center py-8 sm:py-16 text-gray-400">
+        ) : filteredCategories.length === 0 ? (
+            <div className="flex flex-col items-center py-8 sm:py-16 text-theme-text-muted">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 sm:w-12 sm:h-12 mb-2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0A9 9 0 11.75 12a9 9 0 0117.25 0z" /></svg>
               <span className="text-base sm:text-lg font-semibold">No categories found.</span>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
               {filteredCategories.map((cat) => (
-                <div key={cat.id} className="flex items-center gap-2 sm:gap-4 bg-gray-50 rounded-xl p-2 sm:p-4 border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div key={cat.id} className="flex items-center gap-2 sm:gap-4 bg-theme-surface rounded-xl p-2 sm:p-4 border border-theme-border shadow-sm hover:shadow-md transition">
                   <div className="flex-shrink-0">
                     {cat.icon ? (
                       <img
                         src={getIconUrl(cat.icon)}
                         alt={cat.name}
-                        className="w-10 h-10 sm:w-16 sm:h-16 object-cover rounded-lg border border-gray-200 bg-white"
-                        onError={e => { e.target.onerror = null; e.target.src = ''; e.target.parentNode.innerHTML = '<div class=\'w-10 h-10 sm:w-16 sm:h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400\'>N/A</div>'; }}
+                        className="w-10 h-10 sm:w-16 sm:h-16 object-cover rounded-lg border border-theme-border bg-theme-card"
+                        onError={(e) => {
+                          try {
+                            e.target.onerror = null;
+                            e.target.style.display = 'none';
+                            const parent = e.target.parentNode;
+                            if (parent) {
+                              parent.innerHTML = '<div class="w-10 h-10 sm:w-16 sm:h-16 bg-theme-surface rounded-lg flex items-center justify-center text-theme-text-muted">N/A</div>';
+                            }
+                          } catch (error) {
+                            console.warn('Error handling image load failure:', error);
+                          }
+                        }}
                       />
                     ) : (
-                      <div className="w-10 h-10 sm:w-16 sm:h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">N/A</div>
+                      <div className="w-10 h-10 sm:w-16 sm:h-16 bg-theme-surface rounded-lg flex items-center justify-center text-theme-text-muted">N/A</div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-base sm:text-lg text-gray-800 truncate">{cat.name}</div>
+                    <div className="font-bold text-base sm:text-lg text-theme-text truncate">{cat.name}</div>
                     <div className="mt-1">
-                      <button
-                        className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded text-xs font-semibold focus:outline-none ${cat.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-500'}`}
-                        onClick={() => handleToggleStatus(cat)}
-                        title="Toggle status"
-                      >
+                    <button
+                        className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                          cat.is_active 
+                            ? 'bg-green-100 text-green-600 focus:ring-green-400 dark:bg-green-900/30 dark:text-green-300' 
+                            : 'bg-gray-200 text-gray-500 focus:ring-gray-400 dark:bg-gray-700 dark:text-gray-300'
+                        }`}
+                      onClick={() => handleToggleStatus(cat)}
+                      title="Toggle status"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                        {cat.is_active ? 'Active' : 'Inactive'}
-                      </button>
+                      {cat.is_active ? 'Active' : 'Inactive'}
+                    </button>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1 sm:gap-2">
                     <button
-                      className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-bold transition"
+                      className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary-500 hover:bg-primary-600 text-white rounded text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
                       onClick={() => { setEditData(cat); setModalOpen(true); }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6 6M3 21h6a2 2 0 002-2v-6a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
                       Edit
                     </button>
                     <button
-                      className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-bold transition"
+                      className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
                       onClick={() => { setDeleteTarget(cat); setDeleteModalOpen(true); }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -297,22 +312,22 @@ export default function Categories() {
                 </div>
               ))}
             </div>
-          )}
-        </div>
-        <CategoryFormModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onSubmit={editData ? handleEditCategory : handleAddCategory}
-          initialData={editData}
-          isEdit={!!editData}
-        />
-        <ConfirmDeleteModal
-          open={deleteModalOpen}
-          onClose={() => setDeleteModalOpen(false)}
-          onConfirm={handleDeleteCategory}
-          categoryName={deleteTarget?.name}
-          loading={deleteLoading}
-        />
+        )}
+      </div>
+      <CategoryFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={editData ? handleEditCategory : handleAddCategory}
+        initialData={editData}
+        isEdit={!!editData}
+      />
+      <ConfirmDeleteModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteCategory}
+        categoryName={deleteTarget?.name}
+        loading={deleteLoading}
+      />
       </div>
     </div>
   );

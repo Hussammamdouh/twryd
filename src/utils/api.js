@@ -44,6 +44,9 @@ export function post(path, opts) {
 export function put(path, opts) {
   return apiRequest(path, { ...opts, method: 'PUT' });
 }
+export function patch(path, opts) {
+  return apiRequest(path, { ...opts, method: 'PATCH' });
+}
 export function del(path, opts) {
   return apiRequest(path, { ...opts, method: 'DELETE' });
 } 

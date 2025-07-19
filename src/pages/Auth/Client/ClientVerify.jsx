@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { post } from '../../../utils/api';
-import { useToast } from '../../UI/Common/ToastContext';
+import { useToast } from '../../../UI/Common/ToastContext';
 
 export default function ClientVerify({ onVerified, identifier: initialIdentifier }) {
   const [identifier, setIdentifier] = useState(initialIdentifier || '');
@@ -13,7 +13,7 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await post('/api/client/verify', { data: { identifier, verification_code: code } });
+      const data = await post('/api/client/verify', { data: { identifier, code } });
       if (data.success) {
         toast.show('Verification successful!', 'success');
         if (onVerified) onVerified();

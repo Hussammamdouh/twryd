@@ -1,28 +1,87 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { post } from '../../../utils/api';
+import { useToast } from '../../../UI/Common/ToastContext';
 
 const SupplierForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const toast = useToast();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
-      await post('/api/supplier/forgot-password', { data: { email } });
+      await post('/api/supplier/forgot-password', { data: { identifier: email } });
+      toast.show('Password reset link sent!', 'success');
       navigate('/reset-password-supplier', { state: { email } });
-    } catch {
-      // handle error
+    } catch (err) {
+      setError(err.message || 'Failed to send reset link');
+      toast.show(err.message || 'Failed to send reset link', 'error');
     } finally {
       setLoading(false);
     }
   };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input value={email} onChange={e => setEmail(e.target.value)} />
-      <button type="submit" disabled={loading}>Submit</button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8" role="main">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
+        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-900">
+          Forgot Password
+        </h2>
+        <div className="w-16 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mb-8" />
+        <p className="text-gray-600 text-center mb-6">
+          Enter your email address and we'll send you a link to reset your password.
+        </p>
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading}>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className="text-base font-medium text-gray-700">Email Address</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/></svg>
+              </span>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="w-full bg-[#f7fafc] pl-10 pr-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border border-gray-200 placeholder-gray-400"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                disabled={loading}
+                aria-invalid={!!error}
+                aria-describedby={error ? 'email-error' : undefined}
+              />
+            </div>
+            {error && <div id="email-error" className="text-red-500 text-sm mt-1" role="alert">{error}</div>}
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            aria-label="Send reset link"
+            className="w-full py-3 font-bold text-white rounded-lg bg-gradient-to-r from-[#0099FF] to-[#1E90FF] shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+          >
+            {loading && (
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            )}
+            {loading ? 'Sending...' : 'Send Reset Link'}
+          </button>
+          <div className="text-center">
+            <Link to="/login-supplier" className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 rounded">
+              Back to Login
+            </Link>
+          </div>
     </form>
+      </div>
+    </div>
   );
 };
+
 export default SupplierForgotPassword; 

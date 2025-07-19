@@ -1,147 +1,370 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { get, post, put, del, patch } from '../../utils/api';
+import { useToast } from '../../UI/Common/ToastContext';
+import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../UI/Common/Modal';
+import ConfirmModal from '../../UI/supplier/ConfirmModal';
+import StatusBadge from '../../UI/supplier/StatusBadge';
+import Spinner from '../../UI/supplier/Spinner';
 
-const DUMMY_WAREHOUSES = [
-  { id: 1, name: 'Main Warehouse', address: '123 Main St', region: 'Cairo', capacity: 500, is_active: true },
-  { id: 2, name: 'Alex Storage', address: '45 Nile Ave', region: 'Alexandria', capacity: 300, is_active: false },
-];
-
-function WarehouseFormModal({ open, onClose, onSubmit, initialData }) {
-  const [form, setForm] = useState(
-    initialData || { name: '', address: '', region: '', capacity: '', is_active: true }
-  );
-  const [loading, setLoading] = useState(false);
+function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
+  const [form, setForm] = useState({
+    name: '',
+    address: '',
+    phone: '',
+  });
+  const [errors, setErrors] = useState({});
 
   React.useEffect(() => {
-    if (open) setForm(initialData || { name: '', address: '', region: '', capacity: '', is_active: true });
+    if (open) {
+      setForm(initialData || { name: '', address: '', phone: '' });
+      setErrors({});
+    }
   }, [open, initialData]);
 
   const handleChange = e => {
-    const { name, value, type, checked } = e.target;
-    setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!form.name.trim()) newErrors.name = 'Name is required';
+    if (!form.address.trim()) newErrors.address = 'Address is required';
+    if (!form.phone.trim()) newErrors.phone = 'Phone is required';
+    if (form.phone && !/^[0-9+\-\s()]+$/.test(form.phone)) {
+      newErrors.phone = 'Invalid phone number format';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = e => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
+    if (validateForm()) {
       onSubmit(form);
-      setLoading(false);
-    }, 500);
+    }
   };
 
   return (
     <Modal open={open} onClose={onClose} title={initialData ? 'Edit Warehouse' : 'Add Warehouse'}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input name="name" value={form.name} onChange={handleChange} required placeholder="Name" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="address" value={form.address} onChange={handleChange} required placeholder="Address" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="region" value={form.region} onChange={handleChange} required placeholder="Region" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="capacity" type="number" min="0" value={form.capacity} onChange={handleChange} required placeholder="Capacity" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <label className="flex items-center gap-2 mt-2">
-          <input type="checkbox" name="is_active" checked={form.is_active} onChange={handleChange} />
-          <span>Active</span>
-        </label>
-        <button type="submit" disabled={loading} className="w-full py-2 font-bold text-white rounded bg-blue-500 hover:bg-blue-600 transition disabled:opacity-60 mt-2">
-          {loading ? 'Saving...' : (initialData ? 'Save Changes' : 'Add Warehouse')}
-        </button>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-theme-text mb-1">
+            Warehouse Name *
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            value={form.name}
+            onChange={handleChange}
+            required
+            placeholder="Enter warehouse name"
+            className={`theme-input w-full px-3 py-2 rounded ${
+              errors.name ? 'border-red-300' : ''
+            }`}
+          />
+          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="address" className="block text-sm font-medium text-theme-text mb-1">
+            Address *
+          </label>
+          <input
+            id="address"
+            name="address"
+            type="text"
+            value={form.address}
+            onChange={handleChange}
+            required
+            placeholder="Enter warehouse address"
+            className={`theme-input w-full px-3 py-2 rounded ${
+              errors.address ? 'border-red-300' : ''
+            }`}
+          />
+          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-theme-text mb-1">
+            Phone Number *
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            value={form.phone}
+            onChange={handleChange}
+            required
+            placeholder="Enter phone number"
+            className={`theme-input w-full px-3 py-2 rounded ${
+              errors.phone ? 'border-red-300' : ''
+            }`}
+          />
+          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="theme-button-secondary flex-1 py-2 px-4 rounded transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="theme-button flex-1 py-2 px-4 rounded disabled:opacity-60 transition"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <Spinner size={16} />
+                <span className="ml-2">Saving...</span>
+              </div>
+            ) : (
+              initialData ? 'Update Warehouse' : 'Add Warehouse'
+            )}
+          </button>
+        </div>
       </form>
     </Modal>
   );
 }
 
-function ConfirmDeleteModal({ open, onClose, onConfirm, warehouseName, loading }) {
-  return (
-    <Modal open={open} onClose={onClose} title="Delete Warehouse">
-      <h3 className="text-xl font-bold mb-4">Delete Warehouse</h3>
-      <p className="mb-6">Are you sure you want to delete <span className="font-semibold">{warehouseName}</span>?</p>
-      <div className="flex gap-4 justify-end">
-        <button onClick={onClose} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-        <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60">
-          {loading ? 'Deleting...' : 'Delete'}
-        </button>
-      </div>
-    </Modal>
-  );
-}
-
 export default function Warehouses() {
-  const [warehouses, setWarehouses] = useState(DUMMY_WAREHOUSES);
+  const [warehouses, setWarehouses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const toast = useToast();
+  const { token } = useAuth();
 
-  const handleAdd = () => { setEditData(null); setModalOpen(true); };
-  const handleEdit = (wh) => { setEditData(wh); setModalOpen(true); };
-  const handleDelete = (wh) => { setDeleteTarget(wh); setDeleteModalOpen(true); };
-
-  const handleSubmit = (form) => {
-    if (editData) {
-      setWarehouses(ws => ws.map(w => w.id === editData.id ? { ...w, ...form } : w));
-    } else {
-      setWarehouses(ws => [...ws, { ...form, id: Date.now() }]);
+  // Fetch warehouses
+  const fetchWarehouses = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await get('/api/supplier/warehouses', { token });
+      const warehousesData = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      setWarehouses(warehousesData);
+    } catch (err) {
+      setError(err.message || 'Failed to load warehouses');
+      toast.show(err.message || 'Failed to load warehouses', 'error');
+    } finally {
+      setLoading(false);
     }
-    setModalOpen(false);
-    setEditData(null);
   };
 
-  const handleConfirmDelete = () => {
-    setDeleteLoading(true);
-    setTimeout(() => {
-      setWarehouses(ws => ws.filter(w => w.id !== deleteTarget.id));
+  useEffect(() => {
+    fetchWarehouses();
+  }, []);
+
+  // Handle form submission (create/update)
+  const handleSubmit = async (formData) => {
+    setActionLoading(true);
+    try {
+      if (editData) {
+        // Update warehouse
+        await put(`/api/supplier/warehouses/${editData.id}`, { data: formData, token });
+        toast.show('Warehouse updated successfully!', 'success');
+      } else {
+        // Create warehouse
+        await post('/api/supplier/warehouses', { data: formData, token });
+        toast.show('Warehouse created successfully!', 'success');
+      }
+      
+      setModalOpen(false);
+      setEditData(null);
+      fetchWarehouses(); // Refresh the list
+    } catch (err) {
+      toast.show(err.message || 'Failed to save warehouse', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle delete
+  const handleDelete = async () => {
+    setActionLoading(true);
+    try {
+      await del(`/api/supplier/warehouses/${deleteTarget.id}`, { token });
+      toast.show('Warehouse deleted successfully!', 'success');
       setDeleteModalOpen(false);
       setDeleteTarget(null);
-      setDeleteLoading(false);
-    }, 500);
+      fetchWarehouses(); // Refresh the list
+    } catch (err) {
+      toast.show(err.message || 'Failed to delete warehouse', 'error');
+    } finally {
+      setActionLoading(false);
+    }
   };
+
+  // Handle toggle status
+  const handleToggleStatus = async (warehouse) => {
+    try {
+      await patch(`/api/supplier/warehouses/${warehouse.id}/toggle`, { token });
+      toast.show(`Warehouse ${warehouse.is_active ? 'deactivated' : 'activated'} successfully!`, 'success');
+      fetchWarehouses(); // Refresh the list
+    } catch (err) {
+      toast.show(err.message || 'Failed to toggle warehouse status', 'error');
+    }
+  };
+
+  const handleAdd = () => {
+    setEditData(null);
+    setModalOpen(true);
+  };
+
+  const handleEdit = (warehouse) => {
+    setEditData(warehouse);
+    setModalOpen(true);
+  };
+
+  const handleDeleteClick = (warehouse) => {
+    setDeleteTarget(warehouse);
+    setDeleteModalOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-5xl mx-auto py-8 px-2">
+        <div className="flex items-center justify-center h-64">
+          <Spinner size={32} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto py-8 px-2">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-blue-700">Warehouses</h1>
-        <button onClick={handleAdd} className="px-5 py-2 rounded bg-blue-600 text-white font-bold hover:bg-blue-700">+ Add Warehouse</button>
+        <div>
+          <h1 className="text-2xl font-bold text-primary-700">Warehouses</h1>
+          <p className="text-theme-text-secondary mt-1">Manage your warehouse locations</p>
+        </div>
+        <button
+          onClick={handleAdd}
+          className="theme-button px-5 py-2 rounded font-bold transition flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add Warehouse
+        </button>
       </div>
-      <div className="bg-white rounded-2xl shadow-2xl p-3 sm:p-6 border border-gray-100 overflow-x-auto">
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/30 dark:border-red-700">
+          <p className="text-red-600 dark:text-red-300">{error}</p>
+        </div>
+      )}
+
+      <div className="theme-card p-3 sm:p-6 overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="bg-blue-50 text-blue-700">
-              <th className="py-2 px-3 text-left">Name</th>
-              <th className="py-2 px-3 text-left">Address</th>
-              <th className="py-2 px-3 text-left">Region</th>
-              <th className="py-2 px-3 text-left">Capacity</th>
-              <th className="py-2 px-3 text-left">Status</th>
-              <th className="py-2 px-3 text-right">Actions</th>
+            <tr className="theme-table-header text-primary-700">
+              <th className="py-3 px-4 text-left font-semibold">Name</th>
+              <th className="py-3 px-4 text-left font-semibold">Address</th>
+              <th className="py-3 px-4 text-left font-semibold">Phone</th>
+              <th className="py-3 px-4 text-left font-semibold">Status</th>
+              <th className="py-3 px-4 text-right font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {warehouses.map(wh => (
-              <tr key={wh.id} className="border-b last:border-b-0 hover:bg-blue-50/30">
-                <td className="py-2 px-3 font-semibold">{wh.name}</td>
-                <td className="py-2 px-3">{wh.address}</td>
-                <td className="py-2 px-3">{wh.region}</td>
-                <td className="py-2 px-3">{wh.capacity}</td>
-                <td className="py-2 px-3">
-                  <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${wh.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500'}`}>
-                    {wh.is_active ? 'Active' : 'Inactive'}
+            {warehouses.map(warehouse => (
+              <tr key={warehouse.id} className="border-b border-theme-border last:border-b-0 hover:bg-theme-surface">
+                <td className="py-3 px-4 font-semibold text-theme-text">{warehouse.name}</td>
+                <td className="py-3 px-4 text-theme-text">{warehouse.address}</td>
+                <td className="py-3 px-4 text-theme-text">{warehouse.phone}</td>
+                <td className="py-3 px-4">
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${
+                    warehouse.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'
+                  }`}>
+                    {warehouse.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td className="py-2 px-3 text-right">
-                  <button onClick={() => handleEdit(wh)} className="text-blue-600 hover:underline mr-3">Edit</button>
-                  <button onClick={() => handleDelete(wh)} className="text-red-600 hover:underline">Delete</button>
+                <td className="py-3 px-4 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => handleToggleStatus(warehouse)}
+                      className={`px-3 py-1 rounded text-xs font-medium transition ${
+                        warehouse.is_active
+                          ? 'bg-orange-100 text-orange-700 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300'
+                          : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300'
+                      }`}
+                      title={warehouse.is_active ? 'Deactivate' : 'Activate'}
+                    >
+                      {warehouse.is_active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button
+                      onClick={() => handleEdit(warehouse)}
+                      className="text-primary-600 hover:text-primary-800 transition px-2 py-1"
+                      title="Edit"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(warehouse)}
+                      className="text-red-600 hover:text-red-800 transition px-2 py-1"
+                      title="Delete"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
-            {warehouses.length === 0 && (
+            {warehouses.length === 0 && !loading && (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-gray-400">No warehouses found.</td>
+                <td colSpan={5} className="py-12 text-center text-theme-text-muted">
+                  <div className="flex flex-col items-center gap-2">
+                    <svg className="w-12 h-12 text-theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <p className="text-lg font-medium">No warehouses found</p>
+                    <p className="text-sm">Get started by adding your first warehouse</p>
+                  </div>
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      <WarehouseFormModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} initialData={editData} />
-      <ConfirmDeleteModal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={handleConfirmDelete} warehouseName={deleteTarget?.name} loading={deleteLoading} />
+
+      {/* Form Modal */}
+      <WarehouseFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleSubmit}
+        initialData={editData}
+        loading={actionLoading}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Warehouse"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+        loading={actionLoading}
+      />
     </div>
   );
 } 

@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "Twryd Admin API",
+			"name": "Twryd - Admin API",
 			"item": [
 				{
 					"name": "Authentication",
@@ -547,7 +547,7 @@
 			]
 		},
 		{
-			"name": "Twryd Category API",
+			"name": "Twryd - Category API",
 			"item": [
 				{
 					"name": "Public Endpoints",
@@ -1022,7 +1022,7 @@
 			]
 		},
 		{
-			"name": "Twryd Client API",
+			"name": "Twryd - Client API",
 			"item": [
 				{
 					"name": "Authentication",
@@ -1114,7 +1114,7 @@
 										{
 											"key": "tax_card_file",
 											"type": "file",
-											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07 (2).pdf"
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07 (1).pdf"
 										},
 										{
 											"key": "cr_number",
@@ -1192,7 +1192,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"identifier\": \"hamzafottoh74@gmail.com\",\n    \"verification_code\": \"865650\"\n}"
+									"raw": "{\n    \"identifier\": \"hamzafottoh74@gmail.com\",\n    \"verification_code\": \"361515\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/client/verify",
@@ -1714,7 +1714,7 @@
 			]
 		},
 		{
-			"name": "Twryd - Invitation Module API",
+			"name": "Twryd - Invitation API",
 			"item": [
 				{
 					"name": "Public Endpoints",
@@ -2738,1253 +2738,312 @@
 			]
 		},
 		{
-			"name": "Twryd - Location Module API",
+			"name": "Twryd - Location API",
 			"item": [
 				{
 					"name": "Public Endpoints",
 					"item": [
 						{
-							"name": "Get All Governorates",
-							"event": [
+							"name": "Governorates",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains governorates', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('data');",
-											"    pm.expect(response.data.data).to.be.an('array');",
-											"});",
-											"",
-											"pm.test('Governorate structure', function () {",
-											"    const governorates = pm.response.json().data.data;",
-											"    if (governorates.length > 0) {",
-											"        const governorate = governorates[0];",
-											"        pm.expect(governorate).to.have.property('id');",
-											"        pm.expect(governorate).to.have.property('name');",
-											"        pm.expect(governorate).to.have.property('areas_count');",
-											"    }",
-											"});",
-											"",
-											"// Store first governorate ID for later use",
-											"const governorates = pm.response.json().data.data;",
-											"if (governorates.length > 0) {",
-											"    pm.collectionVariables.set('governorate_id', governorates[0].id);",
-											"}"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/governorates?per_page=10",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"governorates"
-									],
-									"query": [
-										{
-											"key": "per_page",
-											"value": "10"
-										}
-									]
+									"name": "Get All Governorates",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/governorates?per_page=15",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"governorates"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "15",
+													"description": "Number of items per page (default: 15)"
+												}
+											]
+										},
+										"description": "Retrieve all governorates with pagination"
+									},
+									"response": []
 								},
-								"description": "Get all governorates with pagination (public endpoint)"
-							},
-							"response": []
+								{
+									"name": "Get Governorate by ID",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/governorates/1",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"governorates",
+												"1"
+											]
+										},
+										"description": "Retrieve a specific governorate by its ID"
+									},
+									"response": []
+								}
+							]
 						},
 						{
-							"name": "Get Governorate by ID",
-							"event": [
+							"name": "Areas",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains governorate', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('id');",
-											"    pm.expect(response.data).to.have.property('name');",
-											"});",
-											"",
-											"pm.test('Governorate ID matches', function () {",
-											"    const governorate = pm.response.json().data;",
-											"    pm.expect(governorate.id.toString()).to.equal(pm.collectionVariables.get('governorate_id'));",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/governorates/{{governorate_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"governorates",
-										"{{governorate_id}}"
-									]
+									"name": "Get Areas by Governorate",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/governorates/1/areas?per_page=15",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"governorates",
+												"1",
+												"areas"
+											],
+											"query": [
+												{
+													"key": "per_page",
+													"value": "15",
+													"description": "Number of items per page (default: 15)"
+												}
+											]
+										},
+										"description": "Retrieve all areas for a specific governorate"
+									},
+									"response": []
 								},
-								"description": "Get specific governorate by ID (public endpoint)"
-							},
-							"response": []
-						},
-						{
-							"name": "Get Areas by Governorate",
-							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains areas', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('data');",
-											"    pm.expect(response.data.data).to.be.an('array');",
-											"});",
-											"",
-											"pm.test('Area structure', function () {",
-											"    const areas = pm.response.json().data.data;",
-											"    if (areas.length > 0) {",
-											"        const area = areas[0];",
-											"        pm.expect(area).to.have.property('id');",
-											"        pm.expect(area).to.have.property('name');",
-											"        pm.expect(area).to.have.property('governorate_id');",
-											"        pm.expect(area).to.have.property('polygon');",
-											"    }",
-											"});",
-											"",
-											"// Store first area ID for later use",
-											"const areas = pm.response.json().data.data;",
-											"if (areas.length > 0) {",
-											"    pm.collectionVariables.set('area_id', areas[0].id);",
-											"}"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/governorates/{{governorate_id}}/areas?per_page=10",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"governorates",
-										"{{governorate_id}}",
-										"areas"
-									],
-									"query": [
-										{
-											"key": "per_page",
-											"value": "10"
-										}
-									]
+									"name": "Get Area by ID",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/areas/1",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"areas",
+												"1"
+											]
+										},
+										"description": "Retrieve a specific area by its ID"
+									},
+									"response": []
 								},
-								"description": "Get all areas for a specific governorate (public endpoint)"
-							},
-							"response": []
-						},
-						{
-							"name": "Get Area by ID",
-							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains area', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('id');",
-											"    pm.expect(response.data).to.have.property('name');",
-											"    pm.expect(response.data).to.have.property('governorate_id');",
-											"    pm.expect(response.data).to.have.property('polygon');",
-											"});",
-											"",
-											"pm.test('Area ID matches', function () {",
-											"    const area = pm.response.json().data;",
-											"    pm.expect(area.id.toString()).to.equal(pm.collectionVariables.get('area_id'));",
-											"});"
-										]
-									}
+									"name": "Find Area by Coordinates",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/areas/find-by-coordinates/30.0444/31.2357",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"areas",
+												"find-by-coordinates",
+												"30.0444",
+												"31.2357"
+											]
+										},
+										"description": "Find area based on latitude and longitude coordinates"
+									},
+									"response": []
 								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/areas/{{area_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"areas",
-										"{{area_id}}"
-									]
-								},
-								"description": "Get specific area by ID (public endpoint)"
-							},
-							"response": []
-						},
-						{
-							"name": "Find Area by Coordinates",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response structure', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('success');",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response).to.have.property('data');",
-											"});",
-											"",
-											"pm.test('Data is either area object or null', function () {",
-											"    const data = pm.response.json().data;",
-											"    pm.expect(data === null || typeof data === 'object').to.be.true;",
-											"});",
-											"",
-											"pm.test('If area found, has required properties', function () {",
-											"    const data = pm.response.json().data;",
-											"    if (data !== null) {",
-											"        pm.expect(data).to.have.property('id');",
-											"        pm.expect(data).to.have.property('name');",
-											"        pm.expect(data).to.have.property('governorate_id');",
-											"        pm.expect(data).to.have.property('polygon');",
-											"    }",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/areas/find-by-coordinates/30.0444/31.2357",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"areas",
-										"find-by-coordinates",
-										"30.0444",
-										"31.2357"
-									]
-								},
-								"description": "Find area by latitude and longitude coordinates (public endpoint)"
-							},
-							"response": []
+							]
 						}
 					]
 				},
 				{
-					"name": "Admin Endpoints - Governorates",
+					"name": "Admin Endpoints",
 					"item": [
 						{
-							"name": "Create Governorate",
-							"event": [
+							"name": "Areas Management",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains governorate', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('id');",
-											"    pm.expect(response.data).to.have.property('name');",
-											"    pm.expect(response.data.name).to.equal('Cairo Governorate');",
-											"});",
-											"",
-											"pm.test('Success message', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.message).to.include('created');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cairo Governorate\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
+									"name": "Create Area",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer {{admin_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"governorate_id\": 1,\n    \"name\": \"Downtown Cairo\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0445,\n            \"lng\": 31.2358\n        },\n        {\n            \"lat\": 30.0446,\n            \"lng\": 31.2359\n        },\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}"
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/admin/areas",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"admin",
+												"areas"
+											]
+										},
+										"description": "Create a new area with polygon coordinates (Admin only)"
+									},
+									"response": []
 								},
-								"url": {
-									"raw": "{{base_url}}/admin/governorates",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates"
-									]
-								},
-								"description": "Create a new governorate (admin only)"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Governorate",
-							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains updated governorate', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('id');",
-											"    pm.expect(response.data).to.have.property('name');",
-											"    pm.expect(response.data.name).to.equal('Updated Cairo Governorate');",
-											"});",
-											"",
-											"pm.test('Success message', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.message).to.include('updated');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Updated Cairo Governorate\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
+									"name": "Update Area",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer {{admin_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"governorate_id\": 1,\n    \"name\": \"Updated Downtown Cairo\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0445,\n            \"lng\": 31.2358\n        },\n        {\n            \"lat\": 30.0446,\n            \"lng\": 31.2359\n        },\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}"
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/admin/areas/1",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"admin",
+												"areas",
+												"1"
+											]
+										},
+										"description": "Update an existing area (Admin only)"
+									},
+									"response": []
 								},
-								"url": {
-									"raw": "{{base_url}}/admin/governorates/{{governorate_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates",
-										"{{governorate_id}}"
-									]
-								},
-								"description": "Update an existing governorate (admin only)"
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Governorate",
-							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Success message', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.message).to.include('deleted');",
-											"});"
-										]
-									}
+									"name": "Delete Area",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer {{admin_token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/location/admin/areas/1",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"location",
+												"admin",
+												"areas",
+												"1"
+											]
+										},
+										"description": "Delete an area (Admin only)"
+									},
+									"response": []
 								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/governorates/{{governorate_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates",
-										"{{governorate_id}}"
-									]
-								},
-								"description": "Delete a governorate (admin only)"
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Admin Endpoints - Areas",
-					"item": [
-						{
-							"name": "Create Area",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains area', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('id');",
-											"    pm.expect(response.data).to.have.property('name');",
-											"    pm.expect(response.data).to.have.property('governorate_id');",
-											"    pm.expect(response.data).to.have.property('polygon');",
-											"    pm.expect(response.data.name).to.equal('Downtown Cairo');",
-											"});",
-											"",
-											"pm.test('Polygon structure', function () {",
-											"    const area = pm.response.json().data;",
-											"    pm.expect(area.polygon).to.be.an('array');",
-											"    pm.expect(area.polygon.length).to.be.at.least(3);",
-											"    pm.expect(area.polygon[0]).to.have.property('lat');",
-											"    pm.expect(area.polygon[0]).to.have.property('lng');",
-											"});",
-											"",
-											"pm.test('Success message', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.message).to.include('created');",
-											"});",
-											"",
-											"// Store area ID for later use",
-											"const area = pm.response.json().data;",
-											"pm.collectionVariables.set('area_id', area.id);"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"governorate_id\": {{governorate_id}},\n    \"name\": \"Downtown Cairo\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        },\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas"
-									]
-								},
-								"description": "Create a new area with polygon coordinates (admin only)"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Area",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Response contains updated area', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.data).to.have.property('id');",
-											"    pm.expect(response.data).to.have.property('name');",
-											"    pm.expect(response.data).to.have.property('governorate_id');",
-											"    pm.expect(response.data).to.have.property('polygon');",
-											"    pm.expect(response.data.name).to.equal('Updated Downtown Cairo');",
-											"});",
-											"",
-											"pm.test('Updated polygon structure', function () {",
-											"    const area = pm.response.json().data;",
-											"    pm.expect(area.polygon).to.be.an('array');",
-											"    pm.expect(area.polygon.length).to.be.at.least(3);",
-											"});",
-											"",
-											"pm.test('Success message', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.message).to.include('updated');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Updated Downtown Cairo\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        },\n        {\n            \"lat\": 30.0744,\n            \"lng\": 31.2657\n        },\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas/{{area_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas",
-										"{{area_id}}"
-									]
-								},
-								"description": "Update an existing area (admin only)"
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Area",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 200', function () {",
-											"    pm.expect(pm.response.code).to.equal(200);",
-											"});",
-											"",
-											"pm.test('Success message', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response.message).to.include('deleted');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/areas/{{area_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas",
-										"{{area_id}}"
-									]
-								},
-								"description": "Delete an area (admin only)"
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Validation Tests",
-					"item": [
-						{
-							"name": "Create Governorate - Missing Name",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 422', function () {",
-											"    pm.expect(pm.response.code).to.equal(422);",
-											"});",
-											"",
-											"pm.test('Response contains validation errors', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('errors');",
-											"    pm.expect(response.errors).to.have.property('name');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/governorates",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates"
-									]
-								},
-								"description": "Test validation for missing governorate name"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Governorate - Duplicate Name",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 422', function () {",
-											"    pm.expect(pm.response.code).to.equal(422);",
-											"});",
-											"",
-											"pm.test('Response contains validation errors', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('errors');",
-											"    pm.expect(response.errors).to.have.property('name');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Cairo Governorate\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/governorates",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates"
-									]
-								},
-								"description": "Test validation for duplicate governorate name"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Area - Missing Required Fields",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 422', function () {",
-											"    pm.expect(pm.response.code).to.equal(422);",
-											"});",
-											"",
-											"pm.test('Response contains validation errors', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('errors');",
-											"    pm.expect(response.errors).to.have.property('governorate_id');",
-											"    pm.expect(response.errors).to.have.property('polygon');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Test Area\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas"
-									]
-								},
-								"description": "Test validation for missing required fields in area creation"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Area - Invalid Polygon",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 422', function () {",
-											"    pm.expect(pm.response.code).to.equal(422);",
-											"});",
-											"",
-											"pm.test('Response contains validation errors', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('errors');",
-											"    pm.expect(response.errors).to.have.property('polygon');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"governorate_id\": {{governorate_id}},\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas"
-									]
-								},
-								"description": "Test validation for invalid polygon (less than 3 points)"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Area - Invalid Coordinates",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 422', function () {",
-											"    pm.expect(pm.response.code).to.equal(422);",
-											"});",
-											"",
-											"pm.test('Response contains validation errors', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('errors');",
-											"    pm.expect(response.errors).to.have.property('polygon.0.lat');",
-											"    pm.expect(response.errors).to.have.property('polygon.0.lng');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"governorate_id\": {{governorate_id}},\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 100,\n            \"lng\": 200\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas"
-									]
-								},
-								"description": "Test validation for invalid coordinates (out of range)"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Area - Non-existent Governorate",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 422', function () {",
-											"    pm.expect(pm.response.code).to.equal(422);",
-											"});",
-											"",
-											"pm.test('Response contains validation errors', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('errors');",
-											"    pm.expect(response.errors).to.have.property('governorate_id');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"governorate_id\": 99999,\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas"
-									]
-								},
-								"description": "Test validation for non-existent governorate"
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Authentication Tests",
-					"item": [
-						{
-							"name": "Create Governorate - Unauthorized",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 401', function () {",
-											"    pm.expect(pm.response.code).to.equal(401);",
-											"});",
-											"",
-											"pm.test('Response indicates unauthorized', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response.message).to.include('Unauthenticated');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Test Governorate\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/governorates",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates"
-									]
-								},
-								"description": "Test unauthorized access to admin endpoint"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Area - Unauthorized",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 401', function () {",
-											"    pm.expect(pm.response.code).to.equal(401);",
-											"});",
-											"",
-											"pm.test('Response indicates unauthorized', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response.message).to.include('Unauthenticated');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"governorate_id\": 1,\n    \"name\": \"Test Area\",\n    \"polygon\": [\n        {\n            \"lat\": 30.0444,\n            \"lng\": 31.2357\n        },\n        {\n            \"lat\": 30.0544,\n            \"lng\": 31.2457\n        },\n        {\n            \"lat\": 30.0644,\n            \"lng\": 31.2557\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas"
-									]
-								},
-								"description": "Test unauthorized access to admin area endpoint"
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Error Handling Tests",
-					"item": [
-						{
-							"name": "Get Governorate - Not Found",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 404', function () {",
-											"    pm.expect(pm.response.code).to.equal(404);",
-											"});",
-											"",
-											"pm.test('Response indicates not found', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response.message).to.include('not found');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/governorates/99999",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"governorates",
-										"99999"
-									]
-								},
-								"description": "Test getting non-existent governorate"
-							},
-							"response": []
-						},
-						{
-							"name": "Get Area - Not Found",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 404', function () {",
-											"    pm.expect(pm.response.code).to.equal(404);",
-											"});",
-											"",
-											"pm.test('Response indicates not found', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response.message).to.include('not found');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/areas/99999",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"areas",
-										"99999"
-									]
-								},
-								"description": "Test getting non-existent area"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Governorate - Not Found",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 404', function () {",
-											"    pm.expect(pm.response.code).to.equal(404);",
-											"});",
-											"",
-											"pm.test('Response indicates not found', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response.message).to.include('not found');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Updated Name\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/governorates/99999",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"governorates",
-										"99999"
-									]
-								},
-								"description": "Test updating non-existent governorate"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Area - Not Found",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"pm.test('Status code is 404', function () {",
-											"    pm.expect(pm.response.code).to.equal(404);",
-											"});",
-											"",
-											"pm.test('Response indicates not found', function () {",
-											"    const response = pm.response.json();",
-											"    pm.expect(response).to.have.property('message');",
-											"    pm.expect(response.message).to.include('not found');",
-											"});"
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"name\": \"Updated Area Name\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/areas/99999",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"admin",
-										"areas",
-										"99999"
-									]
-								},
-								"description": "Test updating non-existent area"
-							},
-							"response": []
+							]
 						}
 					]
 				}
 			]
 		},
 		{
-			"name": "Twryd - Supplier Module API",
+			"name": "Twryd - Supplier API",
 			"item": [
 				{
 					"name": "Authentication",
@@ -4631,6 +3690,1496 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Twryd - Product API",
+			"item": [
+				{
+					"name": "Product - Supplier",
+					"item": [
+						{
+							"name": "List Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json().data;",
+											"if(jsonData.id){ pm.environment.set(\"product_id\", jsonData.id); }"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Labtop HP",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "20000",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "10",
+											"description": "not required",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "8 ram, 500 ssd ....",
+											"description": "not required",
+											"type": "text"
+										},
+										{
+											"key": "product_url",
+											"value": "http://127.0.0.1:8000",
+											"description": "not required, valid url",
+											"type": "text"
+										},
+										{
+											"key": "category_id",
+											"value": "{{category_id}}",
+											"type": "text"
+										},
+										{
+											"key": "supplier_id",
+											"value": "{{supplier_id}}",
+											"type": "text"
+										},
+										{
+											"key": "is_active",
+											"value": "1",
+											"description": "not required, 1 or 0",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Product",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Labtop HP",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "20000",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "10",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "description",
+											"value": "8 ram, 500 ssd ....",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "product_url",
+											"value": "http://127.0.0.1:8000",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "category_id",
+											"value": "{{category_id}}",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "supplier_id",
+											"value": "{{supplier_id}}",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "is_active",
+											"value": "1",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products Statistics",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/statistics",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"statistics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Client Default Discount",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"default_discount\": 10\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/clients/{{client_id}}/default-discount",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"clients",
+										"{{client_id}}",
+										"default-discount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products-by-category/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products-by-category",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Client Product Discount",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"default_discount\": 5\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier-management/products/{{product_id}}/clients/{{client_id}}/default-discount",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier-management",
+										"products",
+										"{{product_id}}",
+										"clients",
+										"{{client_id}}",
+										"default-discount"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product - Client",
+					"item": [
+						{
+							"name": "List Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Product",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Supplier",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/products-by-supplier/{{supplier_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"products-by-supplier",
+										"{{supplier_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/products-by-category/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"products-by-category",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products Search",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/products-search",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"products-search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Supplier and Category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/products-by-supplier-category/{{supplier_id}}/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"products-by-supplier-category",
+										"{{supplier_id}}",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Available Suppliers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/available-suppliers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"available-suppliers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Available Categories",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{client_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/client-management/available-categories",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"client-management",
+										"available-categories"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product - Admin",
+					"item": [
+						{
+							"name": "List Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if(jsonData.data.id){ pm.environment.set(\"product_id\", jsonData.data.id); }"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Sample Product\",\n  \"description\": \"A generic product description.\",\n  \"price\": 100,\n  \"supplier_id\": \"{{supplier_id}}\",\n  \"category_id\": \"{{category_id}}\",\n  \"discount\": 20,\n  \"product_url\": \"\",\n  \"is_active\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Product",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Sample Product\",\n  \"description\": \"A generic product description.\",\n  \"price\": 100,\n  \"supplier_id\": \"{{supplier_id}}\",\n  \"category_id\": \"{{category_id}}\",\n  \"discount\": 20,\n  \"product_url\": \"\",\n  \"is_active\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products/{{product_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products Statistics",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products-statistics",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products-statistics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Bulk Update Status",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"ids\": [1,2,3], // ids of products\n  \"status\": \"active\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products-bulk-update-status",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products-bulk-update-status"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Supplier",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products-by-supplier/{{supplier_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products-by-supplier",
+										"{{supplier_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products-by-category/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products-by-category",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products by Supplier and Category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products-by-supplier-category/{{supplier_id}}/{{category_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products-by-supplier-category",
+										"{{supplier_id}}",
+										"{{category_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Suppliers with Stats",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/suppliers-with-stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"suppliers-with-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Categories with Stats",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/categories-with-stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"categories-with-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Client Default Discount",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"default_discount\": 10\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/suppliers/{{supplier_id}}/clients/{{client_id}}/default-discount",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"suppliers",
+										"{{supplier_id}}",
+										"clients",
+										"{{client_id}}",
+										"default-discount"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products Detailed Statistics",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin-management/products-detailed-statistics",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"admin-management",
+										"products-detailed-statistics"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd - Shipping API",
+			"item": [
+				{
+					"name": "Shipping - Supplier",
+					"item": [
+						{
+							"name": "List Shipping Drivers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/shipping-drivers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"shipping-drivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Shipping Driver",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if(jsonData.data){ pm.environment.set(\"shipping_driver_id\", jsonData.data.id); }"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Sample Driver",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "Standard",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "054984",
+											"type": "text"
+										},
+										{
+											"key": "car_name",
+											"value": "bmw m5",
+											"type": "text"
+										},
+										{
+											"key": "car_number",
+											"value": "465484",
+											"type": "text"
+										},
+										{
+											"key": "license_number",
+											"value": "1564897",
+											"type": "text"
+										},
+										{
+											"key": "supplier_id",
+											"value": "{{supplier_id}}",
+											"type": "text"
+										},
+										{
+											"key": "license_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07.pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/shipping-drivers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"shipping-drivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Shipping Driver",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Sample Driver update\"\n    // \"type\": \"Standard\",\n    // \"phone\": \"054984\",\n    // \"car_name\": \"bmw m5\",\n    // \"car_number\": \"465484\",\n    // \"license_number\": \"1564897\",\n    // \"supplier_id\": \"{{supplier_id}}\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/shipping-drivers/{{shipping_driver_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"shipping-drivers",
+										"{{shipping_driver_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Shipping Driver",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/shipping-drivers/{{shipping_driver_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"shipping-drivers",
+										"{{shipping_driver_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Toggle Shipping Driver",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/shipping-drivers/{{shipping_driver_id}}/toggle",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"shipping-drivers",
+										"{{shipping_driver_id}}",
+										"toggle"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Twryd - Warehouses API",
+			"item": [
+				{
+					"name": "Warehouses - Supplier",
+					"item": [
+						{
+							"name": "List Warehouses",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/warehouses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"warehouses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Warehouse",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if(jsonData.id){ pm.environment.set(\"warehouse_id\", jsonData.id); }"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Main Warehouse\",\n  \"supplier_id\": \"{{supplier_id}}\",\n  \"address\": \"giza\",\n  \"phone\": \"146548788\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/warehouses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"warehouses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Warehouse",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n//   \"supplier_id\": \"{{supplier_id}}\",\n//   \"address\": \"giza\",\n//   \"phone\": \"146548788\"\n  \"name\": \"Main Warehouse Update\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/supplier/warehouses/{{warehouse_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"warehouses",
+										"{{warehouse_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Warehouse",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/warehouses/{{warehouse_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"warehouses",
+										"{{warehouse_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Toggle Warehouse",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{supplier_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/supplier/warehouses/{{warehouse_id}}/toggle",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"supplier",
+										"warehouses",
+										"{{warehouse_id}}",
+										"toggle"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		}
 	],
 	"variable": [
@@ -4665,6 +5214,31 @@
 		{
 			"key": "invitation_id",
 			"value": ""
+		},
+		{
+			"key": "category_id",
+			"value": "d9e4387b-a1d4-479a-a2bc-9a90b99502c2",
+			"type": "default"
+		},
+		{
+			"key": "supplier_id",
+			"value": "3f587911-7cd2-46ce-ac64-20138de41923",
+			"type": "default"
+		},
+		{
+			"key": "product_id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "shipping_driver_id",
+			"value": "bef4f64d-b4ad-4fce-bb7f-fc544bda7a77",
+			"type": "default"
+		},
+		{
+			"key": "warehouse_id",
+			"value": "",
+			"type": "default"
 		}
 	]
 }

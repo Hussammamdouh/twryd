@@ -27,12 +27,14 @@ export default function ClientsRegisteration() {
         (pos) => {
           setForm((prev) => ({
             ...prev,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
+            latitude: pos.coords.latitude.toFixed(6),
+            longitude: pos.coords.longitude.toFixed(6),
           }));
         },
-        () => {},
-        { enableHighAccuracy: true }
+        (error) => {
+          console.log('Location access denied or error:', error.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     }
   }, []);
@@ -58,24 +60,21 @@ export default function ClientsRegisteration() {
     }
     try {
       const formData = new FormData();
-      // Add required fields with correct keys
+      // Add required fields with correct keys as per API
       formData.append('name', form.name);
+      formData.append('email', form.email);
+      formData.append('phone', form.phone);
+      formData.append('whatsapp', form.whatsapp);
       formData.append('password', form.password);
       formData.append('password_confirmation', form.passwordConfirm);
       formData.append('tax_card_number', form.tax_card_number);
       if (form.tax_card_file) formData.append('tax_card_file', form.tax_card_file);
       formData.append('cr_number', form.cr_number);
       if (form.cr_file) formData.append('cr_file', form.cr_file);
-      // Contact: send email or phone as contact (prefer email if both)
-      if (form.email) formData.append('contact', form.email);
-      else if (form.phone) formData.append('contact', form.phone);
-      // Optional fields
-      formData.append('email', form.email);
-      formData.append('phone', form.phone);
-      formData.append('whatsapp', form.whatsapp);
       formData.append('latitude', form.latitude);
       formData.append('longitude', form.longitude);
       formData.append('area_id', form.areaId);
+      
       const response = await post('/api/client/register', { data: formData });
       if (!response.success) {
         throw new Error(response.message || 'Registration failed');
@@ -144,12 +143,54 @@ export default function ClientsRegisteration() {
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="latitude" className="text-base font-medium text-gray-700">Latitude (optional)</label>
-              <input type="text" name="latitude" id="latitude" className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Latitude" value={form.latitude} onChange={handleChange} readOnly />
+              <label htmlFor="latitude" className="text-base font-medium text-gray-700">Latitude</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  name="latitude" 
+                  id="latitude" 
+                  className="flex-1 bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                  placeholder="Latitude will be auto-detected" 
+                  value={form.latitude} 
+                  onChange={handleChange} 
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                          setForm((prev) => ({
+                            ...prev,
+                            latitude: pos.coords.latitude.toFixed(6),
+                            longitude: pos.coords.longitude.toFixed(6),
+                          }));
+                        },
+                        (error) => {
+                          console.log('Location access denied or error:', error.message);
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                      );
+                    }
+                  }}
+                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  title="Get current location"
+                >
+                  📍
+                </button>
+              </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="longitude" className="text-base font-medium text-gray-700">Longitude (optional)</label>
-              <input type="text" name="longitude" id="longitude" className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Longitude" value={form.longitude} onChange={handleChange} readOnly />
+              <label htmlFor="longitude" className="text-base font-medium text-gray-700">Longitude</label>
+              <input 
+                type="text" 
+                name="longitude" 
+                id="longitude" 
+                className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                placeholder="Longitude will be auto-detected" 
+                value={form.longitude} 
+                onChange={handleChange} 
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">

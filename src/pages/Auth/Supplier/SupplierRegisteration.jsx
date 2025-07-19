@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { post, get } from '../../../utils/api';
-import { useToast } from '../../UI/Common/ToastContext';
+import { useToast } from '../../../UI/Common/ToastContext';
 
 const KEY_PERSON_ROLES = [
   { value: '', label: 'Select Role' },
@@ -24,6 +24,8 @@ export default function SupplierRegisteration() {
     tax_card_number: '',
     cr_number: '',
     category_id: '',
+    latitude: '',
+    longitude: '',
     key_persons: [
       { name: '', role: '', phone: '', email: '' },
       { name: '', role: '', phone: '', email: '' },
@@ -32,7 +34,12 @@ export default function SupplierRegisteration() {
     tax_card_file: null,
     cr_file: null,
   });
-  const [formErrors, setFormErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({
+    key_persons: [
+      { name: '', role: '', phone: '', email: '' },
+      { name: '', role: '', phone: '', email: '' },
+    ]
+  });
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -55,6 +62,25 @@ export default function SupplierRegisteration() {
       }
     }
     fetchCategories();
+  }, []);
+
+  // Get current location on component mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setForm((prev) => ({
+            ...prev,
+            latitude: pos.coords.latitude.toFixed(6),
+            longitude: pos.coords.longitude.toFixed(6),
+          }));
+        },
+        (error) => {
+          console.log('Location access denied or error:', error.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      );
+    }
   }, []);
 
   // --- Validation helpers ---
@@ -149,7 +175,10 @@ export default function SupplierRegisteration() {
         return { ...prev, key_persons: kp };
       });
       setFormErrors((prev) => {
-        const kpErrs = prev.key_persons ? [...prev.key_persons] : [{}, {}];
+        const kpErrs = prev.key_persons ? [...prev.key_persons] : [
+          { name: '', role: '', phone: '', email: '' },
+          { name: '', role: '', phone: '', email: '' },
+        ];
         kpErrs[Number(idx)][field] = validateKeyPerson(Number(idx), field, value);
         return { ...prev, key_persons: kpErrs };
       });
@@ -180,6 +209,8 @@ export default function SupplierRegisteration() {
       formData.append('tax_card_number', form.tax_card_number);
       formData.append('cr_number', form.cr_number);
       formData.append('category_ids[0]', form.category_id);
+      formData.append('latitude', form.latitude);
+      formData.append('longitude', form.longitude);
       form.key_persons.forEach((kp, i) => {
         formData.append(`key_persons[${i}][name]`, kp.name);
         formData.append(`key_persons[${i}][role]`, kp.role);
@@ -275,10 +306,10 @@ export default function SupplierRegisteration() {
                 <option value="">{categoriesError}</option>
               ) : (
                 <>
-                  <option value="">Select Category</option>
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
+              <option value="">Select Category</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
                 </>
               )}
             </select>
@@ -288,7 +319,7 @@ export default function SupplierRegisteration() {
             <label className="text-base font-medium text-gray-700">Key Persons</label>
             {[0,1].map(i => (
               <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2">
-                <input name={`key_persons[${i}][name]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Name" value={form.key_persons[i].name} onChange={handleChange} aria-invalid={!!formErrors.key_persons[i].name} aria-describedby={formErrors.key_persons[i].name ? `key_persons-${i}-name-error` : undefined} />
+                <input name={`key_persons[${i}][name]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Name" value={form.key_persons[i].name} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name) ? `key_persons-${i}-name-error` : undefined} />
                 <select
                   name={`key_persons[${i}][role]`}
                   required
@@ -300,8 +331,8 @@ export default function SupplierRegisteration() {
                     <option key={role.value} value={role.value}>{role.label}</option>
                   ))}
                 </select>
-                <input name={`key_persons[${i}][phone]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Phone" value={form.key_persons[i].phone} onChange={handleChange} aria-invalid={!!formErrors.key_persons[i].phone} aria-describedby={formErrors.key_persons[i].phone ? `key_persons-${i}-phone-error` : undefined} />
-                <input name={`key_persons[${i}][email]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Email" value={form.key_persons[i].email} onChange={handleChange} aria-invalid={!!formErrors.key_persons[i].email} aria-describedby={formErrors.key_persons[i].email ? `key_persons-${i}-email-error` : undefined} />
+                <input name={`key_persons[${i}][phone]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Phone" value={form.key_persons[i].phone} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].phone)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].phone) ? `key_persons-${i}-phone-error` : undefined} />
+                <input name={`key_persons[${i}][email]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Email" value={form.key_persons[i].email} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].email)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].email) ? `key_persons-${i}-email-error` : undefined} />
               </div>
             ))}
             {formErrors.key_persons && formErrors.key_persons.map((err, i) => (
@@ -327,6 +358,58 @@ export default function SupplierRegisteration() {
             <label htmlFor="cr_file" className="text-base font-medium text-gray-700">CR File</label>
             <input id="cr_file" name="cr_file" type="file" accept="application/pdf,image/*" required className="w-full bg-[#f7fafc] px-4 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base" onChange={handleChange} aria-invalid={!!formErrors.cr_file} aria-describedby={formErrors.cr_file ? 'cr_file-error' : undefined} />
             {formErrors.cr_file && <div id="cr_file-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.cr_file}</div>}
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="latitude" className="text-base font-medium text-gray-700">Latitude</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  name="latitude" 
+                  id="latitude" 
+                  className="flex-1 bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                  placeholder="Latitude will be auto-detected" 
+                  value={form.latitude} 
+                  onChange={handleChange} 
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                          setForm((prev) => ({
+                            ...prev,
+                            latitude: pos.coords.latitude.toFixed(6),
+                            longitude: pos.coords.longitude.toFixed(6),
+                          }));
+                        },
+                        (error) => {
+                          console.log('Location access denied or error:', error.message);
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                      );
+                    }
+                  }}
+                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  title="Get current location"
+                >
+                  📍
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="longitude" className="text-base font-medium text-gray-700">Longitude</label>
+              <input 
+                type="text" 
+                name="longitude" 
+                id="longitude" 
+                className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                placeholder="Longitude will be auto-detected" 
+                value={form.longitude} 
+                onChange={handleChange} 
+              />
+            </div>
           </div>
           <button
             type="submit"

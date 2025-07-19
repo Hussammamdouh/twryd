@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { post } from '../../../utils/api';
-import { useToast } from '../../UI/Common/ToastContext';
+import { useToast } from '../../../UI/Common/ToastContext';
 
 export default function SupplierVerify({ onVerified, identifier: initialIdentifier }) {
   const [identifier, setIdentifier] = useState(initialIdentifier || '');

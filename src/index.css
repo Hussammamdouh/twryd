@@ -1,3 +1,85 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme variables */
+    --bg-color: #ffffff;
+    --surface-color: #f8fafc;
+    --card-color: #ffffff;
+    --border-color: #e2e8f0;
+    --text-color: #1e293b;
+    --text-secondary-color: #64748b;
+    --text-muted-color: #94a3b8;
+  }
+
+  .dark {
+    /* Dark theme variables */
+    --bg-color: #0f172a;
+    --surface-color: #1e293b;
+    --card-color: #334155;
+    --border-color: #475569;
+    --text-color: #f1f5f9;
+    --text-secondary-color: #94a3b8;
+    --text-muted-color: #64748b;
+  }
+
+  body {
+    @apply bg-theme-bg text-theme-text transition-colors duration-200;
+  }
+
+  /* Smooth transitions for theme switching */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+}
+
+@layer components {
+  /* Theme-aware component classes */
+  .theme-card {
+    @apply bg-theme-card border border-theme-border rounded-lg shadow-sm;
+  }
+
+  .theme-surface {
+    @apply bg-theme-surface border border-theme-border rounded-lg;
+  }
+
+  .theme-input {
+    @apply bg-theme-card border border-theme-border text-theme-text focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+
+  .theme-input::placeholder {
+    @apply text-theme-text-muted;
+  }
+
+  .theme-button {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors;
+  }
+
+  .theme-button-secondary {
+    @apply bg-theme-surface border border-theme-border text-theme-text hover:bg-theme-card transition-colors;
+  }
+
+  .theme-table {
+    @apply bg-theme-card border border-theme-border rounded-lg overflow-hidden;
+  }
+
+  .theme-table-header {
+    @apply bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20;
+  }
+
+  .theme-modal {
+    @apply bg-theme-card border border-theme-border shadow-xl;
+  }
+
+  .theme-sidebar {
+    @apply bg-theme-surface border-r border-theme-border;
+  }
+
+  .theme-topbar {
+    @apply bg-theme-card border-b border-theme-border;
+  }
+}

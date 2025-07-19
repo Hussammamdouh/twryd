@@ -33,10 +33,10 @@ function GovernateFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
     <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Governate' : 'Add New Governate'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+          <label className="block text-sm font-medium mb-1 text-theme-text">Name</label>
+          <input name="name" value={form.name} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
         </div>
-        <button type="submit" disabled={loading} className="w-full py-2 font-bold text-white rounded bg-blue-500 hover:bg-blue-600 transition disabled:opacity-60 mt-2">
+        <button type="submit" disabled={loading} className="theme-button w-full py-2 font-bold rounded transition disabled:opacity-60 mt-2">
           {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Governate')}
         </button>
       </form>
@@ -73,10 +73,10 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
     <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Area' : 'Add New Area'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+          <label className="block text-sm font-medium mb-1 text-theme-text">Name</label>
+          <input name="name" value={form.name} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
         </div>
-        <button type="submit" disabled={loading} className="w-full py-2 font-bold text-white rounded bg-blue-500 hover:bg-blue-600 transition disabled:opacity-60 mt-2">
+        <button type="submit" disabled={loading} className="theme-button w-full py-2 font-bold rounded transition disabled:opacity-60 mt-2">
           {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Area')}
         </button>
       </form>
@@ -194,27 +194,31 @@ export default function Governates() {
     <div className="flex justify-center items-start min-h-[80vh] w-full py-8 px-2">
       <div className="w-full max-w-5xl flex flex-col md:flex-row gap-4">
         {/* Governates List */}
-        <div className="w-full md:w-1/3 bg-white rounded-2xl shadow-lg p-2 sm:p-4 border border-gray-100 mb-2 md:mb-0">
+        <div className="theme-card w-full md:w-1/3 p-2 sm:p-4 mb-2 md:mb-0">
           <div className="flex items-center justify-between mb-2 sm:mb-4">
-            <div className="text-base sm:text-lg font-bold text-blue-700">Governates</div>
+            <div className="text-base sm:text-lg font-bold text-primary-700">Governates</div>
             <button
-              className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded font-bold shadow hover:bg-blue-700 text-xs sm:text-sm"
+              className="theme-button px-2 sm:px-3 py-1 font-bold shadow text-xs sm:text-sm"
               onClick={() => { setGovEditData(null); setGovModalOpen(true); }}
             >
               + Add
             </button>
           </div>
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-theme-border">
             {governates.map(g => (
               <li
                 key={g.id}
-                className={`py-1 sm:py-2 px-1 sm:px-2 rounded-lg cursor-pointer flex items-center justify-between transition text-xs sm:text-base ${selectedGovernate === g.id ? 'bg-blue-50 border-l-4 border-blue-600' : 'hover:bg-gray-50'}`}
+                className={`py-1 sm:py-2 px-1 sm:px-2 rounded-lg cursor-pointer flex items-center justify-between transition text-xs sm:text-base ${
+                  selectedGovernate === g.id 
+                    ? 'bg-primary-50 border-l-4 border-primary-600 dark:bg-primary-900/30 dark:border-primary-400' 
+                    : 'hover:bg-theme-surface'
+                }`}
                 onClick={() => setSelectedGovernate(g.id)}
               >
-                <span className="font-medium text-gray-900 truncate max-w-[90px] sm:max-w-[180px]">{g.name}</span>
+                <span className="font-medium text-theme-text truncate max-w-[90px] sm:max-w-[180px]">{g.name}</span>
                 <div className="flex gap-1">
                   <button
-                    className="p-1 text-blue-600 hover:bg-blue-100 rounded"
+                    className="p-1 text-primary-600 hover:bg-primary-100 rounded"
                     onClick={e => { e.stopPropagation(); setGovEditData(g); setGovModalOpen(true); }}
                     title="Edit"
                   >
@@ -233,39 +237,39 @@ export default function Governates() {
           </ul>
         </div>
         {/* Areas Table */}
-        <div className="w-full md:w-2/3 bg-white rounded-2xl shadow-lg p-2 sm:p-4 border border-gray-100">
+        <div className="theme-card w-full md:w-2/3 p-2 sm:p-4">
           <div className="flex items-center justify-between mb-2 sm:mb-4 flex-wrap gap-1 sm:gap-2">
-            <div className="text-base sm:text-lg font-bold text-blue-700 truncate">Areas for: <span className="text-gray-800">{governates.find(g => g.id === selectedGovernate)?.name || '...'}</span></div>
+            <div className="text-base sm:text-lg font-bold text-primary-700 truncate">Areas for: <span className="text-theme-text">{governates.find(g => g.id === selectedGovernate)?.name || '...'}</span></div>
             <button
-              className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded font-bold shadow hover:bg-blue-700 text-xs sm:text-sm"
+              className="theme-button px-2 sm:px-3 py-1 font-bold shadow text-xs sm:text-sm"
               onClick={() => { setAreaEditData(null); setAreaModalOpen(true); }}
               disabled={!selectedGovernate}
             >
               + Add
             </button>
           </div>
-          <div className="overflow-x-auto rounded-lg border border-gray-100">
+          <div className="theme-table overflow-x-auto rounded-lg">
             <table className="min-w-full text-xs sm:text-sm">
               <thead>
-                <tr className="bg-blue-50 text-blue-700 font-semibold">
+                <tr className="theme-table-header text-primary-700 font-semibold">
                   <th className="px-2 sm:px-4 py-2 text-left">Name</th>
                   <th className="px-2 sm:px-4 py-2 text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={2} className="text-center py-8 sm:py-12 text-gray-500">Loading...</td></tr>
+                  <tr><td colSpan={2} className="text-center py-8 sm:py-12 text-theme-text-secondary">Loading...</td></tr>
                 ) : error ? (
                   <tr><td colSpan={2} className="text-center py-8 sm:py-12 text-red-500">{error}</td></tr>
                 ) : areas.length === 0 ? (
-                  <tr><td colSpan={2} className="text-center py-8 sm:py-12 text-gray-400">No areas found.</td></tr>
+                  <tr><td colSpan={2} className="text-center py-8 sm:py-12 text-theme-text-muted">No areas found.</td></tr>
                 ) : (
                   areas.map(a => (
-                    <tr key={a.id} className="border-b last:border-b-0 hover:bg-blue-50 transition">
-                      <td className="px-2 sm:px-4 py-2 font-medium text-gray-900 truncate max-w-[90px] sm:max-w-[220px]">{a.name}</td>
+                    <tr key={a.id} className="border-b border-theme-border last:border-b-0 hover:bg-theme-surface transition">
+                      <td className="px-2 sm:px-4 py-2 font-medium text-theme-text truncate max-w-[90px] sm:max-w-[220px]">{a.name}</td>
                       <td className="px-2 sm:px-4 py-2 flex gap-1 sm:gap-2 flex-wrap">
                         <button
-                          className="p-1 sm:p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full transition shadow"
+                          className="p-1 sm:p-2 bg-primary-100 hover:bg-primary-200 text-primary-700 rounded-full transition shadow"
                           onClick={() => { setAreaEditData(a); setAreaModalOpen(true); }}
                           title="Edit"
                         >
@@ -305,10 +309,10 @@ export default function Governates() {
       {/* Confirm Delete Modals */}
       {deleteGovId && (
         <Modal open={!!deleteGovId} onClose={() => setDeleteGovId(null)} title="Delete Governate">
-          <h3 className="text-xl font-bold mb-6">Delete Governate</h3>
-          <p className="mb-6">Are you sure you want to delete <span className="font-semibold">{governates.find(g => g.id === deleteGovId)?.name}</span>?</p>
+          <h3 className="text-xl font-bold mb-6 text-theme-text">Delete Governate</h3>
+          <p className="mb-6 text-theme-text">Are you sure you want to delete <span className="font-semibold">{governates.find(g => g.id === deleteGovId)?.name}</span>?</p>
           <div className="flex gap-4 justify-end">
-            <button onClick={() => setDeleteGovId(null)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+            <button onClick={() => setDeleteGovId(null)} className="theme-button-secondary px-4 py-2 rounded">Cancel</button>
             <button onClick={() => handleDeleteGovernate(deleteGovId)} disabled={deleteLoading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60">
               {deleteLoading ? 'Deleting...' : 'Delete'}
             </button>
@@ -317,10 +321,10 @@ export default function Governates() {
       )}
       {deleteAreaId && (
         <Modal open={!!deleteAreaId} onClose={() => setDeleteAreaId(null)} title="Delete Area">
-          <h3 className="text-xl font-bold mb-6">Delete Area</h3>
-          <p className="mb-6">Are you sure you want to delete this area?</p>
+          <h3 className="text-xl font-bold mb-6 text-theme-text">Delete Area</h3>
+          <p className="mb-6 text-theme-text">Are you sure you want to delete this area?</p>
           <div className="flex gap-4 justify-end">
-            <button onClick={() => setDeleteAreaId(null)} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+            <button onClick={() => setDeleteAreaId(null)} className="theme-button-secondary px-4 py-2 rounded">Cancel</button>
             <button onClick={() => handleDeleteArea(deleteAreaId)} disabled={deleteLoading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60">
               {deleteLoading ? 'Deleting...' : 'Delete'}
             </button>

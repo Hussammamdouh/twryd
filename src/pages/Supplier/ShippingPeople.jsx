@@ -32,20 +32,20 @@ function DriverFormModal({ open, onClose, onSubmit, initialData, loading }) {
   return (
     <Modal open={open} onClose={onClose} title={initialData ? 'Edit Delivery Person' : 'Add New Delivery Person'}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input name="name" value={form.name} onChange={handleChange} required placeholder="Name" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="type" value={form.type} onChange={handleChange} required placeholder="Type (e.g. driver)" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="phone" value={form.phone} onChange={handleChange} required placeholder="Phone Number" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="car_name" value={form.car_name} onChange={handleChange} required placeholder="Car Name" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="car_number" value={form.car_number} onChange={handleChange} required placeholder="Car Number" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="license_number" value={form.license_number} onChange={handleChange} required placeholder="License Number" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
-        <input name="warehouse" value={form.warehouse} onChange={handleChange} placeholder="Assigned Warehouse (optional)" className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400" />
+        <input name="name" placeholder="Full Name" value={form.name} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" required />
+        <input name="type" placeholder="Type (Driver, Delivery Person, etc.)" value={form.type} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" required />
+        <input name="phone" placeholder="Phone Number" value={form.phone} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" required />
+        <input name="car_name" placeholder="Car Name/Model" value={form.car_name} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
+        <input name="car_number" placeholder="Car Number/Plate" value={form.car_number} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
+        <input name="license_number" placeholder="License Number" value={form.license_number} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
+        <input name="warehouse" placeholder="Assigned Warehouse" value={form.warehouse} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
         <input name="license_file" type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleChange} className="w-full" />
-        <select name="status" value={form.status} onChange={handleChange} className="w-full px-3 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-400">
+        <select name="status" value={form.status} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded">
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
           <option value="suspended">Suspended</option>
         </select>
-        <button type="submit" disabled={loading} className="w-full py-2 font-bold text-white rounded bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition disabled:opacity-60 mt-2 shadow">
+        <button type="submit" disabled={loading} className="theme-button w-full py-2 font-bold rounded transition disabled:opacity-60 mt-2 shadow">
           {loading ? 'Saving...' : (initialData ? 'Save Changes' : 'Add Delivery Person')}
         </button>
       </form>
@@ -57,9 +57,9 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, driverName, loading }) {
   return (
     <Modal open={open} onClose={onClose} title="Delete Delivery Person">
       <h3 className="text-xl font-bold mb-6 text-red-700 flex items-center gap-2">Delete Delivery Person</h3>
-      <p className="mb-6">Are you sure you want to delete <span className="font-semibold">{driverName}</span>?</p>
+      <p className="mb-6 text-theme-text">Are you sure you want to delete <span className="font-semibold">{driverName}</span>?</p>
       <div className="flex gap-4 justify-end">
-        <button onClick={onClose} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+        <button onClick={onClose} className="theme-button-secondary px-4 py-2 rounded">Cancel</button>
         <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 shadow">
           {loading ? 'Deleting...' : 'Delete'}
         </button>
@@ -127,41 +127,70 @@ export default function ShippingPeople() {
   // Add or edit driver
   const handleSubmit = async (form) => {
     setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append('name', form.name);
-      formData.append('type', form.type);
-      formData.append('phone', form.phone);
-      formData.append('car_name', form.car_name);
-      formData.append('car_number', form.car_number);
-      formData.append('license_number', form.license_number);
-      if (user?.id) formData.append('supplier_id', user.id);
-      if (form.license_file) formData.append('license_file', form.license_file);
-      // status is not always required by API, but we keep it for UI
-      if (editData) {
+    const prevDrivers = drivers;
+    if (editData) {
+      // Optimistic UI: update driver locally
+      setDrivers(drivers.map(d => d.id === editData.id ? { ...d, ...form } : d));
+      try {
+        const formData = new FormData();
+        formData.append('name', form.name);
+        formData.append('type', form.type);
+        formData.append('phone', form.phone);
+        formData.append('car_name', form.car_name);
+        formData.append('car_number', form.car_number);
+        formData.append('license_number', form.license_number);
+        if (user?.id) formData.append('supplier_id', user.id);
+        if (form.license_file) formData.append('license_file', form.license_file);
+        if (form.status) formData.append('status', form.status);
         await put(`/api/supplier/shipping-drivers/${editData.id}`, { token, data: formData });
-      } else {
-        await post('/api/supplier/shipping-drivers', { token, data: formData });
+        setModalOpen(false);
+        setEditData(null);
+      } catch (err) {
+        setDrivers(prevDrivers);
+        setError(err.message || 'Failed to save driver');
+      } finally {
+        setLoading(false);
       }
-      setModalOpen(false);
-      setEditData(null);
-      fetchDrivers();
-    } catch (err) {
-      setError(err.message || 'Failed to save driver');
-    } finally {
-      setLoading(false);
+    } else {
+      // Optimistic UI: add driver locally
+      const tempId = Math.random().toString(36).slice(2);
+      const newDriver = { ...form, id: tempId };
+      setDrivers([newDriver, ...drivers]);
+      try {
+        const formData = new FormData();
+        formData.append('name', form.name);
+        formData.append('type', form.type);
+        formData.append('phone', form.phone);
+        formData.append('car_name', form.car_name);
+        formData.append('car_number', form.car_number);
+        formData.append('license_number', form.license_number);
+        if (user?.id) formData.append('supplier_id', user.id);
+        if (form.license_file) formData.append('license_file', form.license_file);
+        if (form.status) formData.append('status', form.status);
+        const res = await post('/api/supplier/shipping-drivers', { token, data: formData });
+        setDrivers(drivers => [res.data, ...drivers.filter(d => d.id !== tempId)]);
+        setModalOpen(false);
+        setEditData(null);
+      } catch (err) {
+        setDrivers(prevDrivers);
+        setError(err.message || 'Failed to save driver');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   // Delete driver
   const handleConfirmDelete = async () => {
     setDeleteLoading(true);
+    const prevDrivers = drivers;
+    setDrivers(drivers.filter(d => d.id !== deleteTarget.id));
     try {
       await del(`/api/supplier/shipping-drivers/${deleteTarget.id}`, { token });
       setDeleteModalOpen(false);
       setDeleteTarget(null);
-      fetchDrivers();
     } catch (err) {
+      setDrivers(prevDrivers);
       setError(err.message || 'Failed to delete driver');
     } finally {
       setDeleteLoading(false);
@@ -171,6 +200,14 @@ export default function ShippingPeople() {
   // Status actions (simulate for now, as API may not support suspend/reactivate directly)
   const handleStatusAction = (driver, action) => {
     setDrivers(ds => ds.map(d => d.id === driver.id ? { ...d, status: action } : d));
+    // If you want to call an API, do it here and revert on error
+    // Example:
+    // try {
+    //   await post(`/api/supplier/shipping-drivers/${driver.id}/status`, { token, data: { status: action } });
+    // } catch (err) {
+    //   setDrivers(prevDrivers);
+    //   setError(err.message || 'Failed to update status');
+    // }
   };
 
   // Unique warehouse list for filter
@@ -178,24 +215,26 @@ export default function ShippingPeople() {
 
   return (
     <div className="w-full max-w-6xl mx-auto py-10 px-2 flex flex-col gap-6 animate-fadeIn">
-      <h1 className="text-3xl font-extrabold mb-2 text-blue-700 tracking-tight drop-shadow flex items-center gap-3">
-        <FiUserPlus className="text-blue-400" /> Delivery Personnel
+      <h1 className="text-3xl font-extrabold mb-2 text-primary-700 tracking-tight drop-shadow flex items-center gap-3">
+        <FiUserPlus className="text-primary-400" /> Delivery Personnel
       </h1>
-      <div className="flex flex-wrap gap-3 mb-2 items-center bg-white rounded-xl shadow p-4 border border-gray-100">
-        <div className="flex items-center bg-gray-100 rounded-lg px-2 py-1 w-full sm:w-auto">
-          <FiSearch className="text-gray-400 mr-2" />
+      <div className="flex flex-wrap gap-3 mb-2 items-center theme-card p-4">
+        <div className="flex items-center bg-theme-surface rounded-lg px-2 py-1 w-full sm:w-auto">
+          <FiSearch className="text-theme-text-muted mr-2" />
           <input
             type="text"
             placeholder="Search by name or phone number..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-transparent outline-none px-2 py-2 min-w-[180px] w-full sm:w-auto"
+            className="bg-transparent outline-none px-2 py-2 min-w-[180px] w-full sm:w-auto focus:ring-2 focus:ring-primary-400 rounded text-theme-text"
+            aria-label="Search delivery personnel"
           />
         </div>
         <select
           value={warehouseFilter}
           onChange={e => setWarehouseFilter(e.target.value)}
-          className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 bg-white"
+          className="theme-input px-4 py-2 rounded-lg"
+          aria-label="Filter by warehouse"
         >
           <option value="">All Warehouses</option>
           {warehouseOptions.map(w => <option key={w} value={w}>{w}</option>)}
@@ -203,7 +242,8 @@ export default function ShippingPeople() {
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 bg-white"
+          className="theme-input px-4 py-2 rounded-lg"
+          aria-label="Filter by status"
         >
           <option value="">All Statuses</option>
           <option value="active">Active</option>
@@ -212,19 +252,19 @@ export default function ShippingPeople() {
         </select>
         <button
           onClick={handleAdd}
-          className="ml-auto flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold shadow hover:from-blue-600 hover:to-blue-800 transition"
+          className="theme-button ml-auto flex items-center gap-2 px-5 py-2 rounded-lg font-bold shadow"
         >
           <FiUserPlus /> Add New Delivery Person
         </button>
       </div>
-      <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 border border-gray-100 overflow-x-auto">
+      <div className="theme-card p-4 sm:p-6 overflow-x-auto">
         {error && <div className="text-red-600 font-bold mb-4">{error}</div>}
         {loading ? (
-          <div className="flex justify-center py-12 text-blue-600 font-bold text-lg">Loading...</div>
+          <div className="flex justify-center py-12 text-primary-600 font-bold text-lg">Loading...</div>
         ) : (
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="bg-blue-50 text-blue-700">
+            <tr className="theme-table-header text-primary-700">
               <th className="py-3 px-3 text-left font-bold">Agent Name</th>
               <th className="py-3 px-3 text-left font-bold">Phone Number</th>
               <th className="py-3 px-3 text-left font-bold">Vehicle Info</th>
@@ -235,16 +275,16 @@ export default function ShippingPeople() {
           </thead>
           <tbody>
             {pagedDrivers.map(driver => (
-              <tr key={driver.id} className="border-b last:border-b-0 hover:bg-blue-50/40 transition">
-                <td className="py-3 px-3 font-semibold text-gray-900">{driver.name}</td>
-                <td className="py-3 px-3">{driver.phone}</td>
-                <td className="py-3 px-3">{[driver.car_name, driver.car_number].filter(Boolean).join(', ')}</td>
-                <td className="py-3 px-3">{driver.warehouse}</td>
+              <tr key={driver.id} className="border-b border-theme-border last:border-b-0 hover:bg-theme-surface transition">
+                <td className="py-3 px-3 font-semibold text-theme-text">{driver.name}</td>
+                <td className="py-3 px-3 text-theme-text">{driver.phone}</td>
+                <td className="py-3 px-3 text-theme-text">{[driver.car_name, driver.car_number].filter(Boolean).join(', ')}</td>
+                <td className="py-3 px-3 text-theme-text">{driver.warehouse}</td>
                 <td className="py-3 px-3">
-                  <span className={`inline-block px-3 py-1 rounded-full border text-xs font-bold shadow-sm ${STATUS_STYLES[driver.status]}`}>{driver.status?.charAt(0).toUpperCase() + driver.status?.slice(1)}</span>
+                  <span className={`inline-block px-3 py-1 rounded-full border text-xs font-bold shadow-sm ${STATUS_STYLES[driver.status]} dark:bg-opacity-30`}>{driver.status?.charAt(0).toUpperCase() + driver.status?.slice(1)}</span>
                 </td>
                 <td className="py-3 px-3 text-right flex gap-2 justify-end items-center">
-                  <button onClick={() => handleEdit(driver)} title="Edit" className="p-2 rounded-full hover:bg-blue-100 text-blue-600 transition" aria-label="Edit"><FiEdit2 /></button>
+                  <button onClick={() => handleEdit(driver)} title="Edit" className="p-2 rounded-full hover:bg-primary-100 text-primary-600 transition" aria-label="Edit"><FiEdit2 /></button>
                   <button onClick={() => handleDelete(driver)} title="Delete" className="p-2 rounded-full hover:bg-red-100 text-red-600 transition" aria-label="Delete"><FiTrash2 /></button>
                   {driver.status === 'active' && (
                     <button onClick={() => handleStatusAction(driver, 'suspended')} title="Suspend" className="p-2 rounded-full hover:bg-orange-100 text-orange-500 transition" aria-label="Suspend"><FiPause /></button>
@@ -260,7 +300,7 @@ export default function ShippingPeople() {
             ))}
             {pagedDrivers.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-gray-400">No delivery personnel found.</td>
+                <td colSpan={6} className="py-12 text-center text-theme-text-muted">No delivery personnel found.</td>
               </tr>
             )}
           </tbody>
@@ -271,15 +311,15 @@ export default function ShippingPeople() {
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-5 py-2 rounded-lg bg-gray-200 text-gray-600 font-bold disabled:opacity-60 shadow"
+            className="theme-button-secondary px-5 py-2 rounded-lg font-bold disabled:opacity-60 shadow"
           >
             Previous
           </button>
-          <span className="text-base font-semibold text-gray-700">Page {page} of {totalPages}</span>
+          <span className="text-base font-semibold text-theme-text">Page {page} of {totalPages}</span>
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-5 py-2 rounded-lg bg-blue-500 text-white font-bold disabled:opacity-60 shadow"
+            className="theme-button px-5 py-2 rounded-lg font-bold disabled:opacity-60 shadow"
           >
             Next
           </button>

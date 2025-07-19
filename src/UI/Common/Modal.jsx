@@ -1,69 +1,138 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
-export default function Modal({ open, onClose, children, title, className = '' }) {
-  const ref = useRef();
+export default function Modal({ 
+  open, 
+  onClose, 
+  children, 
+  title, 
+  className = '',
+  size = 'default',
+  closeOnOverlayClick = true,
+  closeOnEscape = true,
+  showCloseButton = true
+}) {
+  const modalRef = useRef();
   const lastActiveElement = useRef(null);
-  // Generate unique id for aria-labelledby
   const labelId = title ? `modal-title-${Math.random().toString(36).slice(2)}` : undefined;
+
+  // Performance: Memoize close handler
+  const handleClose = useCallback(() => {
+    if (onClose) onClose();
+  }, [onClose]);
+
+  // Performance: Memoize overlay click handler
+  const handleOverlayClick = useCallback((e) => {
+    if (closeOnOverlayClick && e.target === e.currentTarget) {
+      handleClose();
+    }
+  }, [closeOnOverlayClick, handleClose]);
+
+  // Performance: Memoize keydown handler
+  const handleKeyDown = useCallback((e) => {
+    if (closeOnEscape && e.key === 'Escape') {
+      handleClose();
+    }
+    
+    if (e.key === 'Tab') {
+      // Enhanced focus trap
+      const focusableEls = modalRef.current?.querySelectorAll(
+        'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      
+      if (!focusableEls || focusableEls.length === 0) return;
+      
+      const firstEl = focusableEls[0];
+      const lastEl = focusableEls[focusableEls.length - 1];
+      
+      if (!e.shiftKey && document.activeElement === lastEl) {
+        e.preventDefault();
+        firstEl.focus();
+      } else if (e.shiftKey && document.activeElement === firstEl) {
+        e.preventDefault();
+        lastEl.focus();
+      }
+    }
+  }, [closeOnEscape, handleClose]);
 
   useEffect(() => {
     if (!open) return;
+
     // Save last focused element
     lastActiveElement.current = document.activeElement;
+    
     // Focus modal
-    ref.current?.focus();
-    // Handle Esc key and focus trap
-    const handleKey = (e) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'Tab') {
-        // Focus trap
-        const focusableEls = ref.current.querySelectorAll(
-          'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        const firstEl = focusableEls[0];
-        const lastEl = focusableEls[focusableEls.length - 1];
-        if (!e.shiftKey && document.activeElement === lastEl) {
-          e.preventDefault();
-          firstEl.focus();
-        } else if (e.shiftKey && document.activeElement === firstEl) {
-          e.preventDefault();
-          lastEl.focus();
-        }
-      }
-    };
-    document.addEventListener('keydown', handleKey);
+    modalRef.current?.focus();
+    
+    // Add event listeners
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+    
     return () => {
-      document.removeEventListener('keydown', handleKey);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+      
       // Restore focus
       lastActiveElement.current?.focus();
     };
-  }, [open, onClose]);
+  }, [open, handleKeyDown]);
+
+  // Size classes
+  const sizeClasses = {
+    small: 'max-w-sm',
+    default: 'max-w-md',
+    large: 'max-w-lg',
+    xlarge: 'max-w-xl',
+    full: 'max-w-full mx-4',
+  };
+
+  const modalSize = sizeClasses[size] || sizeClasses.default;
 
   if (!open) return null;
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm animate-fadeIn"
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelId}
+      aria-describedby={labelId ? `${labelId}-desc` : undefined}
       tabIndex={-1}
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={handleOverlayClick}
     >
       <div
-        ref={ref}
+        ref={modalRef}
         tabIndex={-1}
-        className={`bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative outline-none ${className}`}
-        aria-describedby={labelId ? `${labelId}-desc` : undefined}
+        className={`theme-modal rounded-2xl shadow-2xl p-6 w-full ${modalSize} relative outline-none animate-scaleIn ${className}`}
+        role="document"
       >
-        {title && <h2 id={labelId} className="text-xl font-bold mb-4">{title}</h2>}
-        {children}
-        <button
-          onClick={onClose}
-          aria-label="Close modal"
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-2xl"
-        >
-          &times;
-        </button>
+        {/* Header */}
+        {(title || showCloseButton) && (
+          <div className="flex items-center justify-between mb-4">
+            {title && (
+              <h2 id={labelId} className="text-xl font-bold text-theme-text">
+                {title}
+              </h2>
+            )}
+            {showCloseButton && (
+              <button
+                onClick={handleClose}
+                aria-label="Close modal"
+                className="p-2 text-theme-text-secondary hover:text-theme-text hover:bg-theme-surface rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Content */}
+        <div id={labelId ? `${labelId}-desc` : undefined}>
+          {children}
+        </div>
       </div>
     </div>
   );
