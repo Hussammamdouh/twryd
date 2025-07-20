@@ -93,15 +93,15 @@ export default function LoginAdmin() {
   }, [formData, validateField, login, toast]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8" role="main">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
+      <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-gray-900">
+          <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-theme-text">
             Admin Login
           </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mx-auto mb-4" />
-          <p className="text-gray-600 text-sm">
+          <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mx-auto mb-4" />
+          <p className="text-theme-text-secondary text-sm">
             Access the administrative dashboard
           </p>
         </div>
@@ -110,11 +110,11 @@ export default function LoginAdmin() {
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading} noValidate>
           {/* Email Field */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium text-gray-700">
+            <label htmlFor="email" className="text-base font-medium text-theme-text">
               Email Address *
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/>
                 </svg>
@@ -125,8 +125,8 @@ export default function LoginAdmin() {
                 type="email"
                 autoComplete="username"
                 required
-                className={`w-full bg-[#f7fafc] pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border transition-colors placeholder-gray-400 ${
-                  errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                className={`theme-input w-full pl-10 pr-4 py-3 rounded-lg text-base shadow-sm transition-colors ${
+                  errors.email ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : ''
                 }`}
                 placeholder="Enter your email address"
                 value={formData.email}
@@ -144,11 +144,11 @@ export default function LoginAdmin() {
 
           {/* Password Field */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-base font-medium text-gray-700">
+            <label htmlFor="password" className="text-base font-medium text-theme-text">
               Password *
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
@@ -159,8 +159,8 @@ export default function LoginAdmin() {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 required
-                className={`w-full bg-[#f7fafc] pl-10 pr-12 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border transition-colors placeholder-gray-400 ${
-                  errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                className={`theme-input w-full pl-10 pr-12 py-3 rounded-lg text-base shadow-sm transition-colors ${
+                  errors.password ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : ''
                 }`}
                 placeholder="Enter your password"
                 value={formData.password}
@@ -171,7 +171,7 @@ export default function LoginAdmin() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-text-muted hover:text-theme-text transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +194,7 @@ export default function LoginAdmin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] hover:from-[#0088EE] hover:to-[#1A7FEE] text-white font-bold rounded-lg shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-105"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-105"
             aria-label="Sign in to admin account"
           >
             {loading ? (

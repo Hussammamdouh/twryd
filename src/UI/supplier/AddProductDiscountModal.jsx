@@ -67,49 +67,67 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
     <Modal open={open} onClose={handleClose} title="Add Product Discount">
       <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
         <div>
-          <label className="block text-gray-700 mb-1 font-medium">Select Product</label>
+          <label className="block text-theme-text mb-1 font-medium">Select Product</label>
           <select
-            className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${error && !selectedProduct ? 'border-red-400' : 'border-gray-200'}`}
+            className={`theme-input w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && !selectedProduct ? 'border-red-400' : ''}`}
             value={selectedProduct}
             onChange={(e) => setSelectedProduct(e.target.value)}
             disabled={loading}
             required
           >
             <option value="">Choose a product...</option>
-            {products?.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name} - {product.category?.name || 'No category'}
-              </option>
-            ))}
+            {products?.length > 0 ? (
+              products.map((product) => (
+                <option key={product.id} value={product.id}>
+                  {product.name} - {product.category?.name || 'No category'}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>No products available</option>
+            )}
           </select>
+          {products?.length === 0 && (
+            <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+              No products found. Please create products first.
+            </p>
+          )}
         </div>
         
         <div>
-          <label className="block text-gray-700 mb-1 font-medium">Select Client</label>
+          <label className="block text-theme-text mb-1 font-medium">Select Client</label>
           <select
-            className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${error && !selectedClient ? 'border-red-400' : 'border-gray-200'}`}
+            className={`theme-input w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && !selectedClient ? 'border-red-400' : ''}`}
             value={selectedClient}
             onChange={(e) => setSelectedClient(e.target.value)}
             disabled={loading}
             required
           >
             <option value="">Choose a client...</option>
-            {clients?.map((client) => (
-              <option key={client.id} value={client.id}>
-                {client.name || client.company_name || 'N/A'} ({client.email || 'No email'})
-              </option>
-            ))}
+            {clients?.length > 0 ? (
+              clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name || client.company_name || 'N/A'} ({client.email || 'No email'})
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>No clients available</option>
+            )}
           </select>
+          {clients?.length === 0 && (
+            <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+              No clients found. Please invite clients first.
+            </p>
+          )}
         </div>
         
         <div>
-          <label className="block text-gray-700 mb-1 font-medium">Discount Percentage</label>
+          <label className="block text-theme-text mb-1 font-medium">Discount Percentage</label>
           <div className="relative">
             <input
               type="number"
               min="0"
               max="100"
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${error && !discount ? 'border-red-400' : 'border-gray-200'}`}
+              className={`theme-input w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && !discount ? 'border-red-400' : ''}`}
               placeholder="Enter discount percentage (0-100)"
               value={discount}
               onChange={(e) => setDiscount(e.target.value)}
@@ -117,7 +135,7 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
               required
             />
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <span className="text-gray-500 text-sm">%</span>
+              <span className="text-theme-text-secondary text-sm">%</span>
             </div>
           </div>
         </div>
@@ -131,7 +149,7 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
         <div className="flex justify-end gap-2 mt-4">
           <button
             type="button"
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded font-semibold hover:bg-gray-300 focus:outline-none"
+            className="theme-button-secondary px-4 py-2 rounded font-semibold focus:outline-none"
             onClick={handleClose}
             disabled={loading}
           >
@@ -139,7 +157,7 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold shadow flex items-center gap-2 focus:outline-none"
+            className="theme-button px-4 py-2 rounded font-semibold shadow flex items-center gap-2 focus:outline-none"
             disabled={loading}
           >
             {loading && <Spinner size={16} color="border-white" />}

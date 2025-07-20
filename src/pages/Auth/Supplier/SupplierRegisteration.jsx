@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { post, get } from '../../../utils/api';
 import { useToast } from '../../../UI/Common/ToastContext';
+import FileUpload from '../../../UI/Common/FileUpload';
 
 const KEY_PERSON_ROLES = [
   { value: '', label: 'Select Role' },
@@ -232,68 +233,68 @@ export default function SupplierRegisteration() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8" role="main">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
+      <div className="theme-card w-full max-w-lg p-8 sm:p-10 flex flex-col items-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           Supplier Registration
         </h2>
-        <div className="w-20 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mb-8" />
+        <div className="w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" encType="multipart/form-data" aria-busy={loading} noValidate>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name" className="text-base font-medium text-gray-700">Name</label>
-              <input id="name" name="name" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Supplier name" value={form.name} onChange={handleChange} aria-invalid={!!formErrors.name} aria-describedby={formErrors.name ? 'name-error' : undefined} />
+              <label htmlFor="name" className="text-base font-medium text-theme-text">Name</label>
+              <input id="name" name="name" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Supplier name" value={form.name} onChange={handleChange} aria-invalid={!!formErrors.name} aria-describedby={formErrors.name ? 'name-error' : undefined} />
               {formErrors.name && <div id="name-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.name}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="email" className="text-base font-medium text-gray-700">Email</label>
-              <input id="email" name="email" type="email" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Supplier email" value={form.email} onChange={handleChange} aria-invalid={!!formErrors.email} aria-describedby={formErrors.email ? 'email-error' : undefined} />
+              <label htmlFor="email" className="text-base font-medium text-theme-text">Email</label>
+              <input id="email" name="email" type="email" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Supplier email" value={form.email} onChange={handleChange} aria-invalid={!!formErrors.email} aria-describedby={formErrors.email ? 'email-error' : undefined} />
               {formErrors.email && <div id="email-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.email}</div>}
             </div>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="phone" className="text-base font-medium text-gray-700">Phone</label>
-              <input id="phone" name="phone" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Supplier phone" value={form.phone} onChange={handleChange} aria-invalid={!!formErrors.phone} aria-describedby={formErrors.phone ? 'phone-error' : undefined} />
+              <label htmlFor="phone" className="text-base font-medium text-theme-text">Phone</label>
+              <input id="phone" name="phone" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Supplier phone" value={form.phone} onChange={handleChange} aria-invalid={!!formErrors.phone} aria-describedby={formErrors.phone ? 'phone-error' : undefined} />
               {formErrors.phone && <div id="phone-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.phone}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="whatsapp" className="text-base font-medium text-gray-700">WhatsApp</label>
-              <input id="whatsapp" name="whatsapp" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Supplier WhatsApp" value={form.whatsapp} onChange={handleChange} aria-invalid={!!formErrors.whatsapp} aria-describedby={formErrors.whatsapp ? 'whatsapp-error' : undefined} />
+              <label htmlFor="whatsapp" className="text-base font-medium text-theme-text">WhatsApp</label>
+              <input id="whatsapp" name="whatsapp" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Supplier WhatsApp" value={form.whatsapp} onChange={handleChange} aria-invalid={!!formErrors.whatsapp} aria-describedby={formErrors.whatsapp ? 'whatsapp-error' : undefined} />
               {formErrors.whatsapp && <div id="whatsapp-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.whatsapp}</div>}
             </div>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="password" className="text-base font-medium text-gray-700">Password</label>
-              <input id="password" name="password" type="password" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Password" value={form.password} onChange={handleChange} aria-invalid={!!formErrors.password} aria-describedby={formErrors.password ? 'password-error' : undefined} />
+              <label htmlFor="password" className="text-base font-medium text-theme-text">Password</label>
+              <input id="password" name="password" type="password" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Password" value={form.password} onChange={handleChange} aria-invalid={!!formErrors.password} aria-describedby={formErrors.password ? 'password-error' : undefined} />
               {formErrors.password && <div id="password-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.password}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="password_confirmation" className="text-base font-medium text-gray-700">Confirm Password</label>
-              <input id="password_confirmation" name="password_confirmation" type="password" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Confirm password" value={form.password_confirmation} onChange={handleChange} aria-invalid={!!formErrors.password_confirmation} aria-describedby={formErrors.password_confirmation ? 'password_confirmation-error' : undefined} />
+              <label htmlFor="password_confirmation" className="text-base font-medium text-theme-text">Confirm Password</label>
+              <input id="password_confirmation" name="password_confirmation" type="password" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Confirm password" value={form.password_confirmation} onChange={handleChange} aria-invalid={!!formErrors.password_confirmation} aria-describedby={formErrors.password_confirmation ? 'password_confirmation-error' : undefined} />
               {formErrors.password_confirmation && <div id="password_confirmation-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.password_confirmation}</div>}
             </div>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="tax_card_number" className="text-base font-medium text-gray-700">Tax Card Number</label>
-              <input id="tax_card_number" name="tax_card_number" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Tax card number" value={form.tax_card_number} onChange={handleChange} aria-invalid={!!formErrors.tax_card_number} aria-describedby={formErrors.tax_card_number ? 'tax_card_number-error' : undefined} />
+              <label htmlFor="tax_card_number" className="text-base font-medium text-theme-text">Tax Card Number</label>
+              <input id="tax_card_number" name="tax_card_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Tax card number" value={form.tax_card_number} onChange={handleChange} aria-invalid={!!formErrors.tax_card_number} aria-describedby={formErrors.tax_card_number ? 'tax_card_number-error' : undefined} />
               {formErrors.tax_card_number && <div id="tax_card_number-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.tax_card_number}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="cr_number" className="text-base font-medium text-gray-700">CR Number</label>
-              <input id="cr_number" name="cr_number" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="CR number" value={form.cr_number} onChange={handleChange} aria-invalid={!!formErrors.cr_number} aria-describedby={formErrors.cr_number ? 'cr_number-error' : undefined} />
+              <label htmlFor="cr_number" className="text-base font-medium text-theme-text">CR Number</label>
+              <input id="cr_number" name="cr_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="CR number" value={form.cr_number} onChange={handleChange} aria-invalid={!!formErrors.cr_number} aria-describedby={formErrors.cr_number ? 'cr_number-error' : undefined} />
               {formErrors.cr_number && <div id="cr_number-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.cr_number}</div>}
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="category_id" className="text-base font-medium text-gray-700">Category</label>
+            <label htmlFor="category_id" className="text-base font-medium text-theme-text">Category</label>
             <select
               id="category_id"
               name="category_id"
               required
-              className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
+              className="theme-input w-full px-4 py-3 rounded-md text-base"
               value={form.category_id}
               onChange={handleChange}
               aria-invalid={!!formErrors.category_id}
@@ -316,14 +317,14 @@ export default function SupplierRegisteration() {
             {formErrors.category_id && <div id="category_id-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.category_id}</div>}
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-base font-medium text-gray-700">Key Persons</label>
+            <label className="text-base font-medium text-theme-text">Key Persons</label>
             {[0,1].map(i => (
               <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2">
-                <input name={`key_persons[${i}][name]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Name" value={form.key_persons[i].name} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name) ? `key_persons-${i}-name-error` : undefined} />
+                <input name={`key_persons[${i}][name]`} required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Name" value={form.key_persons[i].name} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name) ? `key_persons-${i}-name-error` : undefined} />
                 <select
                   name={`key_persons[${i}][role]`}
                   required
-                  className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
+                  className="theme-input w-full px-4 py-3 rounded-md text-base"
                   value={form.key_persons[i].role}
                   onChange={handleChange}
                 >
@@ -331,8 +332,8 @@ export default function SupplierRegisteration() {
                     <option key={role.value} value={role.value}>{role.label}</option>
                   ))}
                 </select>
-                <input name={`key_persons[${i}][phone]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Phone" value={form.key_persons[i].phone} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].phone)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].phone) ? `key_persons-${i}-phone-error` : undefined} />
-                <input name={`key_persons[${i}][email]`} required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Email" value={form.key_persons[i].email} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].email)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].email) ? `key_persons-${i}-email-error` : undefined} />
+                <input name={`key_persons[${i}][phone]`} required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Phone" value={form.key_persons[i].phone} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].phone)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].phone) ? `key_persons-${i}-phone-error` : undefined} />
+                <input name={`key_persons[${i}][email]`} required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Email" value={form.key_persons[i].email} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].email)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].email) ? `key_persons-${i}-email-error` : undefined} />
               </div>
             ))}
             {formErrors.key_persons && formErrors.key_persons.map((err, i) => (
@@ -344,30 +345,54 @@ export default function SupplierRegisteration() {
               </div>
             ))}
           </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="logo" className="text-base font-medium text-gray-700">Logo</label>
-            <input id="logo" name="logo" type="file" accept="image/*" required className="w-full bg-[#f7fafc] px-4 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base" onChange={handleChange} aria-invalid={!!formErrors.logo} aria-describedby={formErrors.logo ? 'logo-error' : undefined} />
-            {formErrors.logo && <div id="logo-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.logo}</div>}
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="tax_card_file" className="text-base font-medium text-gray-700">Tax Card File</label>
-            <input id="tax_card_file" name="tax_card_file" type="file" accept="application/pdf,image/*" required className="w-full bg-[#f7fafc] px-4 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base" onChange={handleChange} aria-invalid={!!formErrors.tax_card_file} aria-describedby={formErrors.tax_card_file ? 'tax_card_file-error' : undefined} />
-            {formErrors.tax_card_file && <div id="tax_card_file-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.tax_card_file}</div>}
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="cr_file" className="text-base font-medium text-gray-700">CR File</label>
-            <input id="cr_file" name="cr_file" type="file" accept="application/pdf,image/*" required className="w-full bg-[#f7fafc] px-4 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base" onChange={handleChange} aria-invalid={!!formErrors.cr_file} aria-describedby={formErrors.cr_file ? 'cr_file-error' : undefined} />
-            {formErrors.cr_file && <div id="cr_file-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.cr_file}</div>}
-          </div>
+          <FileUpload
+            id="logo"
+            name="logo"
+            accept="image/*"
+            required
+            onChange={handleChange}
+            label="Logo"
+            error={formErrors.logo}
+            maxSize={2 * 1024 * 1024} // 2MB
+            ariaInvalid={!!formErrors.logo}
+            ariaDescribedby={formErrors.logo ? 'logo-error' : undefined}
+          />
+          {formErrors.logo && <div id="logo-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.logo}</div>}
+          <FileUpload
+            id="tax_card_file"
+            name="tax_card_file"
+            accept="application/pdf,image/*"
+            required
+            onChange={handleChange}
+            label="Tax Card File"
+            error={formErrors.tax_card_file}
+            maxSize={2 * 1024 * 1024} // 2MB
+            ariaInvalid={!!formErrors.tax_card_file}
+            ariaDescribedby={formErrors.tax_card_file ? 'tax_card_file-error' : undefined}
+          />
+          {formErrors.tax_card_file && <div id="tax_card_file-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.tax_card_file}</div>}
+          <FileUpload
+            id="cr_file"
+            name="cr_file"
+            accept="application/pdf,image/*"
+            required
+            onChange={handleChange}
+            label="CR File"
+            error={formErrors.cr_file}
+            maxSize={2 * 1024 * 1024} // 2MB
+            ariaInvalid={!!formErrors.cr_file}
+            ariaDescribedby={formErrors.cr_file ? 'cr_file-error' : undefined}
+          />
+          {formErrors.cr_file && <div id="cr_file-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.cr_file}</div>}
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="latitude" className="text-base font-medium text-gray-700">Latitude</label>
+              <label htmlFor="latitude" className="text-base font-medium text-theme-text">Latitude</label>
               <div className="flex gap-2">
                 <input 
                   type="text" 
                   name="latitude" 
                   id="latitude" 
-                  className="flex-1 bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                  className="theme-input flex-1 px-4 py-3 rounded-md text-base" 
                   placeholder="Latitude will be auto-detected" 
                   value={form.latitude} 
                   onChange={handleChange} 
@@ -399,12 +424,12 @@ export default function SupplierRegisteration() {
               </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="longitude" className="text-base font-medium text-gray-700">Longitude</label>
+              <label htmlFor="longitude" className="text-base font-medium text-theme-text">Longitude</label>
               <input 
                 type="text" 
                 name="longitude" 
                 id="longitude" 
-                className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                className="theme-input w-full px-4 py-3 rounded-md text-base" 
                 placeholder="Longitude will be auto-detected" 
                 value={form.longitude} 
                 onChange={handleChange} 
@@ -415,7 +440,7 @@ export default function SupplierRegisteration() {
             type="submit"
             disabled={loading}
             aria-label="Register"
-            className="w-full py-3 font-bold text-white rounded-lg bg-gradient-to-r from-[#0099FF] to-[#1E90FF] shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">

@@ -27,20 +27,20 @@ const ClientForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8" role="main">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
+      <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
+        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           Forgot Password
         </h2>
-        <div className="w-16 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mb-8" />
-        <p className="text-gray-600 text-center mb-6">
+        <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
+        <p className="text-theme-text-secondary text-center mb-6">
           Enter your email address and we'll send you a link to reset your password.
         </p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium text-gray-700">Email Address</label>
+            <label htmlFor="email" className="text-base font-medium text-theme-text">Email Address</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/></svg>
               </span>
               <input
@@ -48,7 +48,7 @@ const ClientForgotPassword = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="w-full bg-[#f7fafc] pl-10 pr-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border border-gray-200 placeholder-gray-400"
+                className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
                 placeholder="Enter your email address"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -63,7 +63,7 @@ const ClientForgotPassword = () => {
             type="submit"
             disabled={loading}
             aria-label="Send reset link"
-            className="w-full py-3 font-bold text-white rounded-lg bg-gradient-to-r from-[#0099FF] to-[#1E90FF] shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@ const ClientForgotPassword = () => {
             {loading ? 'Sending...' : 'Send Reset Link'}
           </button>
           <div className="text-center">
-            <Link to="/login-client" className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 rounded">
+            <Link to="/login-client" className="text-primary-600 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 rounded">
               Back to Login
             </Link>
           </div>

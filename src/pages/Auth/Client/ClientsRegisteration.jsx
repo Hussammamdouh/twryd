@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { post } from '../../../utils/api';
+import FileUpload from '../../../UI/Common/FileUpload';
 
 export default function ClientsRegisteration() {
   const [form, setForm] = useState({
@@ -92,64 +93,74 @@ export default function ClientsRegisteration() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8" role="main">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
+      <div className="theme-card w-full max-w-lg p-8 sm:p-10 flex flex-col items-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           Client Registration
         </h2>
-        <div className="w-20 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mb-8" />
+        <div className="w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" encType="multipart/form-data" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-base font-medium text-gray-700">Client Name</label>
-            <input type="text" name="name" id="name" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter client name" value={form.name} onChange={handleChange} />
+            <label htmlFor="name" className="text-base font-medium text-theme-text">Client Name</label>
+            <input type="text" name="name" id="name" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter client name" value={form.name} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium text-gray-700">Email</label>
-            <input type="email" name="email" id="email" className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter your email" value={form.email} onChange={handleChange} />
+            <label htmlFor="email" className="text-base font-medium text-theme-text">Email</label>
+            <input type="email" name="email" id="email" className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter your email" value={form.email} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="phone" className="text-base font-medium text-gray-700">Phone Number</label>
-            <input type="tel" name="phone" id="phone" className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter your phone number" value={form.phone} onChange={handleChange} />
+            <label htmlFor="phone" className="text-base font-medium text-theme-text">Phone Number</label>
+            <input type="tel" name="phone" id="phone" className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter your phone number" value={form.phone} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="whatsapp" className="text-base font-medium text-gray-700">WhatsApp Number</label>
-            <input type="tel" name="whatsapp" id="whatsapp" className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter your WhatsApp number" value={form.whatsapp} onChange={handleChange} />
+            <label htmlFor="whatsapp" className="text-base font-medium text-theme-text">WhatsApp Number</label>
+            <input type="tel" name="whatsapp" id="whatsapp" className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter your WhatsApp number" value={form.whatsapp} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="password" className="text-base font-medium text-gray-700">Password</label>
-              <input type="password" name="password" id="password" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter password" value={form.password} onChange={handleChange} />
+              <label htmlFor="password" className="text-base font-medium text-theme-text">Password</label>
+              <input type="password" name="password" id="password" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter password" value={form.password} onChange={handleChange} />
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="passwordConfirm" className="text-base font-medium text-gray-700">Confirm Password</label>
-              <input type="password" name="passwordConfirm" id="passwordConfirm" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Confirm password" value={form.passwordConfirm} onChange={handleChange} />
+              <label htmlFor="passwordConfirm" className="text-base font-medium text-theme-text">Confirm Password</label>
+              <input type="password" name="passwordConfirm" id="passwordConfirm" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Confirm password" value={form.passwordConfirm} onChange={handleChange} />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="tax_card_number" className="text-base font-medium text-gray-700">Tax Card Number</label>
-            <input type="text" name="tax_card_number" id="tax_card_number" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter tax card number" value={form.tax_card_number} onChange={handleChange} />
+            <label htmlFor="tax_card_number" className="text-base font-medium text-theme-text">Tax Card Number</label>
+            <input type="text" name="tax_card_number" id="tax_card_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter tax card number" value={form.tax_card_number} onChange={handleChange} />
           </div>
+          <FileUpload
+            id="tax_card_file"
+            name="tax_card_file"
+            accept="image/*"
+            required
+            onChange={handleChange}
+            label="Tax Card File"
+            maxSize={2 * 1024 * 1024} // 2MB
+          />
           <div className="flex flex-col gap-2">
-            <label htmlFor="tax_card_file" className="text-base font-medium text-gray-700">Tax Card File</label>
-            <input type="file" name="tax_card_file" id="tax_card_file" accept="image/*" required className="w-full bg-[#f7fafc] px-4 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base" onChange={handleChange} />
+            <label htmlFor="cr_number" className="text-base font-medium text-theme-text">Commercial Registration Number</label>
+            <input type="text" name="cr_number" id="cr_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter commercial registration number" value={form.cr_number} onChange={handleChange} />
           </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="cr_number" className="text-base font-medium text-gray-700">Commercial Registration Number</label>
-            <input type="text" name="cr_number" id="cr_number" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter commercial registration number" value={form.cr_number} onChange={handleChange} />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="cr_file" className="text-base font-medium text-gray-700">Commercial Registration File</label>
-            <input type="file" name="cr_file" id="cr_file" accept="image/*" required className="w-full bg-[#f7fafc] px-4 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base" onChange={handleChange} />
-          </div>
+          <FileUpload
+            id="cr_file"
+            name="cr_file"
+            accept="image/*"
+            required
+            onChange={handleChange}
+            label="Commercial Registration File"
+            maxSize={2 * 1024 * 1024} // 2MB
+          />
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="latitude" className="text-base font-medium text-gray-700">Latitude</label>
+              <label htmlFor="latitude" className="text-base font-medium text-theme-text">Latitude</label>
               <div className="flex gap-2">
                 <input 
                   type="text" 
                   name="latitude" 
                   id="latitude" 
-                  className="flex-1 bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                  className="theme-input flex-1 px-4 py-3 rounded-md text-base" 
                   placeholder="Latitude will be auto-detected" 
                   value={form.latitude} 
                   onChange={handleChange} 
@@ -181,12 +192,12 @@ export default function ClientsRegisteration() {
               </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="longitude" className="text-base font-medium text-gray-700">Longitude</label>
+              <label htmlFor="longitude" className="text-base font-medium text-theme-text">Longitude</label>
               <input 
                 type="text" 
                 name="longitude" 
                 id="longitude" 
-                className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" 
+                className="theme-input w-full px-4 py-3 rounded-md text-base" 
                 placeholder="Longitude will be auto-detected" 
                 value={form.longitude} 
                 onChange={handleChange} 
@@ -194,8 +205,8 @@ export default function ClientsRegisteration() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="areaId" className="text-base font-medium text-gray-700">Area ID</label>
-            <input type="text" name="areaId" id="areaId" required className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400" placeholder="Enter area ID" value={form.areaId} onChange={handleChange} />
+            <label htmlFor="areaId" className="text-base font-medium text-theme-text">Area ID</label>
+            <input type="text" name="areaId" id="areaId" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder="Enter area ID" value={form.areaId} onChange={handleChange} />
           </div>
           {error && <div className="text-red-600 text-sm text-center">{error}</div>}
           {success && <div className="text-green-600 text-sm text-center">Registration successful!</div>}
@@ -203,7 +214,7 @@ export default function ClientsRegisteration() {
             type="submit"
             disabled={loading}
             aria-label="Register"
-            className="w-full py-3 font-bold text-white rounded-lg bg-gradient-to-r from-[#0099FF] to-[#1E90FF] shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

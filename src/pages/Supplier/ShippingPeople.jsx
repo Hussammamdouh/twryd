@@ -3,6 +3,7 @@ import { FiSearch, FiUserPlus, FiEdit2, FiTrash2, FiPause, FiPlay } from 'react-
 import { get, post, put, del } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../UI/Common/Modal';
+import FileUpload from '../../UI/Common/FileUpload';
 
 const STATUS_STYLES = {
   active: 'bg-green-100 text-green-700 border-green-300',
@@ -10,7 +11,7 @@ const STATUS_STYLES = {
   suspended: 'bg-red-100 text-red-700 border-red-300',
 };
 
-function DriverFormModal({ open, onClose, onSubmit, initialData, loading }) {
+function DriverFormModal({ open, onClose, onSubmit, initialData, loading, warehouses }) {
   const [form, setForm] = useState(
     initialData || { name: '', type: '', phone: '', car_name: '', car_number: '', license_number: '', warehouse: '', status: 'active', license_file: null }
   );
@@ -38,8 +39,30 @@ function DriverFormModal({ open, onClose, onSubmit, initialData, loading }) {
         <input name="car_name" placeholder="Car Name/Model" value={form.car_name} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
         <input name="car_number" placeholder="Car Number/Plate" value={form.car_number} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
         <input name="license_number" placeholder="License Number" value={form.license_number} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
-        <input name="warehouse" placeholder="Assigned Warehouse" value={form.warehouse} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
-        <input name="license_file" type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleChange} className="w-full" />
+        <select name="warehouse" value={form.warehouse} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded">
+          <option value="">Select Warehouse</option>
+          {warehouses?.length > 0 ? (
+            warehouses.map(warehouse => (
+              <option key={warehouse.id} value={warehouse.id}>
+                {warehouse.name}
+              </option>
+            ))
+          ) : (
+            <option value="" disabled>No warehouses available</option>
+          )}
+        </select>
+        {warehouses?.length === 0 && (
+          <p className="text-sm text-orange-600 dark:text-orange-400">
+            No warehouses found. Please create warehouses first in the Warehouses section.
+          </p>
+        )}
+        <FileUpload
+          name="license_file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={handleChange}
+          label="License File"
+          required={false}
+        />
         <select name="status" value={form.status} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded">
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
@@ -71,6 +94,7 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, driverName, loading }) {
 export default function ShippingPeople() {
   const { token, user } = useAuth();
   const [drivers, setDrivers] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -104,8 +128,22 @@ export default function ShippingPeople() {
     }
   };
 
+  // Fetch warehouses
+  const fetchWarehouses = async () => {
+    try {
+      const res = await get('/api/supplier/warehouses', { token });
+      const warehousesData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setWarehouses(warehousesData);
+    } catch {
+      setWarehouses([]);
+    }
+  };
+
   useEffect(() => {
-    if (token) fetchDrivers();
+    if (token) {
+      fetchDrivers();
+      fetchWarehouses();
+    }
     // eslint-disable-next-line
   }, [token]);
 
@@ -113,7 +151,7 @@ export default function ShippingPeople() {
   const perPage = 4;
   const filteredDrivers = drivers.filter(d => {
     const matchesSearch = !search || d.name?.toLowerCase().includes(search.toLowerCase()) || d.phone?.includes(search);
-    const matchesWarehouse = !warehouseFilter || d.warehouse === warehouseFilter;
+    const matchesWarehouse = !warehouseFilter || String(d.warehouse) === String(warehouseFilter);
     const matchesStatus = !statusFilter || d.status === statusFilter;
     return matchesSearch && matchesWarehouse && matchesStatus;
   });
@@ -211,7 +249,7 @@ export default function ShippingPeople() {
   };
 
   // Unique warehouse list for filter
-  const warehouseOptions = Array.from(new Set(drivers.map(d => d.warehouse).filter(Boolean)));
+  const warehouseOptions = warehouses.map(w => ({ id: w.id, name: w.name }));
 
   return (
     <div className="w-full max-w-6xl mx-auto py-10 px-2 flex flex-col gap-6 animate-fadeIn">
@@ -237,7 +275,7 @@ export default function ShippingPeople() {
           aria-label="Filter by warehouse"
         >
           <option value="">All Warehouses</option>
-          {warehouseOptions.map(w => <option key={w} value={w}>{w}</option>)}
+          {warehouseOptions.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
         <select
           value={statusFilter}
@@ -279,9 +317,13 @@ export default function ShippingPeople() {
                 <td className="py-3 px-3 font-semibold text-theme-text">{driver.name}</td>
                 <td className="py-3 px-3 text-theme-text">{driver.phone}</td>
                 <td className="py-3 px-3 text-theme-text">{[driver.car_name, driver.car_number].filter(Boolean).join(', ')}</td>
-                <td className="py-3 px-3 text-theme-text">{driver.warehouse}</td>
+                <td className="py-3 px-3 text-theme-text">
+                  {warehouses.find(w => w.id === driver.warehouse)?.name || driver.warehouse || 'Not Assigned'}
+                </td>
                 <td className="py-3 px-3">
-                  <span className={`inline-block px-3 py-1 rounded-full border text-xs font-bold shadow-sm ${STATUS_STYLES[driver.status]} dark:bg-opacity-30`}>{driver.status?.charAt(0).toUpperCase() + driver.status?.slice(1)}</span>
+                  <span className={`inline-block px-3 py-1 rounded-full border text-xs font-bold shadow-sm ${STATUS_STYLES[driver.status] || STATUS_STYLES.inactive} dark:bg-opacity-30`}>
+                    {driver.status ? (driver.status.charAt(0).toUpperCase() + driver.status.slice(1)) : 'Inactive'}
+                  </span>
                 </td>
                 <td className="py-3 px-3 text-right flex gap-2 justify-end items-center">
                   <button onClick={() => handleEdit(driver)} title="Edit" className="p-2 rounded-full hover:bg-primary-100 text-primary-600 transition" aria-label="Edit"><FiEdit2 /></button>
@@ -325,7 +367,7 @@ export default function ShippingPeople() {
           </button>
         </div>
       </div>
-      <DriverFormModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} initialData={editData} loading={loading} />
+      <DriverFormModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} initialData={editData} loading={loading} warehouses={warehouses} />
       <ConfirmDeleteModal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={handleConfirmDelete} driverName={deleteTarget?.name} loading={deleteLoading} />
     </div>
   );

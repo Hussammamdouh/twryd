@@ -128,11 +128,18 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
             <label className="block text-sm font-medium mb-1 text-theme-text">Category</label>
             <select name="category_id" value={form.category_id} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded">
               <option value="">Select category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
+              {categories && categories.length > 0 ? (
+                categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))
+              ) : (
+                <option value="" disabled>No categories available</option>
+              )}
             </select>
-          {formErrors.category_id && <div className="text-red-500 text-xs mt-1">{formErrors.category_id}</div>}
+            {formErrors.category_id && <div className="text-red-500 text-xs mt-1">{formErrors.category_id}</div>}
+            {categories && categories.length === 0 && (
+              <div className="text-yellow-500 text-xs mt-1">No categories found. Please contact admin.</div>
+            )}
           </div>
           <div className="flex items-center gap-2">
           <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} className="focus:ring-2 focus:ring-primary-400" />
@@ -177,6 +184,8 @@ export default function Products() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { token, user } = useAuth();
   const toast = useToast();
+  
+
 
   // Fetch products
   const fetchProducts = async () => {
@@ -184,7 +193,9 @@ export default function Products() {
     setError('');
     try {
       const res = await get('/api/supplier-management/products', { token });
-      setProducts(res.data?.products || []);
+      // Handle both old format (res.data.products) and new format (res.data)
+      const productsData = res.data?.products || res.data || [];
+      setProducts(productsData);
     } catch (err) {
       setError(err.message || 'Failed to load products');
     } finally {
@@ -195,16 +206,29 @@ export default function Products() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await get('/api/v1/categories');
-      setCategories(res.data?.data || []);
+      const res = await get('/api/client-management/available-categories');
+      const cats = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setCategories(cats);
     } catch {
-      setCategories([]);
+      // Fallback to public categories endpoint
+      try {
+        const fallbackRes = await get('/api/v1/categories');
+        const fallbackCats = Array.isArray(fallbackRes.data) ? fallbackRes.data : (fallbackRes.data?.data || []);
+        setCategories(fallbackCats);
+      } catch {
+        setCategories([]);
+      }
     }
   };
 
   useEffect(() => {
-    if (token) fetchProducts();
-    fetchCategories();
+    if (token) {
+      fetchProducts();
+      fetchCategories();
+    } else {
+      // Try to fetch categories without token as fallback
+      fetchCategories();
+    }
     // eslint-disable-next-line
   }, [token]);
 
@@ -308,6 +332,8 @@ export default function Products() {
     });
   }, [products, search, filterCategory, filterStatus]);
 
+
+  
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4 text-theme-text">My Products</h1>

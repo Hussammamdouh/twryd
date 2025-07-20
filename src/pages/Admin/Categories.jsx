@@ -4,6 +4,7 @@ import { get, post, put, del } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
 import Modal from '../../UI/Common/Modal';
+import FileUpload from '../../UI/Common/FileUpload';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://back.twryd.com';
 function getIconUrl(icon) {
@@ -106,19 +107,25 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
             <input name="name" value={form.name} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
           {formErrors.name && <div className="text-red-500 text-xs mt-1">{formErrors.name}</div>}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1 text-theme-text">Icon {isEdit ? '(optional)' : '(required)'}</label>
-            <input name="icon" type="file" accept="image/*" onChange={handleChange} className="w-full" required={!isEdit} />
-            {isEdit && initialData?.icon && (
-              <div className="flex items-center gap-2 mt-2">
-                <img src={getIconUrl(initialData.icon)} alt="icon" className="w-8 h-8 object-cover rounded" />
-                <label className="flex items-center gap-1 text-xs text-theme-text">
-                  <input type="checkbox" name="remove_icon" checked={form.remove_icon} onChange={handleChange} /> Remove icon
-                </label>
-              </div>
-            )}
+          <FileUpload
+            id="icon"
+            name="icon"
+            accept="image/*"
+            required={!isEdit}
+            onChange={handleChange}
+            label={`Icon ${isEdit ? '(optional)' : '(required)'}`}
+            error={formErrors.icon}
+            maxSize={1 * 1024 * 1024} // 1MB
+          />
+          {isEdit && initialData?.icon && (
+            <div className="flex items-center gap-2 mt-2">
+              <img src={getIconUrl(initialData.icon)} alt="icon" className="w-8 h-8 object-cover rounded" />
+              <label className="flex items-center gap-1 text-xs text-theme-text">
+                <input type="checkbox" name="remove_icon" checked={form.remove_icon} onChange={handleChange} /> Remove icon
+              </label>
+            </div>
+          )}
           {formErrors.icon && <div className="text-red-500 text-xs mt-1">{formErrors.icon}</div>}
-          </div>
           <div className="flex items-center gap-2">
           <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} className="focus:ring-2 focus:ring-primary-400" />
             <label htmlFor="is_active" className="text-sm text-theme-text">Active</label>

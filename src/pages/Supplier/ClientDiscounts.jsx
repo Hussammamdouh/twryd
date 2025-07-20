@@ -21,7 +21,14 @@ export default function ClientDiscounts() {
   const fetchClients = async () => {
     setLoading(true);
     try {
-      const res = await get(`/api/supplier/invitations/clients?per_page=10&paginated=true&page=${page}`, { token });
+      // Try without pagination first, then with pagination as fallback
+      let res;
+      try {
+        res = await get('/api/supplier/invitations/clients', { token });
+      } catch {
+        res = await get(`/api/supplier/invitations/clients?per_page=10&paginated=true&page=${page}`, { token });
+      }
+      
       const data = res.data?.clients?.data || res.data?.clients || [];
       setClients(data);
       setTotalPages(res.data?.clients?.last_page || 1);

@@ -82,14 +82,14 @@ export default function InvitationHandler() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md w-full mx-4">
+      <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+        <div className="theme-card rounded-2xl shadow-xl p-8 max-w-md w-full mx-4">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Processing Invitation</h2>
-            <p className="text-gray-600 mb-4">Please wait while we process your invitation...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <h2 className="text-xl font-bold text-theme-text mb-2">Processing Invitation</h2>
+            <p className="text-theme-text-secondary mb-4">Please wait while we process your invitation...</p>
             {invitationToken && (
-              <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+              <div className="text-xs text-theme-text-muted bg-theme-surface p-2 rounded">
                 <strong>Debug:</strong> Token: {invitationToken.substring(0, 20)}...
               </div>
             )}
@@ -101,26 +101,26 @@ export default function InvitationHandler() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md w-full mx-4">
+      <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+        <div className="theme-card rounded-2xl shadow-xl p-8 max-w-md w-full mx-4">
           <div className="text-center">
             <div className="text-red-500 mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Invitation Error</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <h2 className="text-xl font-bold text-theme-text mb-2">Invitation Error</h2>
+            <p className="text-theme-text-secondary mb-6">{error}</p>
             <div className="space-y-3">
               <button
                 onClick={() => navigate('/')}
-                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+                className="theme-button w-full px-4 py-2 font-semibold rounded-lg transition-colors"
               >
                 Go to Home
               </button>
               <button
                 onClick={() => navigate('/login-client')}
-                className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-colors"
+                className="theme-button-secondary w-full px-4 py-2 font-semibold rounded-lg transition-colors"
               >
                 Login as Client
               </button>

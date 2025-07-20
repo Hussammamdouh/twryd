@@ -40,20 +40,20 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8">
+      <div className="w-full max-w-md theme-card rounded-2xl shadow-2xl p-8 sm:p-10 flex flex-col items-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           Verify Your Account
         </h2>
-        <div className="w-20 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mb-8" />
+        <div className="w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
         <form onSubmit={handleVerify} className="w-full flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <label htmlFor="identifier" className="text-base font-medium text-gray-700">Email or Phone</label>
+            <label htmlFor="identifier" className="text-base font-medium text-theme-text">Email or Phone</label>
             <input
               id="identifier"
               type="text"
               required
-              className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400"
+              className="theme-input w-full px-4 py-3 rounded-md text-base"
               placeholder="Enter your email or phone"
               value={identifier}
               onChange={e => setIdentifier(e.target.value)}
@@ -61,12 +61,12 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="code" className="text-base font-medium text-gray-700">Verification Code</label>
+            <label htmlFor="code" className="text-base font-medium text-theme-text">Verification Code</label>
             <input
               id="code"
               type="text"
               required
-              className="w-full bg-[#f7fafc] px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base placeholder-gray-400"
+              className="theme-input w-full px-4 py-3 rounded-md text-base"
               placeholder="Enter the code you received"
               value={code}
               onChange={e => setCode(e.target.value)}
@@ -75,7 +75,7 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 font-bold text-white rounded-lg bg-gradient-to-r from-[#0099FF] to-[#1E90FF] shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading ? 'Verifying...' : 'Verify'}
           </button>
@@ -83,7 +83,7 @@ export default function ClientVerify({ onVerified, identifier: initialIdentifier
         <button
           onClick={handleResend}
           disabled={resending || !identifier}
-          className="mt-6 text-blue-600 hover:underline disabled:opacity-60"
+          className="mt-6 text-primary-600 dark:text-primary-400 hover:underline disabled:opacity-60"
         >
           {resending ? 'Resending...' : 'Resend Verification Code'}
         </button>

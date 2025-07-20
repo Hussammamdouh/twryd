@@ -23,10 +23,20 @@ export default function ProductDiscounts() {
   const fetchProducts = async () => {
     try {
       const res = await get('/api/supplier-management/products', { token });
-      const data = res.data?.products?.data || res.data?.products || [];
+      // Handle the actual API response structure: res.data is the array directly
+      const data = Array.isArray(res.data) ? res.data : (res.data?.products?.data || res.data?.products || []);
       setProducts(data);
     } catch (err) {
       console.error('Failed to load products:', err.message);
+      // Try fallback endpoint if main one fails
+      try {
+        const fallbackRes = await get('/api/supplier/products', { token });
+        const fallbackData = Array.isArray(fallbackRes.data) ? fallbackRes.data : (fallbackRes.data?.products?.data || fallbackRes.data?.products || []);
+        setProducts(fallbackData);
+      } catch (fallbackErr) {
+        console.error('Fallback also failed:', fallbackErr);
+        setProducts([]);
+      }
     }
   };
 
@@ -34,7 +44,8 @@ export default function ProductDiscounts() {
   const fetchClients = async () => {
     try {
       const res = await get('/api/supplier/invitations/clients', { token });
-      const data = res.data?.clients?.data || res.data?.clients || [];
+      // Handle the actual API response structure
+      const data = Array.isArray(res.data) ? res.data : (res.data?.clients?.data || res.data?.clients || []);
       setClients(data);
     } catch (err) {
       console.error('Failed to load clients:', err.message);

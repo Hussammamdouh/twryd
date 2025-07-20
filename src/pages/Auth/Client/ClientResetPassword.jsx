@@ -79,27 +79,27 @@ const ClientResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e0e7ef] to-[#f5f5f5] px-2 py-8" role="main">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
+      <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
+        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           Reset Password
         </h2>
-        <div className="w-16 h-1 bg-gradient-to-r from-[#0099FF] to-[#1E90FF] rounded-full mb-8" />
-        <p className="text-gray-600 text-center mb-6">
+        <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
+        <p className="text-theme-text-secondary text-center mb-6">
           Enter the reset code sent to your email and your new password.
         </p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="code" className="text-base font-medium text-gray-700">Reset Code</label>
+            <label htmlFor="code" className="text-base font-medium text-theme-text">Reset Code</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               </span>
               <input
                 id="code"
                 type="text"
                 required
-                className="w-full bg-[#f7fafc] pl-10 pr-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border border-gray-200 placeholder-gray-400"
+                className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
                 placeholder="Enter reset code"
                 value={code}
                 onChange={e => setCode(e.target.value)}
@@ -110,9 +110,9 @@ const ClientResetPassword = () => {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-base font-medium text-gray-700">New Password</label>
+            <label htmlFor="password" className="text-base font-medium text-theme-text">New Password</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Z"/></svg>
               </span>
               <input
@@ -120,7 +120,7 @@ const ClientResetPassword = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="w-full bg-[#f7fafc] pl-10 pr-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border border-gray-200 placeholder-gray-400"
+                className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
                 placeholder="Enter new password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -129,14 +129,14 @@ const ClientResetPassword = () => {
                 aria-describedby={error ? 'password-error' : undefined}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-theme-text-muted mt-1">
               Password must be at least 8 characters with uppercase, lowercase, and symbol
             </p>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="confirmPassword" className="text-base font-medium text-gray-700">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="text-base font-medium text-theme-text">Confirm Password</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Z"/></svg>
               </span>
               <input
@@ -144,7 +144,7 @@ const ClientResetPassword = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="w-full bg-[#f7fafc] pl-10 pr-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-base shadow-sm border border-gray-200 placeholder-gray-400"
+                className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
                 placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
@@ -159,7 +159,7 @@ const ClientResetPassword = () => {
             type="submit"
             disabled={loading}
             aria-label="Reset password"
-            className="w-full py-3 font-bold text-white rounded-lg bg-gradient-to-r from-[#0099FF] to-[#1E90FF] shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -170,7 +170,7 @@ const ClientResetPassword = () => {
             {loading ? 'Resetting...' : 'Reset Password'}
           </button>
           <div className="text-center">
-            <Link to="/login-client" className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 rounded">
+            <Link to="/login-client" className="text-primary-600 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 rounded">
               Back to Login
             </Link>
           </div>
