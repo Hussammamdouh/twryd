@@ -1,7 +1,6 @@
 import React, { Suspense, useMemo } from 'react';
 import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import ThemeToggle from '../../components/ThemeToggle';
@@ -10,6 +9,7 @@ import ThemeToggle from '../../components/ThemeToggle';
 const ClientInvitations = React.lazy(() => import('./ClientInvitations'));
 const ClientProfile = React.lazy(() => import('../Auth/Client/ClientProfile'));
 const ClientDashboardHome = React.lazy(() => import('./ClientDashboardHome'));
+const ClientMarketplace = React.lazy(() => import('./ClientMarketplace'));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
@@ -54,8 +54,10 @@ function ClientSidebar() {
 
   const navigation = [
     { name: 'Dashboard', href: '/client/dashboard/home', icon: 'grid', current: location.pathname === '/client/dashboard/home' },
+    { name: 'Marketplace', href: '/client/dashboard/my-marketplace', icon: 'store', current: location.pathname.startsWith('/client/dashboard/my-marketplace') },
+    { name: 'Cart', href: '/client/dashboard/cart', icon: 'cart', current: location.pathname.startsWith('/client/dashboard/cart') },
+    { name: 'Orders', href: '/client/dashboard/orders', icon: 'orders', current: location.pathname.startsWith('/client/dashboard/orders') || location.pathname.startsWith('/client/dashboard/order-confirmation') },
     { name: 'My Suppliers', href: '/client/dashboard/invitations', icon: 'handshake', current: location.pathname === '/client/dashboard/invitations' },
-    { name: 'Orders', href: '/client/dashboard/orders', icon: 'cart', current: location.pathname === '/client/dashboard/orders' },
     { name: 'Discounts', href: '/client/dashboard/discounts', icon: 'tag', current: location.pathname === '/client/dashboard/discounts' },
     { name: 'Settings', href: '/client/dashboard/settings', icon: 'gear', current: location.pathname === '/client/dashboard/settings' },
   ];
@@ -67,14 +69,24 @@ function ClientSidebar() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
         </svg>
       ),
-      handshake: (
+      store: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V6a2 2 0 012-2h14a2 2 0 012 2v1M5 7h14l1 5H4l1-5zm2 8a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
         </svg>
       ),
       cart: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+        </svg>
+      ),
+      orders: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      ),
+      handshake: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
         </svg>
       ),
       tag: (
@@ -192,6 +204,14 @@ export default function ClientDashboard() {
                           <ClientDashboardHome />
                         </div>
                       </div>
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="my-marketplace" 
+                  element={
+                    <ErrorBoundary>
+                      <ClientMarketplace />
                     </ErrorBoundary>
                   } 
                 />

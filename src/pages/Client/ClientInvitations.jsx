@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, post } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -112,23 +112,7 @@ export default function ClientInvitations() {
     },
   });
 
-  const disconnectMutation = useMutation({
-    mutationFn: async (supplierId) => {
-      // Since there's no disconnect endpoint, we'll use suspend as a workaround
-      return await post(`/api/client/invitations/suppliers/${supplierId}/suspend`, { 
-        token: token // auth token from useAuth
-      });
-    },
-    onSuccess: () => {
-      toast.show('Supplier disconnected successfully!', 'success');
-      queryClient.invalidateQueries(['client-invitations']);
-      queryClient.invalidateQueries(['client-relationships']);
-      queryClient.invalidateQueries(['client-suppliers']);
-    },
-    onError: (error) => {
-      toast.show(error.message || 'Failed to disconnect supplier', 'error');
-    },
-  });
+  // Disconnect functionality is not supported by the API, so no mutation is defined.
 
   // Combine data
   const allInvitations = useMemo(() => {
@@ -136,53 +120,43 @@ export default function ClientInvitations() {
     const relationships = relationshipsData?.relationships?.data || [];
     const suppliers = suppliersData?.suppliers || [];
 
-    console.log('Raw data:', {
-      invitations: invitations.length,
-      relationships: relationships.length,
-      suppliers: suppliers.length,
-      suppliersData: suppliersData
-    });
-
     // Create a map of supplier data for quick lookup
     const supplierMap = new Map();
     suppliers.forEach(supplier => {
-      // Handle the nested supplier structure from the API
       const supplierId = supplier.supplier_id || supplier.id;
       const supplierData = supplier.supplier || supplier;
       supplierMap.set(supplierId, supplierData);
     });
 
-    console.log('Supplier map:', Array.from(supplierMap.entries()));
-
     // Combine invitations and relationships
-    const combined = [
-      ...invitations.map(inv => {
-        const supplier = supplierMap.get(inv.supplier_id) || { name: 'Unknown Supplier', email: 'N/A' };
-        console.log('Invitation supplier lookup:', { supplier_id: inv.supplier_id, found: !!supplierMap.get(inv.supplier_id), supplier });
-        return {
-          ...inv,
-          type: 'invitation',
-          supplier,
-          sent_date: inv.created_at,
-          status: inv.status,
-          access: 'No Access'
-        };
-      }),
-      ...relationships.map(rel => {
-        const supplier = supplierMap.get(rel.supplier_id) || { name: 'Unknown Supplier', email: 'N/A' };
-        console.log('Relationship supplier lookup:', { supplier_id: rel.supplier_id, found: !!supplierMap.get(rel.supplier_id), supplier });
-        return {
-          ...rel,
-          type: 'relationship',
-          supplier,
-          sent_date: rel.connected_at,
-          status: rel.status === 'active' ? 'accepted' : rel.status,
-          access: rel.status === 'active' ? 'Access Granted' : 'No Access'
-        };
-      })
+    let combined = [
+      ...invitations.map(inv => ({
+        ...inv,
+        type: 'invitation',
+        supplier: inv.supplier || supplierMap.get(inv.supplier_id) || { name: 'Unknown Supplier', email: 'N/A' },
+        sent_date: inv.created_at,
+        status: inv.status,
+        access: 'No Access'
+      })),
+      ...relationships.map(rel => ({
+        ...rel,
+        type: 'relationship',
+        supplier: rel.supplier || supplierMap.get(rel.supplier_id) || { name: 'Unknown Supplier', email: 'N/A' },
+        sent_date: rel.connected_at,
+        status: rel.status === 'active' ? 'accepted' : rel.status,
+        access: rel.status === 'active' ? 'Access Granted' : 'No Access'
+      }))
     ];
 
-    console.log('Combined data:', combined);
+    // Remove duplicates: keep only one entry per supplier_id and status
+    const seen = new Set();
+    combined = combined.filter(item => {
+      const key = `${item.supplier_id}-${item.status}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
     return combined;
   }, [invitationsData, relationshipsData, suppliersData]);
 
@@ -232,11 +206,7 @@ export default function ClientInvitations() {
     toast.show('Resend functionality coming soon!', 'info');
   };
 
-  const handleDisconnect = (invitation) => {
-    setSelectedInvitation(invitation);
-    setConfirmAction('disconnect');
-    setShowConfirmModal(true);
-  };
+  // Disconnect handler removed as not supported by API.
 
   const handleVisitStore = (invitation) => {
     // TODO: Implement visit store functionality
@@ -275,7 +245,7 @@ export default function ClientInvitations() {
         rejectMutation.mutate(selectedInvitation.token);
         break;
       case 'disconnect':
-        disconnectMutation.mutate(selectedInvitation.supplier_id);
+        // This case is removed as disconnect is not supported.
         break;
     }
 
@@ -322,26 +292,15 @@ export default function ClientInvitations() {
       );
     } else if (invitation.status === 'accepted' || invitation.status === 'active') {
       return (
-        <>
-          <button
-            onClick={() => handleDisconnect(invitation)}
-            className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Disconnect
-          </button>
-          <button
-            onClick={() => handleVisitStore(invitation)}
-            className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-            Visit Store
-          </button>
-        </>
+        <button
+          onClick={() => handleVisitStore(invitation)}
+          className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors flex items-center gap-1"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          Visit Store
+        </button>
       );
     } else if (invitation.status === 'rejected') {
       return (
@@ -352,6 +311,7 @@ export default function ClientInvitations() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
+          {/* TODO: Implement resend if API supports it */}
           Resend Request
         </button>
       );
@@ -478,33 +438,33 @@ export default function ClientInvitations() {
                   </td>
                 </tr>
               ) : (
-                paginatedInvitations.map((invitation) => (
-                  <tr key={`${invitation.type}-${invitation.id}`} className="hover:bg-theme-surface transition-colors">
+                paginatedInvitations.map((inv) => (
+                  <tr key={`${inv.type}-${inv.id}`} className="hover:bg-theme-surface transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-theme-text">
-                        {invitation.supplier.name}
+                        {inv.supplier.name}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-theme-text-secondary">
-                        {invitation.supplier.email}
+                        {inv.supplier.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(invitation.status)}
+                      {getStatusBadge(inv.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-theme-text-secondary">
-                        {formatDate(invitation.sent_date)}
+                        {formatDate(inv.sent_date)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex space-x-3">
-                        {getActionButtons(invitation)}
+                        {getActionButtons(inv)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getAccessBadge(invitation.access)}
+                      {getAccessBadge(inv.access)}
                     </td>
                   </tr>
                 ))

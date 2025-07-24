@@ -31,12 +31,11 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
 
   // Helper function to get contact information
   const getContactInfo = (invitation) => {
-    // First try to get from API response
-    if (invitation.contact || invitation.email || invitation.client_email) {
-      return invitation.contact || invitation.email || invitation.client_email;
-    }
-    
-    // If not available in API, try to get from localStorage
+    // Prefer client_email, then email, then contact
+    if (invitation.client_email) return invitation.client_email;
+    if (invitation.email) return invitation.email;
+    if (invitation.contact) return invitation.contact;
+    // Fallback to localStorage
     try {
       const storedInvitations = JSON.parse(localStorage.getItem('supplier_invitations') || '{}');
       const storedInfo = storedInvitations[invitation.id];
@@ -46,7 +45,6 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
     } catch (error) {
       console.error('Error reading from localStorage:', error);
     }
-    
     return 'N/A';
   };
 
