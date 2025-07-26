@@ -14,6 +14,7 @@ const ClientDiscounts = React.lazy(() => import('./ClientDiscounts'));
 const ProductDiscounts = React.lazy(() => import('./ProductDiscounts'));
 const SupplierOrders = React.lazy(() => import('./SupplierOrders'));
 const SupplierOrderDetails = React.lazy(() => import('./SupplierOrderDetails'));
+const SupplierDashboardHome = React.lazy(() => import('./SupplierDashboardHome'));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
@@ -75,7 +76,15 @@ export default function SupplierDashboard() {
           <main className="pt-20 px-8 pb-8">
             <Suspense fallback={<RouteLoading />}>
               <Routes>
-                <Route index element={<Navigate to="profile" replace />} />
+                <Route index element={<Navigate to="home" replace />} />
+                <Route 
+                  path="home" 
+                  element={
+                    <ErrorBoundary>
+                      <SupplierDashboardHome />
+                    </ErrorBoundary>
+                  } 
+                />
                 <Route 
                   path="profile" 
                   element={

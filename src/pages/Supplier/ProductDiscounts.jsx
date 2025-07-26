@@ -52,20 +52,20 @@ export default function ProductDiscounts() {
     }
   };
 
-  // Fetch product discounts (we'll need to create this data structure)
-  const fetchProductDiscounts = async () => {
+  // Fetch product discounts (replace with real API if available)
+  const fetchProductDiscounts = async (pageNum = page) => {
     setLoading(true);
     try {
-      // For now, we'll create a combined data structure from products and clients
-      // In a real scenario, there might be a specific API endpoint for this
+      // If a real API endpoint exists, use it:
+      // const res = await get(`/api/supplier/product-discounts?page=${pageNum}&per_page=10`, { token });
+      // const discountsData = res.data?.data || res.data?.discounts?.data || res.data?.discounts || res.data || [];
+      // setProductDiscounts(discountsData);
+      // setTotalPages(res.data?.last_page || res.data?.discounts?.last_page || 1);
+
+      // Placeholder: create combined data structure
       const combinedDiscounts = [];
-      
-      // This is a placeholder - in reality, you'd have an API endpoint that returns
-      // all product discounts for the supplier
       for (const product of products) {
         for (const client of clients) {
-          // Check if this product has a discount for this client
-          // This would come from the actual API response
           if (product.default_discount && product.default_discount > 0) {
             combinedDiscounts.push({
               id: `${product.id}-${client.id}`,
@@ -79,9 +79,10 @@ export default function ProductDiscounts() {
           }
         }
       }
-      
-      setProductDiscounts(combinedDiscounts);
-      setTotalPages(Math.ceil(combinedDiscounts.length / 10));
+      const pageSize = 10;
+      const pagedDiscounts = combinedDiscounts.slice((pageNum - 1) * pageSize, pageNum * pageSize);
+      setProductDiscounts(pagedDiscounts);
+      setTotalPages(Math.ceil(combinedDiscounts.length / pageSize));
     } catch (err) {
       console.error('Failed to load product discounts:', err.message);
     } finally {
@@ -98,9 +99,10 @@ export default function ProductDiscounts() {
 
   useEffect(() => {
     if (products.length > 0 && clients.length > 0) {
-      fetchProductDiscounts();
+      fetchProductDiscounts(page);
     }
-  }, [products, clients]);
+    // eslint-disable-next-line
+  }, [products, clients, page]);
 
   // Filter product discounts
   const filteredProductDiscounts = useMemo(() => {

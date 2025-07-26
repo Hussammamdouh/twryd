@@ -5,6 +5,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { get, post, put, del } from '../../utils/api';
 import { useToast } from '../../UI/Common/ToastContext';
 import Modal from '../../UI/Common/Modal';
+import ConfirmActionModal from '../../UI/supplier/ConfirmActionModal';
+import Pagination from "../../UI/supplier/Pagination";
 
 // --- Add/Edit Product Modal ---
 function ProductFormModal({ open, onClose, onSubmit, initialData, categories, isEdit }) {
@@ -154,20 +156,7 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
 }
 
 // --- Confirm Delete Modal ---
-function ConfirmDeleteModal({ open, onClose, onConfirm, productName, loading }) {
-  return (
-    <Modal open={open} onClose={onClose} title="Delete Product">
-        <h3 className="text-xl font-bold mb-6 text-theme-text">Delete Product</h3>
-        <p className="mb-6 text-theme-text">Are you sure you want to delete <span className="font-semibold">{productName}</span>?</p>
-        <div className="flex gap-4 justify-end">
-        <button onClick={onClose} className="theme-button-secondary px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">Cancel</button>
-        <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 shadow focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2">
-            {loading ? <Spinner size={18} /> : 'Delete'}
-          </button>
-      </div>
-    </Modal>
-  );
-}
+
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -184,18 +173,22 @@ export default function Products() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { token, user } = useAuth();
   const toast = useToast();
-  
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [recentlyUpdated, setRecentlyUpdated] = useState({});
+  const [actionResult, setActionResult] = useState({}); // { [productId]: 'success' | 'error' }
 
 
   // Fetch products
-  const fetchProducts = async () => {
+  const fetchProducts = async (pageNum = page) => {
     setLoading(true);
     setError('');
     try {
-      const res = await get('/api/supplier-management/products', { token });
+      const res = await get(`/api/supplier-management/products?page=${pageNum}&per_page=10`, { token });
       // Handle both old format (res.data.products) and new format (res.data)
-      const productsData = res.data?.products || res.data || [];
+      const productsData = res.data?.data || res.data?.products?.data || res.data?.products || res.data || [];
       setProducts(productsData);
+      setTotalPages(res.data?.last_page || res.data?.products?.last_page || 1);
     } catch (err) {
       setError(err.message || 'Failed to load products');
     } finally {
@@ -223,14 +216,13 @@ export default function Products() {
 
   useEffect(() => {
     if (token) {
-      fetchProducts();
+      fetchProducts(page);
       fetchCategories();
     } else {
-      // Try to fetch categories without token as fallback
       fetchCategories();
     }
     // eslint-disable-next-line
-  }, [token]);
+  }, [token, page]);
 
   // Add product
   const handleAddProduct = async (form) => {
@@ -288,17 +280,26 @@ export default function Products() {
   // Delete product
   const handleDeleteProduct = async () => {
     setDeleteLoading(true);
-    // Optimistic UI: remove product locally
-    const prevProducts = products;
-    setProducts(products.filter(p => p.id !== deleteTarget.id));
     try {
       await del(`/api/supplier-management/products/${deleteTarget.id}`, { token });
+      setProducts(products => products.filter(p => p.id !== deleteTarget.id));
+      setRecentlyUpdated(prev => ({ ...prev, [deleteTarget.id]: true }));
+      setActionResult(prev => ({ ...prev, [deleteTarget.id]: 'success' }));
+      setTimeout(() => {
+        setRecentlyUpdated(prev => ({ ...prev, [deleteTarget.id]: false }));
+        setActionResult(prev => ({ ...prev, [deleteTarget.id]: undefined }));
+      }, 2000);
       toast.show('Product deleted!', 'success');
       setDeleteModalOpen(false);
       setDeleteTarget(null);
     } catch (err) {
-      setProducts(prevProducts);
-      toast.show(err.message || 'Failed to delete', 'error');
+      setRecentlyUpdated(prev => ({ ...prev, [deleteTarget.id]: true }));
+      setActionResult(prev => ({ ...prev, [deleteTarget.id]: 'error' }));
+      setTimeout(() => {
+        setRecentlyUpdated(prev => ({ ...prev, [deleteTarget.id]: false }));
+        setActionResult(prev => ({ ...prev, [deleteTarget.id]: undefined }));
+      }, 2000);
+      toast.show(err.message || 'Failed to delete product', 'error');
     } finally {
       setDeleteLoading(false);
     }
@@ -306,16 +307,28 @@ export default function Products() {
 
   // Status toggle
   const handleToggleStatus = async (product) => {
-    // Optimistic UI: toggle status locally
     const prevProducts = products;
     setProducts(products.map(p => p.id === product.id ? { ...p, is_active: !p.is_active } : p));
+    setRecentlyUpdated(prev => ({ ...prev, [product.id]: true }));
+    setActionResult(prev => ({ ...prev, [product.id]: undefined }));
     try {
       await put(`/api/supplier-management/products/${product.id}`, {
         token,
         data: { is_active: !product.is_active },
       });
+      setActionResult(prev => ({ ...prev, [product.id]: 'success' }));
+      setTimeout(() => {
+        setRecentlyUpdated(prev => ({ ...prev, [product.id]: false }));
+        setActionResult(prev => ({ ...prev, [product.id]: undefined }));
+      }, 2000);
+      toast.show('Product status updated!', 'success');
     } catch (err) {
       setProducts(prevProducts);
+      setActionResult(prev => ({ ...prev, [product.id]: 'error' }));
+      setTimeout(() => {
+        setRecentlyUpdated(prev => ({ ...prev, [product.id]: false }));
+        setActionResult(prev => ({ ...prev, [product.id]: undefined }));
+      }, 2000);
       toast.show(err.message || 'Failed to update status', 'error');
     }
   };
@@ -381,15 +394,21 @@ export default function Products() {
       ) : error ? (
         <div className="flex justify-center py-12 text-red-500">{error}</div>
       ) : (
-        <ProductTable
-          products={filteredProducts}
-          loading={false}
-          error={null}
-          onEdit={product => { setEditData(product); setModalOpen(true); }}
-          onDelete={product => { setDeleteTarget(product); setDeleteModalOpen(true); }}
-          onToggleStatus={handleToggleStatus}
-          categories={categories}
-        />
+        <>
+          <ProductTable
+            products={filteredProducts}
+            loading={false}
+            error={null}
+            onEdit={product => { setEditData(product); setModalOpen(true); }}
+            onDelete={product => { setDeleteTarget(product); setDeleteModalOpen(true); }}
+            onToggleStatus={handleToggleStatus}
+            categories={categories}
+            recentlyUpdated={recentlyUpdated}
+            actionResult={actionResult}
+            deleteLoading={deleteLoading}
+          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </>
       )}
       <ProductFormModal
         open={modalOpen}
@@ -399,11 +418,14 @@ export default function Products() {
         categories={categories}
         isEdit={!!editData}
       />
-      <ConfirmDeleteModal
-        open={deleteModalOpen}
+      <ConfirmActionModal
+        isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteProduct}
-        productName={deleteTarget?.name}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+        confirmText="Delete Product"
+        confirmColor="red"
         loading={deleteLoading}
       />
     </div>

@@ -81,6 +81,7 @@ export default function Modal({
   // Size classes
   const sizeClasses = {
     small: 'max-w-sm',
+    medium: 'max-w-md',
     default: 'max-w-md',
     large: 'max-w-lg',
     xlarge: 'max-w-xl',

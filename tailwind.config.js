@@ -82,6 +82,37 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Custom scrollbar plugin
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.scrollbar-thin': {
+          'scrollbar-width': 'thin',
+          'scrollbar-color': 'rgb(29 78 216) transparent',
+        },
+        '.scrollbar-thumb-primary-700': {
+          'scrollbar-color': 'rgb(29 78 216) transparent',
+        },
+        '.scrollbar-track-transparent': {
+          'scrollbar-color': 'rgb(29 78 216) transparent',
+        },
+        // Webkit scrollbar styles for better cross-browser support
+        '.scrollbar-thin::-webkit-scrollbar': {
+          'width': '6px',
+        },
+        '.scrollbar-thin::-webkit-scrollbar-track': {
+          'background': 'transparent',
+        },
+        '.scrollbar-thin::-webkit-scrollbar-thumb': {
+          'background-color': 'rgb(29 78 216)',
+          'border-radius': '3px',
+        },
+        '.scrollbar-thin::-webkit-scrollbar-thumb:hover': {
+          'background-color': 'rgb(30 64 175)',
+        },
+      }
+      addUtilities(newUtilities)
+    }
+  ],
 };
 

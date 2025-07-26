@@ -117,7 +117,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
         </thead>
         <tbody>
           {invitations.map((inv) => (
-            <tr key={inv.id || inv.email} className="border-b border-theme-border last:border-0">
+            <tr key={inv.id || inv.email} className="border-b border-theme-border last:border-0 hover:bg-primary-50 dark:hover:bg-primary-900/10">
               <td className="px-4 md:px-6 py-4 whitespace-nowrap text-theme-text">
                 {getContactInfo(inv)}
               </td>

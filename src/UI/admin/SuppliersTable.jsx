@@ -193,63 +193,66 @@ const SuppliersTable = function SuppliersTable({ token }) {
       </div>
 
       {/* Suppliers Table */}
-      <div className="theme-card p-3 sm:p-6 md:p-10">
-        <div className="theme-table overflow-x-auto rounded-lg shadow-sm">
-          <table className="min-w-full text-xs sm:text-sm">
+      <div className="theme-card p-4">
+        <div className="overflow-x-auto rounded-lg">
+          <table className="min-w-full text-sm">
             <thead className="sticky top-0 z-10">
-              <tr className="theme-table-header text-primary-700 text-xs sm:text-base font-semibold">
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left">Logo</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left">Name</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left">Email</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left">Phone</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left">Status</th>
-                <th className="px-2 sm:px-4 py-2 sm:py-3 text-left">Actions</th>
+              <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Logo</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Phone</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 sm:py-12 text-theme-text-secondary">
-                    <div className="flex flex-col items-center gap-2">
-                      <svg className="animate-spin h-6 w-6 text-primary-500" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  <td colSpan={6} className="text-center py-12">
+                    <div className="flex flex-col items-center gap-3">
+                      <svg className="w-8 h-8 text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
-                      <span>Loading suppliers...</span>
+                      <span className="text-gray-500 dark:text-gray-400">Loading suppliers...</span>
                     </div>
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 sm:py-12 text-red-500">
-                    <div className="flex flex-col items-center gap-2">
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <td colSpan={6} className="text-center py-12">
+                    <div className="flex flex-col items-center gap-3">
+                      <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                       </svg>
-                      <span>{error}</span>
+                      <div className="text-lg font-semibold text-red-500">{error}</div>
                     </div>
                   </td>
                 </tr>
               ) : suppliers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 sm:py-12 text-theme-text-muted">
-                    <div className="flex flex-col items-center gap-2">
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  <td colSpan={6} className="text-center py-12">
+                    <div className="flex flex-col items-center gap-3">
+                      <svg className="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10-5v4a1 1 0 001 1h3m-7 4v4m0 0H7a2 2 0 01-2-2v-5a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2h-5z" />
                       </svg>
-                      <span>No suppliers found.</span>
+                      <div className="text-lg font-semibold text-gray-500 dark:text-gray-400">No suppliers found</div>
+                      <p className="text-gray-400 dark:text-gray-500">No suppliers match your current filters</p>
                     </div>
                   </td>
                 </tr>
               ) : (
-                suppliers.map((supplier, idx) => (
-                  <tr key={supplier.id} className={`border-b border-theme-border last:border-b-0 ${idx % 2 === 0 ? 'bg-theme-surface' : 'bg-theme-card'} hover:bg-theme-surface transition group`}>
-                    <td className="px-2 sm:px-4 py-2 sm:py-3">
+                suppliers.map((supplier) => (
+                  <tr 
+                    key={supplier.id} 
+                    className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+                  >
+                    <td className="px-4 py-3">
                       {supplier.logo ? (
                         <img 
                           src={supplier.logo.startsWith('http') ? supplier.logo : `https://back.twryd.com/${supplier.logo}`} 
                           alt={supplier.name} 
-                          className="w-8 h-8 sm:w-12 sm:h-12 object-cover rounded-full border border-theme-border shadow"
+                          className="w-10 h-10 object-cover rounded-full border border-gray-200 dark:border-gray-700 shadow"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.style.display = 'none';
@@ -257,14 +260,14 @@ const SuppliersTable = function SuppliersTable({ token }) {
                           }}
                         />
                       ) : null}
-                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-theme-surface rounded-full flex items-center justify-center text-theme-text-muted" style={{ display: supplier.logo ? 'none' : 'flex' }}>
-                        {supplier.name ? supplier.name.charAt(0).toUpperCase() : 'N/A'}
+                      <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold text-sm" style={{ display: supplier.logo ? 'none' : 'flex' }}>
+                        {supplier.name ? supplier.name.charAt(0).toUpperCase() : 'S'}
                       </div>
                     </td>
-                    <td className="px-2 sm:px-4 py-2 sm:py-3 font-medium text-theme-text text-xs sm:text-base">{supplier.name}</td>
-                    <td className="px-2 sm:px-4 py-2 sm:py-3 break-all text-theme-text">{supplier.email}</td>
-                    <td className="px-2 sm:px-4 py-2 sm:py-3 text-theme-text">{supplier.phone}</td>
-                    <td className="px-2 sm:px-4 py-2 sm:py-3">
+                    <td className="px-4 py-3 font-medium text-theme-text">{supplier.name}</td>
+                    <td className="px-4 py-3 text-theme-text break-all">{supplier.email}</td>
+                    <td className="px-4 py-3 text-theme-text">{supplier.phone}</td>
+                    <td className="px-4 py-3">
                       <span className={`px-2 py-1 rounded text-xs font-semibold ${
                         supplier.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 
                         supplier.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
@@ -276,86 +279,81 @@ const SuppliersTable = function SuppliersTable({ token }) {
                          supplier.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-2 sm:px-4 py-2 sm:py-3 flex gap-1 sm:gap-2 flex-wrap">
-                      {supplier.status === 'pending' && (
-                        <>
-                          <button 
-                            onClick={() => openConfirmModal('approve', supplier)} 
-                            disabled={actionLoading[supplier.id]}
-                            className="flex items-center gap-1 p-1 sm:p-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-full transition shadow text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 disabled:opacity-60" 
-                            title="Approve"
-                            aria-label="Approve supplier"
-                          >
-                            {actionLoading[supplier.id] ? (
-                              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                              </svg>
-                            ) : (
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2">
+                        {supplier.status === 'pending' && (
+                          <>
+                            <button 
+                              onClick={() => openConfirmModal('approve', supplier)} 
+                              disabled={actionLoading[supplier.id]}
+                              className="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/40 text-green-700 dark:text-green-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-60" 
+                              title="Approve"
+                              aria-label="Approve supplier"
+                            >
+                              {actionLoading[supplier.id] ? (
+                                <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                              ) : (
+                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                            </button>
+                            <button 
+                              onClick={() => openConfirmModal('reject', supplier)} 
+                              disabled={actionLoading[supplier.id]}
+                              className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-60" 
+                              title="Reject"
+                              aria-label="Reject supplier"
+                            >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                               </svg>
-                            )}
-                            <span className="hidden md:inline text-xs font-semibold">Approve</span>
-                          </button>
-                          <button 
-                            onClick={() => openConfirmModal('reject', supplier)} 
-                            disabled={actionLoading[supplier.id]}
-                            className="flex items-center gap-1 p-1 sm:p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-full transition shadow text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 disabled:opacity-60" 
-                            title="Reject"
-                            aria-label="Reject supplier"
-                          >
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                              <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                            <span className="hidden md:inline text-xs font-semibold">Reject</span>
-                          </button>
-                        </>
-                      )}
-                      
-                      {supplier.status !== 'pending' && (
-                        <>
-                          <button 
-                            onClick={() => openConfirmModal('toggle-status', supplier)} 
-                            disabled={actionLoading[supplier.id]}
-                            className="flex items-center gap-1 p-1 sm:p-2 bg-primary-100 hover:bg-primary-200 text-primary-700 rounded-full transition shadow text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60" 
-                            title="Toggle Status"
-                            aria-label="Toggle supplier status"
-                          >
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                              <path d="M12 4v16m8-8H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                            <span className="hidden md:inline text-xs font-semibold">Toggle</span>
-                          </button>
-                          <button 
-                            onClick={() => handleAction('verify-email', supplier)} 
-                            disabled={actionLoading[supplier.id]}
-                            className="flex items-center gap-1 p-1 sm:p-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-full transition shadow text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 disabled:opacity-60" 
-                            title="Verify Email"
-                            aria-label="Verify supplier email"
-                          >
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                              <path d="M16 12H8m4-4v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                            <span className="hidden md:inline text-xs font-semibold">Verify</span>
-                          </button>
-                        </>
-                      )}
-                      
-                      <span className="w-px h-6 bg-theme-border mx-1 hidden md:inline-block" />
-                      <button 
-                        onClick={() => openConfirmModal('delete', supplier)} 
-                        disabled={actionLoading[supplier.id]}
-                        className="flex items-center gap-1 p-1 sm:p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-full transition shadow text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 disabled:opacity-60" 
-                        title="Delete"
-                        aria-label="Delete supplier"
-                      >
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                          <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12ZM9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <span className="hidden md:inline text-xs font-semibold">Delete</span>
-                      </button>
+                            </button>
+                          </>
+                        )}
+                        
+                        {supplier.status !== 'pending' && (
+                          <>
+                            <button 
+                              onClick={() => openConfirmModal('toggle-status', supplier)} 
+                              disabled={actionLoading[supplier.id]}
+                              className="p-2 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-800/40 text-primary-700 dark:text-primary-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-400 disabled:opacity-60" 
+                              title="Toggle Status"
+                              aria-label="Toggle supplier status"
+                            >
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </button>
+                            <button 
+                              onClick={() => handleAction('verify-email', supplier)} 
+                              disabled={actionLoading[supplier.id]}
+                              className="p-2 bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-800/40 text-purple-700 dark:text-purple-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:opacity-60" 
+                              title="Verify Email"
+                              aria-label="Verify supplier email"
+                            >
+                              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                <path d="M16 12H8m4-4v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                        
+                        <button 
+                          onClick={() => openConfirmModal('delete', supplier)} 
+                          disabled={actionLoading[supplier.id]}
+                          className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-60" 
+                          title="Delete"
+                          aria-label="Delete supplier"
+                        >
+                          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                            <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12ZM9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

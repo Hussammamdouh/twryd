@@ -3,7 +3,7 @@ import StatusBadge from './StatusBadge';
 import { del } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../Common/ToastContext';
-import ConfirmModal from './ConfirmModal';
+import ConfirmActionModal from './ConfirmActionModal';
 import Spinner from './Spinner';
 import EditDiscountModal from './EditDiscountModal';
 
@@ -22,15 +22,13 @@ const formatDate = (dateString) => {
   }
 };
 
-export default function ClientDiscountsTable({ clients, loading, onAction, onAdd }) {
+export default function ClientDiscountsTable({ clients, loading, onAction, onAdd, onRemoveDiscount, recentlyUpdated = {}, actionResult = {}, rowLoading = {} }) {
   const { token } = useAuth();
-  const [rowLoading, setRowLoading] = useState({});
   const [confirm, setConfirm] = useState({ open: false, type: '', client: null });
   const [editModal, setEditModal] = useState({ open: false, client: null });
   const toast = useToast();
 
   const handleAction = async (type, client) => {
-    setRowLoading(l => ({ ...l, [client.id]: true }));
     try {
       if (type === 'delete') {
         await del(`/api/supplier-management/clients/${client.id}/default-discount`, { token });
@@ -40,19 +38,15 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
     } catch (err) {
       toast.show(err.message || 'Action failed', 'error');
     } finally {
-      setRowLoading(l => ({ ...l, [client.id]: false }));
       setConfirm({ open: false, type: '', client: null });
     }
   };
 
-  const openConfirm = (type, client) => setConfirm({ open: true, type, client });
   const closeConfirm = () => setConfirm({ open: false, type: '', client: null });
   const openEditModal = (client) => setEditModal({ open: true, client });
   const closeEditModal = () => setEditModal({ open: false, client: null });
 
-  const confirmMessage = {
-    delete: 'Are you sure you want to remove this discount?'
-  };
+
 
   if (loading) {
     return <div className="flex justify-center py-12 text-gray-500"><Spinner size={24} /></div>;
@@ -60,10 +54,13 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
 
   if (!clients || clients.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-4">
-        <div>No clients found.</div>
+      <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-4 animate-fade-in">
+        <svg className="w-12 h-12 mb-2 text-blue-200 dark:text-blue-900" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zm0 9c-4.418 0-8-1.79-8-4V7a4 4 0 014-4h8a4 4 0 014 4v6c0 2.21-3.582 4-8 4z" />
+        </svg>
+        <div className="text-lg font-semibold">No clients found.</div>
         <button
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 focus:bg-blue-800 text-white rounded-lg font-bold shadow focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-150"
           onClick={onAdd}
         >
           + Add New Discount
@@ -74,20 +71,26 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
 
   return (
     <div className="overflow-x-auto rounded-lg shadow bg-white dark:bg-gray-900">
-      <table className="min-w-full text-sm md:table bg-white dark:bg-gray-900">
-        <thead>
-          <tr className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
-            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Client Name</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Discount Percentage</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Start Date</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Expiry Date</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Status</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Actions</th>
+      <table className="min-w-full text-sm md:table bg-white dark:bg-gray-900 rounded-lg shadow-md" role="table" aria-label="Client Discounts Table">
+        <thead className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200" role="rowgroup">
+          <tr className="h-12" role="row">
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Client Name</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Discount Percentage</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Start Date</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Expiry Date</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Status</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Actions</th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-900">
+        <tbody className="bg-white dark:bg-gray-900" role="rowgroup">
           {clients.map((client) => (
-            <tr key={client.id} className="border-b border-gray-100 dark:border-gray-800">
+            <tr
+              key={client.id}
+              className={`border-b border-gray-100 dark:border-gray-800 transition-colors duration-300 ${recentlyUpdated[client.id] ? (actionResult[client.id] === 'success' ? 'ring-2 ring-green-400 bg-green-50 dark:bg-green-900/20' : 'ring-2 ring-red-400 bg-red-50 dark:bg-red-900/20') : ''}`}
+              role="row"
+              tabIndex={0}
+              aria-label={`Client: ${client.client?.name || client.name || client.company_name || 'N/A'}, Email: ${client.client?.email || client.client_email || client.email || 'No email'}`}
+            >
               <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                 <div>
                   <div className="font-medium text-gray-900 dark:text-gray-100">
@@ -110,43 +113,55 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
               <td className="px-4 md:px-6 py-4">
                 <StatusBadge 
                   status={client.default_discount && client.default_discount > 0 ? 'active' : 'inactive'} 
+                  aria-label={client.default_discount && client.default_discount > 0 ? 'Active' : 'Inactive'}
                 />
               </td>
-              <td className="px-4 md:px-6 py-4 flex flex-wrap gap-2">
+              <td className="px-4 md:px-6 py-4 flex flex-wrap gap-2 items-center">
                 <button
-                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded shadow text-xs font-bold hover:bg-blue-200 dark:hover:bg-blue-800 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded shadow text-xs font-bold hover:bg-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-150"
                   onClick={() => openEditModal(client)}
                   disabled={rowLoading[client.id]}
                   tabIndex={0}
+                  aria-label={`Edit discount for ${client.client?.name || client.name || client.company_name || 'N/A'}`}
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
                   Edit
                 </button>
                 <button
-                  className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded shadow text-xs font-bold hover:bg-red-200 dark:hover:bg-red-800 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                  onClick={() => openConfirm('delete', client)}
+                  className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded shadow text-xs font-bold hover:bg-red-200 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-150"
+                  onClick={() => onRemoveDiscount(client)}
                   disabled={rowLoading[client.id]}
                   tabIndex={0}
+                  aria-label={`Remove discount for ${client.client?.name || client.name || client.company_name || 'N/A'}`}
                 >
-                  {rowLoading[client.id] && <Spinner size={16} color="border-red-700" />}
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  Delete
+                  {rowLoading[client.id] ? (
+                    <svg className="w-4 h-4 animate-spin text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  ) : 'Delete'}
                 </button>
+                {actionResult[client.id] === 'success' && !rowLoading[client.id] && (
+                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+                {actionResult[client.id] === 'error' && !rowLoading[client.id] && (
+                  <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <ConfirmModal
-        open={confirm.open}
-        title={confirm.type.charAt(0).toUpperCase() + confirm.type.slice(1) + ' Confirmation'}
-        message={confirmMessage[confirm.type]}
+      <ConfirmActionModal
+        isOpen={confirm.open}
+        onClose={closeConfirm}
         onConfirm={() => handleAction(confirm.type, confirm.client)}
-        onCancel={closeConfirm}
+        title="Remove Discount"
+        message="Are you sure you want to remove this client's discount? This action cannot be undone."
+        confirmText="Remove Discount"
+        confirmColor="red"
         loading={rowLoading[confirm.client?.id]}
       />
       <EditDiscountModal
