@@ -203,7 +203,7 @@ export default function ClientInvitations() {
     setShowConfirmModal(true);
   };
 
-  const handleResend = (invitation) => {
+  const handleResend = () => {
     // TODO: Implement resend functionality
     toast.show('Resend functionality coming soon!', 'info');
   };
@@ -350,25 +350,41 @@ export default function ClientInvitations() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-8">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
+          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
+            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+          </div>
+          <div>
+            <span className="text-gray-900 dark:text-white">Invitations</span>
+            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Manage supplier invitations</span>
+          </div>
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Accept, reject, or visit your connected suppliers.</p>
+      </div>
+
       {/* Invitation Token Input */}
-      <div className="theme-card rounded-2xl shadow-xl p-6">
-        <h2 className="text-lg font-semibold text-theme-text mb-4">Accept Invitation</h2>
-        <p className="text-theme-text-secondary mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Accept Invitation</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
           If you received an invitation link from a supplier, enter the invitation token here to accept it.
         </p>
         <div className="flex gap-4">
           <input
             type="text"
             placeholder="Enter invitation token"
-            className="theme-input flex-1 px-4 py-2 rounded-lg"
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
             value={invitationToken}
             onChange={(e) => setInvitationToken(e.target.value)}
           />
           <button
             onClick={handleAcceptByToken}
             disabled={!invitationToken.trim() || acceptMutation.isPending}
-            className="theme-button px-6 py-2 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {acceptMutation.isPending ? 'Accepting...' : 'Accept Invitation'}
           </button>
@@ -376,7 +392,7 @@ export default function ClientInvitations() {
       </div>
 
       {/* Search and Filter */}
-      <div className="theme-card rounded-2xl shadow-xl p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <input
@@ -384,14 +400,14 @@ export default function ClientInvitations() {
               placeholder="Search by supplier name or email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="theme-input w-full px-4 py-2 rounded-lg"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
             />
           </div>
           <div className="sm:w-48">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="theme-input w-full px-4 py-2 rounded-lg"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -405,9 +421,9 @@ export default function ClientInvitations() {
       </div>
 
       {/* Invitations Table */}
-      <div className="theme-card rounded-2xl shadow-xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-theme-border">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
@@ -430,29 +446,29 @@ export default function ClientInvitations() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-theme-surface divide-y divide-theme-border">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {paginatedInvitations.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-theme-text-muted">
+                  <td colSpan="6" className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
                     <div className="flex flex-col items-center">
-                      <svg className="w-12 h-12 text-theme-text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                       </svg>
-                      <p className="text-lg font-medium text-theme-text">No invitations found</p>
-                      <p className="text-sm text-theme-text-secondary">Try adjusting your search or filter criteria</p>
+                      <p className="text-lg font-medium text-gray-700 dark:text-gray-200">No invitations found</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 paginatedInvitations.map((inv) => (
-                  <tr key={`${inv.type}-${inv.id}`} className="hover:bg-theme-surface transition-colors">
+                  <tr key={`${inv.type}-${inv.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-theme-text">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {inv.supplier.name}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-theme-text-secondary">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {inv.supplier.email}
                       </div>
                     </td>
@@ -460,7 +476,7 @@ export default function ClientInvitations() {
                       {getStatusBadge(inv.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-theme-text-secondary">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(inv.sent_date)}
                       </div>
                     </td>

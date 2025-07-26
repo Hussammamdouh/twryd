@@ -93,15 +93,25 @@ export default function ClientOrders() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8">
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold dark:text-white mb-2">My Orders</h1>
-          <p className="text-gray-600 dark:text-gray-400">Track and manage your orders</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
+              <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <div>
+              <span className="text-gray-900 dark:text-white">My Orders</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Track and manage your orders</span>
+            </div>
+          </h1>
         </div>
         <Link
           to="/client/dashboard/my-marketplace"
-          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center gap-2"
+          className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V6a2 2 0 012-2h14a2 2 0 012 2v1M5 7h14l1 5H4l1-5zm2 8a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
@@ -111,17 +121,15 @@ export default function ClientOrders() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="text-gray-500 dark:text-gray-400 mb-4">
-            <svg className="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">No orders yet</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-8 text-lg">Start shopping to see your orders here</p>
+        <div className="flex flex-col items-center justify-center py-24">
+          <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">No orders yet</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">Start shopping to see your orders here.</p>
           <Link
             to="/client/dashboard/my-marketplace"
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition-all duration-200 text-lg"
+            className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition-all duration-200"
           >
             Browse Products
           </Link>
@@ -129,19 +137,19 @@ export default function ClientOrders() {
       ) : (
         <div className="space-y-8">
           {orders.map((order) => (
-            <div key={order.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div key={order.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
               {/* Order Header */}
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                   <div className="flex items-center gap-4 mb-4 md:mb-0">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold dark:text-white">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                           Order #{order.order_number || order.id}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
@@ -158,7 +166,7 @@ export default function ClientOrders() {
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       ${parseFloat(order.total || 0).toFixed(2)}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -172,7 +180,7 @@ export default function ClientOrders() {
               <div className="p-6">
                 {/* Order Items */}
                 <div className="mb-6">
-                  <h4 className="font-semibold mb-4 dark:text-white text-lg flex items-center gap-2">
+                  <h4 className="font-semibold mb-4 text-gray-900 dark:text-white text-lg flex items-center gap-2">
                     <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
@@ -187,7 +195,7 @@ export default function ClientOrders() {
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <h5 className="font-semibold dark:text-white text-lg">
+                          <h5 className="font-semibold text-gray-900 dark:text-white text-lg">
                             {item.product?.name || item.name || 'Unknown Product'}
                           </h5>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -195,7 +203,7 @@ export default function ClientOrders() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-lg dark:text-white text-blue-600">
+                          <div className="font-bold text-lg text-primary-600 dark:text-primary-400">
                             ${parseFloat(item.total || 0).toFixed(2)}
                           </div>
                         </div>
@@ -209,7 +217,7 @@ export default function ClientOrders() {
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Link
                       to={`/client/dashboard/order-confirmation/${order.id}`}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 text-center flex items-center justify-center gap-2"
+                      className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 text-center flex items-center justify-center gap-2"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

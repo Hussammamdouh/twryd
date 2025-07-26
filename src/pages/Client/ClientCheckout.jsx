@@ -65,28 +65,45 @@ export default function ClientCheckout() {
 
   if (loading) return <Spinner />;
   if (!cart || !cart.items || cart.items.length === 0) return (
-    <div className="p-8 text-center text-gray-500 dark:text-gray-300">
-      Your cart is empty. <a href="/client/dashboard/my-marketplace" className="text-blue-600 underline">Go to Marketplace</a>
+    <div className="flex flex-col items-center justify-center py-24">
+      <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+      </svg>
+      <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">Your cart is empty</h2>
+      <p className="text-gray-500 dark:text-gray-400 mb-4">Add products to your cart to proceed to checkout.</p>
+      <Link to="/client/dashboard/my-marketplace" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Go to Marketplace</Link>
     </div>
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold dark:text-white mb-2">Checkout</h1>
-        <p className="text-gray-600 dark:text-gray-400">Review your order and complete your purchase</p>
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
+          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
+            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <span className="text-gray-900 dark:text-white">Checkout</span>
+            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Complete your order</span>
+          </div>
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Review your order details and place your order.</p>
       </div>
+
       {grouped.map(group => (
-        <div key={group.supplier_id} className="mb-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+        <div key={group.supplier_id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold dark:text-white">Supplier: {group.supplier?.name || 'Unknown'}</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Supplier: {group.supplier?.name || 'Unknown'}</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{group.supplier?.email || ''}</p>
               </div>
               {success[group.supplier_id] && (
@@ -103,7 +120,7 @@ export default function ClientCheckout() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm mb-6">
                 <thead>
-                  <tr className="bg-gray-100 dark:bg-gray-700">
+                  <tr className="bg-gray-50 dark:bg-gray-700">
                     <th className="p-3 text-left font-semibold text-gray-700 dark:text-gray-300">Product</th>
                     <th className="p-3 text-center font-semibold text-gray-700 dark:text-gray-300">Qty</th>
                     <th className="p-3 text-center font-semibold text-gray-700 dark:text-gray-300">Price</th>
@@ -121,16 +138,16 @@ export default function ClientCheckout() {
                           </svg>
                         </div>
                         <div>
-                          <div className="font-medium dark:text-white">{item.product?.name || 'Unknown Product'}</div>
+                          <div className="font-medium text-gray-900 dark:text-white">{item.product?.name || 'Unknown Product'}</div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">SKU: {item.product?.id || 'N/A'}</div>
                         </div>
                       </td>
-                      <td className="p-3 text-center dark:text-white font-medium">{item.quantity}</td>
-                      <td className="p-3 text-center dark:text-white">${parseFloat(item.unit_price || 0).toFixed(2)}</td>
-                      <td className="p-3 text-center dark:text-white">
+                      <td className="p-3 text-center text-gray-900 dark:text-white font-medium">{item.quantity}</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-white">${parseFloat(item.unit_price || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-white">
                         {item.product?.base_discount ? `${item.product.base_discount}%` : '-'}
                       </td>
-                      <td className="p-3 text-center font-semibold dark:text-white text-blue-600">${parseFloat(item.total_price || 0).toFixed(2)}</td>
+                      <td className="p-3 text-center font-semibold text-primary-600 dark:text-primary-400">${parseFloat(item.total_price || 0).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -140,7 +157,7 @@ export default function ClientCheckout() {
               <div className="flex-1">
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Order Notes (Optional)</label>
                 <textarea
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-xl p-3 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-xl p-3 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   rows={3}
                   placeholder="Add any special instructions or notes for this order..."
                   value={notes[group.supplier_id] || ''}
@@ -151,14 +168,14 @@ export default function ClientCheckout() {
               <div className="flex flex-col items-end gap-4">
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                       ${group.items.reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0).toFixed(2)}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Total for this supplier</p>
                   </div>
                 </div>
                 <button
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-8 rounded-xl shadow-lg disabled:opacity-60 transition-all duration-200 flex items-center gap-2"
+                  className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-8 rounded-xl shadow-lg disabled:opacity-60 transition-all duration-200 flex items-center gap-2"
                   disabled={submitting[group.supplier_id] || success[group.supplier_id]}
                   onClick={() => handleSubmitOrder(group.supplier_id)}
                 >
@@ -186,7 +203,7 @@ export default function ClientCheckout() {
       <div className="text-center mt-8">
         <Link
           to="/client/dashboard/cart"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors duration-200"
+          className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold transition-colors duration-200"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

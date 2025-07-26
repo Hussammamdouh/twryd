@@ -83,81 +83,100 @@ export default function ClientCart() {
   }, [cart]);
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text dark:bg-gray-900 dark:text-gray-100">
-      <div className="max-w-6xl mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-6">My Cart</h1>
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 space-y-8">
-            {loading ? (
-              <div className="flex justify-center py-24"><Spinner size={32} /></div>
-            ) : grouped.length === 0 ? (
-              <div className="text-center text-gray-400 py-24">Your cart is empty.</div>
-            ) : (
-              grouped.map(group => (
-                <div key={group.supplier} className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-4">
-                  <div className="font-semibold mb-4">Supplier: {group.supplier}</div>
-                  <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {group.items.map(item => (
-                      <div key={item.id} className="flex items-center gap-4 py-4">
-                        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                          {item.image_url ? <img src={item.image_url} alt={item.name} className="max-h-14 object-contain" /> : <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded" />}
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-semibold">{item.product?.name || 'Unknown Product'}</div>
-                          <div className="text-gray-500 text-sm">${item.unit_price}</div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="number"
-                            min={1}
-                            value={item.quantity}
-                            onChange={e => handleUpdateQty(item, Number(e.target.value))}
-                            className="w-16 px-2 py-1 border rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                            disabled={updatingQty[item.id]}
-                          />
-                          <span className="font-bold text-primary-600 text-lg">${item.total_price}</span>
-                        </div>
-                        <button
-                          className="text-red-500 hover:underline ml-4 text-sm font-semibold disabled:opacity-60"
-                          onClick={() => handleRemove(item)}
-                          disabled={removing[item.id]}
-                        >
-                          {removing[item.id] ? 'Removing...' : 'Remove'}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-right font-bold text-xl mt-4">Subtotal: <span className="text-blue-600">${group.items.reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0).toFixed(2)}</span></div>
-                </div>
-              ))
-            )}
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
+          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
+            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+            </svg>
           </div>
-          {/* Order Summary */}
-          <div className="w-full lg:w-80 flex-shrink-0">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-4">
-              <div className="font-semibold mb-2">Order Summary</div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Total Items:</span>
-                <span>{orderSummary.count} {orderSummary.count === 1 ? 'item' : 'items'}</span>
-              </div>
-              <div className="flex justify-between text-lg font-bold mb-4">
-                <span>Total Amount:</span>
-                <span className="text-blue-600">${orderSummary.total.toFixed(2)}</span>
-              </div>
-              <button
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mb-2 disabled:opacity-60"
-                disabled={orderSummary.count === 0}
-                onClick={() => navigate('/client/dashboard/checkout')}
-              >
-                Proceed to Checkout
-              </button>
-              <button
-                className="w-full bg-gray-200 text-gray-700 rounded-lg py-2 font-semibold mt-2"
-                onClick={() => window.location.href = '/client/dashboard/my-marketplace'}
-              >
-                Continue Shopping
-              </button>
+          <div>
+            <span className="text-gray-900 dark:text-white">Shopping Cart</span>
+            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Review your items</span>
+          </div>
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">Update quantities, remove items, or proceed to checkout.</p>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex-1 space-y-8">
+          {loading ? (
+            <div className="flex justify-center py-24"><Spinner size={32} /></div>
+          ) : grouped.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24">
+              <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+              </svg>
+              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">Your cart is empty</h2>
+              <p className="text-gray-500 dark:text-gray-400">Add products to your cart to see them here.</p>
             </div>
+          ) : (
+            grouped.map(group => (
+              <div key={group.supplier} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-4">
+                <div className="font-semibold mb-4 text-gray-900 dark:text-white">Supplier: {group.supplier}</div>
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {group.items.map(item => (
+                    <div key={item.id} className="flex items-center gap-4 py-4">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
+                        {item.image_url ? <img src={item.image_url} alt={item.name} className="max-h-14 object-contain" /> : <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded" />}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900 dark:text-white">{item.product?.name || 'Unknown Product'}</div>
+                        <div className="text-gray-500 text-sm">${item.unit_price}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          value={item.quantity}
+                          onChange={e => handleUpdateQty(item, Number(e.target.value))}
+                          className="w-16 px-2 py-1 border rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                          disabled={updatingQty[item.id]}
+                        />
+                        <span className="font-bold text-primary-600 text-lg">${item.total_price}</span>
+                      </div>
+                      <button
+                        className="text-red-500 hover:underline ml-4 text-sm font-semibold disabled:opacity-60"
+                        onClick={() => handleRemove(item)}
+                        disabled={removing[item.id]}
+                      >
+                        {removing[item.id] ? 'Removing...' : 'Remove'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-right font-bold text-xl mt-4">Subtotal: <span className="text-blue-600">${group.items.reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0).toFixed(2)}</span></div>
+              </div>
+            ))
+          )}
+        </div>
+        {/* Order Summary */}
+        <div className="w-full lg:w-80 flex-shrink-0">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-4">
+            <div className="font-semibold mb-2 text-gray-900 dark:text-white">Order Summary</div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Total Items:</span>
+              <span>{orderSummary.count} {orderSummary.count === 1 ? 'item' : 'items'}</span>
+            </div>
+            <div className="flex justify-between text-lg font-bold mb-4">
+              <span>Total Amount:</span>
+              <span className="text-blue-600">${orderSummary.total.toFixed(2)}</span>
+            </div>
+            <button
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mb-2 disabled:opacity-60"
+              disabled={orderSummary.count === 0}
+              onClick={() => navigate('/client/dashboard/checkout')}
+            >
+              Proceed to Checkout
+            </button>
+            <button
+              className="w-full bg-gray-200 text-gray-700 rounded-lg py-2 font-semibold mt-2"
+              onClick={() => window.location.href = '/client/dashboard/my-marketplace'}
+            >
+              Continue Shopping
+            </button>
           </div>
         </div>
       </div>
