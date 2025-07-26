@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { get, del, put } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
@@ -7,6 +8,7 @@ import Spinner from '../../UI/supplier/Spinner';
 export default function ClientCart() {
   const { token } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState({});
@@ -17,7 +19,7 @@ export default function ClientCart() {
     setLoading(true);
     try {
       const res = await get('/api/client/cart', { token });
-      setCart(res.data || res.data?.cart || null);
+      setCart(res.data?.cart || null);
     } catch {
       setCart(null);
     } finally {
@@ -33,13 +35,9 @@ export default function ClientCart() {
   // Group items by supplier
   const grouped = useMemo(() => {
     if (!cart || !cart.items) return [];
-    const groups = {};
-    cart.items.forEach(item => {
-      const supplier = item.supplier_name || item.supplier?.name || 'Unknown Supplier';
-      if (!groups[supplier]) groups[supplier] = [];
-      groups[supplier].push(item);
-    });
-    return Object.entries(groups).map(([supplier, items]) => ({ supplier, items }));
+    // Based on the API response, each cart has a single supplier
+    const supplier = cart.supplier?.name || 'Unknown Supplier';
+    return [{ supplier, items: cart.items }];
   }, [cart]);
 
   // Remove item
@@ -78,7 +76,7 @@ export default function ClientCart() {
     if (!cart || !cart.items) return { total: 0, count: 0 };
     let total = 0, count = 0;
     cart.items.forEach(item => {
-      total += (item.price - (item.price * (item.discount || 0) / 100)) * item.quantity;
+      total += parseFloat(item.total_price || 0);
       count += item.quantity;
     });
     return { total, count };
@@ -105,8 +103,8 @@ export default function ClientCart() {
                           {item.image_url ? <img src={item.image_url} alt={item.name} className="max-h-14 object-contain" /> : <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded" />}
                         </div>
                         <div className="flex-1">
-                          <div className="font-semibold">{item.name}</div>
-                          <div className="text-gray-500 text-sm">${item.price}</div>
+                          <div className="font-semibold">{item.product?.name || 'Unknown Product'}</div>
+                          <div className="text-gray-500 text-sm">${item.unit_price}</div>
                         </div>
                         <div className="flex items-center gap-2">
                           <input
@@ -114,10 +112,10 @@ export default function ClientCart() {
                             min={1}
                             value={item.quantity}
                             onChange={e => handleUpdateQty(item, Number(e.target.value))}
-                            className="w-16 px-2 py-1 border rounded text-center"
+                            className="w-16 px-2 py-1 border rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
                             disabled={updatingQty[item.id]}
                           />
-                          <span className="font-bold text-primary-600 text-lg">${(item.price - (item.price * (item.discount || 0) / 100)).toFixed(2)}</span>
+                          <span className="font-bold text-primary-600 text-lg">${item.total_price}</span>
                         </div>
                         <button
                           className="text-red-500 hover:underline ml-4 text-sm font-semibold disabled:opacity-60"
@@ -129,7 +127,7 @@ export default function ClientCart() {
                       </div>
                     ))}
                   </div>
-                  <div className="text-right font-bold text-xl mt-4">Subtotal: <span className="text-blue-600">${group.items.reduce((sum, item) => sum + (item.price - (item.price * (item.discount || 0) / 100)) * item.quantity, 0).toFixed(2)}</span></div>
+                  <div className="text-right font-bold text-xl mt-4">Subtotal: <span className="text-blue-600">${group.items.reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0).toFixed(2)}</span></div>
                 </div>
               ))
             )}
@@ -149,7 +147,7 @@ export default function ClientCart() {
               <button
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mb-2 disabled:opacity-60"
                 disabled={orderSummary.count === 0}
-                // onClick={handleCheckout} // Scaffold for future
+                onClick={() => navigate('/client/dashboard/checkout')}
               >
                 Proceed to Checkout
               </button>

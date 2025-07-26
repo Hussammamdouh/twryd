@@ -1337,7 +1337,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email_or_phone\": \"hamzafottoh74@gmail.com\",\n    \"password\": \"password123\"\n}"
+									"raw": "{\n    \"email_or_phone\": \"hossammamdouh05@gmail.com\",\n    \"password\": \"Hussam4716#\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/client/login",
@@ -1777,6 +1777,68 @@
 							],
 							"request": {
 								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/invitations/{{invitation_token}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"invitations",
+										"{{invitation_token}}"
+									]
+								},
+								"description": "View invitation details by token (public endpoint, no authentication required)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Invitation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"pm.test('Response contains invitation details', function () {",
+											"    const response = pm.response.json();",
+											"    pm.expect(response.data).to.have.property('invitation');",
+											"    pm.expect(response.data).to.have.property('supplier');",
+											"    pm.expect(response.data).to.have.property('is_valid');",
+											"    pm.expect(response.data).to.have.property('is_expired');",
+											"});",
+											"",
+											"pm.test('Invitation has required fields', function () {",
+											"    const invitation = pm.response.json().data.invitation;",
+											"    pm.expect(invitation).to.have.property('id');",
+											"    pm.expect(invitation).to.have.property('token');",
+											"    pm.expect(invitation).to.have.property('status');",
+											"    pm.expect(invitation).to.have.property('supplier_id');",
+											"});",
+											"",
+											"pm.test('Supplier information is present', function () {",
+											"    const supplier = pm.response.json().data.supplier;",
+											"    pm.expect(supplier).to.have.property('id');",
+											"    pm.expect(supplier).to.have.property('name');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
 								"header": [
 									{
 										"key": "Accept",
@@ -3496,7 +3558,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"identifier\": \"hamzafottoh74@gmail.com\",\n    \"password\": \"password123A!\"\n}",
+									"raw": "{\n    \"identifier\": \"hussam.mamdouh@aiesec.net\",\n    \"password\": \"Hussam4716#\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -4256,6 +4318,28 @@
 										"api",
 										"client-management",
 										"products"
+									],
+									"query": [
+										{
+											"key": "supplier_id",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "category_id",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "search",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "per_page",
+											"value": null,
+											"disabled": true
+										}
 									]
 								}
 							},
@@ -4287,7 +4371,7 @@
 							"response": []
 						},
 						{
-							"name": "Products by Supplier",
+							"name": "Available Supplier",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -4297,22 +4381,21 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/client-management/products-by-supplier/{{supplier_id}}",
+									"raw": "{{base_url}}/api/client-management/available-suppliers",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"api",
 										"client-management",
-										"products-by-supplier",
-										"{{supplier_id}}"
+										"available-suppliers"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Products by Category",
+							"name": "Available Category",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -4322,15 +4405,14 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/client-management/products-by-category/{{category_id}}",
+									"raw": "{{base_url}}/api/client-management/available-categories",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"api",
 										"client-management",
-										"products-by-category",
-										"{{category_id}}"
+										"available-categories"
 									]
 								}
 							},

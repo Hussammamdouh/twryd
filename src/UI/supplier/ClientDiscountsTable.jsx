@@ -73,38 +73,38 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow bg-white">
-      <table className="min-w-full text-sm md:table">
+    <div className="overflow-x-auto rounded-lg shadow bg-white dark:bg-gray-900">
+      <table className="min-w-full text-sm md:table bg-white dark:bg-gray-900">
         <thead>
-          <tr className="bg-gray-50 text-gray-700">
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Client Name</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Discount Percentage</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Start Date</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Expiry Date</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Status</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Actions</th>
+          <tr className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Client Name</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Discount Percentage</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Start Date</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Expiry Date</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Status</th>
+            <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-gray-900">
           {clients.map((client) => (
-            <tr key={client.id} className="border-b last:border-0">
+            <tr key={client.id} className="border-b border-gray-100 dark:border-gray-800">
               <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                 <div>
-                  <div className="font-medium text-gray-900">
-                    {client.name || client.company_name || 'N/A'}
+                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                    {client.client?.name || client.name || client.company_name || 'N/A'}
                   </div>
-                  <div className="text-gray-500 text-xs">
-                    {client.email || 'No email'}
+                  <div className="text-gray-500 dark:text-gray-300 text-xs">
+                    {client.client?.email || client.client_email || client.email || 'No email'}
                   </div>
                 </div>
               </td>
-              <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+              <td className="px-4 md:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                 {client.default_discount ? `${client.default_discount}%` : 'No discount'}
               </td>
-              <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+              <td className="px-4 md:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                 {formatDate(client.discount_start_date || client.created_at)}
               </td>
-              <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+              <td className="px-4 md:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                 {formatDate(client.discount_expiry_date)}
               </td>
               <td className="px-4 md:px-6 py-4">
@@ -114,7 +114,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
               </td>
               <td className="px-4 md:px-6 py-4 flex flex-wrap gap-2">
                 <button
-                  className="px-3 py-1 bg-blue-100 text-blue-700 rounded shadow text-xs font-bold hover:bg-blue-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded shadow text-xs font-bold hover:bg-blue-200 dark:hover:bg-blue-800 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   onClick={() => openEditModal(client)}
                   disabled={rowLoading[client.id]}
                   tabIndex={0}
@@ -125,7 +125,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                   Edit
                 </button>
                 <button
-                  className="px-3 py-1 bg-red-100 text-red-700 rounded shadow text-xs font-bold hover:bg-red-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded shadow text-xs font-bold hover:bg-red-200 dark:hover:bg-red-800 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
                   onClick={() => openConfirm('delete', client)}
                   disabled={rowLoading[client.id]}
                   tabIndex={0}
@@ -141,7 +141,6 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
           ))}
         </tbody>
       </table>
-      
       <ConfirmModal
         open={confirm.open}
         title={confirm.type.charAt(0).toUpperCase() + confirm.type.slice(1) + ' Confirmation'}
@@ -150,7 +149,6 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
         onCancel={closeConfirm}
         loading={rowLoading[confirm.client?.id]}
       />
-      
       <EditDiscountModal
         open={editModal.open}
         client={editModal.client}

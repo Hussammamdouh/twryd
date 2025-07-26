@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { get, post } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
@@ -7,12 +8,15 @@ import Spinner from '../../UI/supplier/Spinner';
 export default function ClientMarketplace() {
   const { token } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cartLoading, setCartLoading] = useState({});
-  const [filterSupplier, setFilterSupplier] = useState('');
+  const [filterSupplier, setFilterSupplier] = useState(searchParams.get('supplier') || '');
   const [filterCategory, setFilterCategory] = useState('');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
@@ -31,22 +35,43 @@ export default function ClientMarketplace() {
       .catch(() => setSuppliers([]));
   }, [token]);
 
+  // Effect: If supplier_id in URL is not in connected suppliers, clear filter and show warning
+  useEffect(() => {
+    if (filterSupplier && suppliers.length > 0) {
+      const found = suppliers.some(s => (s.id || s.supplier_id)?.toString() === filterSupplier.toString());
+      if (!found) {
+        setFilterSupplier('');
+        setSearchParams({});
+        toast.show('You do not have access to this supplier.', 'warning');
+      }
+    }
+    // eslint-disable-next-line
+  }, [filterSupplier, suppliers]);
+
   // Fetch products
   useEffect(() => {
     setLoading(true);
-    let url = '/api/client-management/products';
-    if (filterSupplier && filterCategory) {
-      url = `/api/client-management/products-by-supplier-category/${filterSupplier}/${filterCategory}`;
-    } else if (filterSupplier) {
-      url = `/api/client-management/products-by-supplier/${filterSupplier}`;
-    } else if (filterCategory) {
-      url = `/api/client-management/products-by-category/${filterCategory}`;
-    } else if (search) {
-      url = `/api/client-management/products-search?query=${encodeURIComponent(search)}`;
-    }
+    // Build query params
+    const params = [];
+    if (filterSupplier) params.push(`supplier_id=${encodeURIComponent(filterSupplier)}`);
+    if (filterCategory) params.push(`category_id=${encodeURIComponent(filterCategory)}`);
+    if (search) params.push(`search=${encodeURIComponent(search)}`);
+    const queryString = params.length ? `?${params.join('&')}` : '';
+    const url = `/api/client-management/products${queryString}`;
     get(url, { token })
-      .then(res => setProducts(res.data?.products || res.data || []))
-      .catch(() => setProducts([]))
+      .then(res => {
+        setProducts(res.data?.products || res.data || []);
+      })
+      .catch(err => {
+        if (err?.response?.data?.message?.includes('Access denied')) {
+          toast.show('You do not have access to this supplier\'s products.', 'error');
+          setFilterSupplier('');
+          setSearchParams({});
+          setProducts([]);
+        } else {
+          setProducts([]);
+        }
+      })
       .finally(() => setLoading(false));
   }, [token, filterSupplier, filterCategory, search]);
 
@@ -64,6 +89,21 @@ export default function ClientMarketplace() {
     }
     return arr;
   }, [products, sort]);
+
+  // Handle product click to navigate to product details
+  const handleProductClick = (product) => {
+    navigate(`/client/dashboard/product/${product.id}`);
+  };
+
+  // Handle filter changes and update URL
+  const handleSupplierFilterChange = (supplierId) => {
+    setFilterSupplier(supplierId);
+    if (supplierId) {
+      setSearchParams({ supplier: supplierId });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   // Quick Add to Cart
   const handleAddToCart = async (product) => {
@@ -91,7 +131,7 @@ export default function ClientMarketplace() {
           <select
             className="theme-input px-3 py-2 rounded border"
             value={filterSupplier}
-            onChange={e => setFilterSupplier(e.target.value)}
+            onChange={e => handleSupplierFilterChange(e.target.value)}
           >
             <option value="">All Suppliers</option>
             {suppliers.map(s => (
@@ -131,7 +171,7 @@ export default function ClientMarketplace() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sortedProducts.map(product => (
-              <div key={product.id} className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex flex-col relative">
+              <div key={product.id} className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleProductClick(product)}>
                 {product.discount > 0 && (
                   <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{product.discount}% Off</span>
                 )}
@@ -144,7 +184,7 @@ export default function ClientMarketplace() {
                 </div>
                 <div className="font-semibold text-lg mb-1">{product.name}</div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-primary-600 font-bold text-xl">${product.price - (product.price * (product.discount || 0) / 100).toFixed(2)}</span>
+                  <span className="text-primary-600 font-bold text-xl">${(product.price - (product.price * (product.discount || 0) / 100)).toFixed(2)}</span>
                   {product.discount > 0 && (
                     <span className="line-through text-gray-400 text-sm">${product.price}</span>
                   )}
@@ -152,20 +192,15 @@ export default function ClientMarketplace() {
                 <div className="text-xs text-gray-500 mb-2">
                   by {product.supplier_name || product.supplier?.name || 'Unknown'}
                 </div>
-                <div className="flex items-center gap-2 mb-4">
-                  {product.in_stock ? (
-                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">In Stock</span>
-                  ) : (
-                    <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Out of Stock</span>
-                  )}
-                </div>
                 <button
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2 disabled:opacity-60"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={cartLoading[product.id] || !product.in_stock}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded mt-auto disabled:opacity-60"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(product);
+                  }}
+                  disabled={cartLoading[product.id]}
                 >
-                  {cartLoading[product.id] ? <Spinner size={16} color="border-white" /> : <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A2 2 0 007.48 19h9.04a2 2 0 001.83-2.7L17 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" /></svg>}
-                  Add to Cart
+                  {cartLoading[product.id] ? 'Adding...' : 'Add to Cart'}
                 </button>
               </div>
             ))}

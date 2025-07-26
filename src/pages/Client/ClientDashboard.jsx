@@ -10,6 +10,11 @@ const ClientInvitations = React.lazy(() => import('./ClientInvitations'));
 const ClientProfile = React.lazy(() => import('../Auth/Client/ClientProfile'));
 const ClientDashboardHome = React.lazy(() => import('./ClientDashboardHome'));
 const ClientMarketplace = React.lazy(() => import('./ClientMarketplace'));
+const ClientProductDetails = React.lazy(() => import('./ClientProductDetails'));
+const ClientCart = React.lazy(() => import('./ClientCart'));
+const ClientCheckout = React.lazy(() => import('./ClientCheckout'));
+const ClientOrderConfirmation = React.lazy(() => import('./ClientOrderConfirmation'));
+const ClientOrders = React.lazy(() => import('./ClientOrders'));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
@@ -216,6 +221,38 @@ export default function ClientDashboard() {
                   } 
                 />
                 <Route 
+                  path="product/:productId" 
+                  element={
+                    <ErrorBoundary>
+                      <ClientProductDetails />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="cart" 
+                  element={
+                    <ErrorBoundary>
+                      <ClientCart />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="checkout" 
+                  element={
+                    <ErrorBoundary>
+                      <ClientCheckout />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="order-confirmation/:orderId" 
+                  element={
+                    <ErrorBoundary>
+                      <ClientOrderConfirmation />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
                   path="profile" 
                   element={
                     <ErrorBoundary>
@@ -239,12 +276,7 @@ export default function ClientDashboard() {
                   path="orders" 
                   element={
                     <ErrorBoundary>
-                      <div className="flex flex-col items-center justify-center min-h-[70vh] theme-surface p-8">
-                        <div className="text-center">
-                          <h2 className="text-2xl font-bold text-theme-text mb-4">Orders</h2>
-                          <p className="text-theme-text-secondary">Orders functionality coming soon!</p>
-                        </div>
-                      </div>
+                      <ClientOrders />
                     </ErrorBoundary>
                   } 
                 />

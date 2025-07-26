@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { get, post } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
@@ -12,6 +13,7 @@ export default function ClientInvitations() {
   const { token } = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   
   // Local state
   const [searchTerm, setSearchTerm] = useState('');
@@ -209,8 +211,12 @@ export default function ClientInvitations() {
   // Disconnect handler removed as not supported by API.
 
   const handleVisitStore = (invitation) => {
-    // TODO: Implement visit store functionality
-    toast.show('Visit store functionality coming soon!', 'info');
+    const supplierId = invitation.supplier_id || invitation.supplier?.id;
+    if (supplierId) {
+      navigate(`/client/dashboard/my-marketplace?supplier=${supplierId}`);
+    } else {
+      toast.show('Supplier information not available', 'error');
+    }
   };
 
   const handleAcceptByToken = () => {

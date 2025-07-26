@@ -4,12 +4,14 @@ import { get, post } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
 import Spinner from '../../UI/supplier/Spinner';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ClientProductDetails() {
   const { productId } = useParams();
   const { token } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -17,6 +19,7 @@ export default function ClientProductDetails() {
   const [tab, setTab] = useState('description');
   const [related, setRelated] = useState([]);
   const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [mainImage, setMainImage] = useState('');
 
   // Fetch product details
   useEffect(() => {
@@ -52,10 +55,25 @@ export default function ClientProductDetails() {
   const images = product && product.images && Array.isArray(product.images) && product.images.length > 0
     ? product.images
     : product && product.image_url ? [product.image_url] : [];
-  const [mainImage, setMainImage] = useState('');
+
+  // Set main image when product or images change
   useEffect(() => {
-    setMainImage(images[0] || '');
+    if (images && images.length > 0) {
+      setMainImage(images[0]);
+    } else {
+      setMainImage('');
+    }
+    // eslint-disable-next-line
   }, [productId, images]);
+
+  // UI
+  if (loading) {
+    return <div className="flex justify-center py-24"><Spinner size={32} /></div>;
+  }
+
+  if (!product) {
+    return <div className="text-center text-red-500 py-24">Product not found or unavailable.</div>;
+  }
 
   // Price calculation
   const discountedPrice = (product.price - (product.price * (product.discount || 0) / 100)).toFixed(2);
@@ -68,19 +86,15 @@ export default function ClientProductDetails() {
         data: { product_id: product.id, quantity: quantity },
       });
       toast.show('Added to cart!', 'success');
+      // Invalidate cart queries to refresh cart data
+      queryClient.invalidateQueries(['client-cart']);
+      queryClient.invalidateQueries(['cart']);
     } catch (err) {
       toast.show(err.message || 'Failed to add to cart', 'error');
     } finally {
       setCartLoading(false);
     }
   };
-
-  if (loading) {
-    return <div className="flex justify-center py-24"><Spinner size={32} /></div>;
-  }
-  if (!product) {
-    return <div className="text-center py-24 text-red-500">Product not found.</div>;
-  }
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text dark:bg-gray-900 dark:text-gray-100">
@@ -126,40 +140,42 @@ export default function ClientProductDetails() {
               by {product.supplier_name || product.supplier?.name || 'Unknown'}
             </div>
             <div className="flex items-center gap-2 mb-2">
-              {product.in_stock ? (
-                <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">In Stock</span>
-              ) : (
-                <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Out of Stock</span>
-              )}
+              {/* Stock status removed as per requirements */}
             </div>
             <div className="flex items-center gap-4 mb-4">
               <label className="text-sm">QUANTITY</label>
-              <input
-                type="number"
-                min={1}
-                max={product.in_stock || 99}
-                value={quantity}
-                onChange={e => setQuantity(Math.max(1, Math.min(Number(e.target.value), product.in_stock || 99)))}
-                className="w-20 px-2 py-1 border rounded"
-                disabled={!product.in_stock}
-              />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-lg font-bold"
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  aria-label="Decrease quantity"
+                >-</button>
+                <input
+                  type="number"
+                  min={1}
+                  value={quantity}
+                  onChange={e => setQuantity(Math.max(1, Number(e.target.value)))}
+                  className="w-16 px-2 py-1 border rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                />
+                <button
+                  type="button"
+                  className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-lg font-bold"
+                  onClick={() => setQuantity(q => q + 1)}
+                  aria-label="Increase quantity"
+                >+</button>
+              </div>
             </div>
             <div className="flex gap-2 mb-4">
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg flex items-center gap-2 disabled:opacity-60"
                 onClick={handleAddToCart}
-                disabled={cartLoading || !product.in_stock}
+                disabled={cartLoading}
               >
                 {cartLoading ? <Spinner size={16} color="border-white" /> : <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A2 2 0 007.48 19h9.04a2 2 0 001.83-2.7L17 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" /></svg>}
                 Add to Cart
               </button>
-              <button
-                className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold py-2 px-6 rounded-lg flex items-center gap-2"
-                disabled
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
-                Add to Wishlist
-              </button>
+              {/* Add to Wishlist button removed as per requirements */}
             </div>
             <div className="flex gap-2 text-gray-400 text-lg">
               {product.product_url && <a href={product.product_url} target="_blank" rel="noopener noreferrer" title="Product Link"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 010 5.656m-1.414-1.414a2 2 0 010-2.828m-2.828 2.828a4 4 0 010-5.656m1.414 1.414a2 2 0 010 2.828" /></svg></a>}
@@ -170,7 +186,7 @@ export default function ClientProductDetails() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-8">
           <div className="flex gap-6 border-b mb-4">
             <button className={`pb-2 font-semibold ${tab === 'description' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`} onClick={() => setTab('description')}>Product Description</button>
-            <button className={`pb-2 font-semibold ${tab === 'specs' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`} onClick={() => setTab('specs')}>Specifications</button>
+            <button className={`pb-2 font-semibold ${tab === 'supplier' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`} onClick={() => setTab('supplier')}>Supplier Details</button>
             <button className={`pb-2 font-semibold ${tab === 'related' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`} onClick={() => setTab('related')}>Related Products</button>
           </div>
           {tab === 'description' && (
@@ -178,17 +194,13 @@ export default function ClientProductDetails() {
               <div className="mb-2 text-sm text-gray-700 dark:text-gray-200">{product.description || 'No description available.'}</div>
             </div>
           )}
-          {tab === 'specs' && (
-            <div className="text-sm text-gray-700 dark:text-gray-200">
-              {product.specifications ? (
-                <ul className="list-disc pl-6">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <li key={key}><span className="font-semibold capitalize">{key}:</span> {value}</li>
-                  ))}
-                </ul>
-              ) : (
-                <div>No specifications available.</div>
-              )}
+          {tab === 'supplier' && (
+            <div>
+              <div className="mb-2 text-sm text-gray-700 dark:text-gray-200">
+                <div><span className="font-semibold">Supplier Name:</span> {product.supplier?.name || product.supplier_name || 'N/A'}</div>
+                <div><span className="font-semibold">Supplier Email:</span> {product.supplier?.email || 'N/A'}</div>
+                {/* Add more supplier details if available */}
+              </div>
             </div>
           )}
           {tab === 'related' && (
