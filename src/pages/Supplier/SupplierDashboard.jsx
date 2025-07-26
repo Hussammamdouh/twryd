@@ -12,6 +12,8 @@ const Warehouses = React.lazy(() => import('./Warehouses'));
 const ShippingPeople = React.lazy(() => import('./ShippingPeople'));
 const ClientDiscounts = React.lazy(() => import('./ClientDiscounts'));
 const ProductDiscounts = React.lazy(() => import('./ProductDiscounts'));
+const SupplierOrders = React.lazy(() => import('./SupplierOrders'));
+const SupplierOrderDetails = React.lazy(() => import('./SupplierOrderDetails'));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
@@ -59,6 +61,8 @@ export default function SupplierDashboard() {
     if (path.endsWith('/shipping-people')) return 'Delivery Personnel';
     if (path.endsWith('/client-discounts')) return 'Client-Based Discounts';
     if (path.endsWith('/product-discounts')) return 'Product Discounts';
+    if (path.includes('/orders/') && path.split('/').length > 3) return 'Order Details';
+    if (path.endsWith('/orders')) return 'Orders Management';
     return 'Profile';
   }, [location.pathname]);
 
@@ -117,6 +121,22 @@ export default function SupplierDashboard() {
                   element={
                     <ErrorBoundary>
                       <ProductDiscounts />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="orders" 
+                  element={
+                    <ErrorBoundary>
+                      <SupplierOrders />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="orders/:orderId" 
+                  element={
+                    <ErrorBoundary>
+                      <SupplierOrderDetails />
                     </ErrorBoundary>
                   } 
                 />
