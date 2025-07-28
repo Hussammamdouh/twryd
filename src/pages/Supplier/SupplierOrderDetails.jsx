@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { get, patch } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
+import { downloadOrderPDF } from '../../utils/pdfUtils';
 import Spinner from '../../UI/supplier/Spinner';
 
 export default function SupplierOrderDetails() {
@@ -12,6 +13,7 @@ export default function SupplierOrderDetails() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   // Fetch order details
   const fetchOrder = async () => {
@@ -120,6 +122,22 @@ export default function SupplierOrderDetails() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  // Handle PDF download
+  const handleDownloadPDF = async () => {
+    if (!order) return;
+    
+    setDownloading(true);
+    try {
+      await downloadOrderPDF(order, 'supplier');
+      toast.show('Invoice downloaded successfully!', 'success');
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.show('Failed to download invoice. Please try again.', 'error');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) return <Spinner />;
@@ -399,6 +417,29 @@ export default function SupplierOrderDetails() {
                   <div className="text-sm text-gray-600 dark:text-gray-400">This order has been cancelled</div>
                 </div>
               )}
+              
+              {/* Download Invoice Button */}
+              <button
+                onClick={handleDownloadPDF}
+                disabled={downloading}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                {downloading ? (
+                  <>
+                    <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Downloading...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download Invoice
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

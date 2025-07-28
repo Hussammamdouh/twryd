@@ -176,6 +176,26 @@ export default function ClientOrders() {
                 </div>
               </div>
 
+              {/* Supplier Information */}
+              {order.supplier && (
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-blue-900 dark:text-blue-100">Supplier: {order.supplier.name}</h4>
+                      <p className="text-sm text-blue-700 dark:text-blue-300">{order.supplier.email}</p>
+                      {order.supplier.phone && (
+                        <p className="text-sm text-blue-700 dark:text-blue-300">Phone: {order.supplier.phone}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Order Content */}
               <div className="p-6">
                 {/* Order Items */}

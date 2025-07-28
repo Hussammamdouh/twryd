@@ -13,6 +13,7 @@ export default function ClientCart() {
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState({});
   const [updatingQty, setUpdatingQty] = useState({});
+  const [supplierFilter, setSupplierFilter] = useState('');
 
   // Fetch cart
   const fetchCart = async () => {
@@ -32,13 +33,40 @@ export default function ClientCart() {
     // eslint-disable-next-line
   }, [token]);
 
-  // Group items by supplier
+  // Group items by supplier with filtering
   const grouped = useMemo(() => {
     if (!cart || !cart.items) return [];
-    // Based on the API response, each cart has a single supplier
-    const supplier = cart.supplier?.name || 'Unknown Supplier';
-    return [{ supplier, items: cart.items }];
-  }, [cart]);
+    
+    // Get all unique suppliers from cart items
+    const suppliers = new Map();
+    cart.items.forEach(item => {
+      const supplierId = item.supplier_id || item.supplier?.id || 'unknown';
+      const supplierName = item.supplier?.name || 'Unknown Supplier';
+      const supplierEmail = item.supplier?.email || '';
+      
+      if (!suppliers.has(supplierId)) {
+        suppliers.set(supplierId, {
+          id: supplierId,
+          name: supplierName,
+          email: supplierEmail,
+          items: []
+        });
+      }
+      suppliers.get(supplierId).items.push(item);
+    });
+
+    // Convert to array and filter by supplier if filter is set
+    let result = Array.from(suppliers.values());
+    
+    if (supplierFilter) {
+      result = result.filter(group => 
+        group.id === supplierFilter || 
+        group.name.toLowerCase().includes(supplierFilter.toLowerCase())
+      );
+    }
+
+    return result;
+  }, [cart, supplierFilter]);
 
   // Remove item
   const handleRemove = async (item) => {
@@ -74,13 +102,27 @@ export default function ClientCart() {
   // Calculate totals
   const orderSummary = useMemo(() => {
     if (!cart || !cart.items) return { total: 0, count: 0 };
+    
+    // If there's a supplier filter, only calculate totals for filtered items
+    if (supplierFilter) {
+      let total = 0, count = 0;
+      grouped.forEach(group => {
+        group.items.forEach(item => {
+          total += parseFloat(item.total_price || 0);
+          count += item.quantity;
+        });
+      });
+      return { total, count };
+    }
+    
+    // Otherwise calculate totals for all items
     let total = 0, count = 0;
     cart.items.forEach(item => {
       total += parseFloat(item.total_price || 0);
       count += item.quantity;
     });
     return { total, count };
-  }, [cart]);
+  }, [cart, grouped, supplierFilter]);
 
   return (
     <div className="space-y-8">
@@ -100,6 +142,34 @@ export default function ClientCart() {
         <p className="text-gray-600 dark:text-gray-400 mt-2">Update quantities, remove items, or proceed to checkout.</p>
       </div>
 
+      {/* Supplier Filter */}
+      {cart && cart.items && cart.items.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter by Supplier
+              </label>
+              <input
+                type="text"
+                placeholder="Search suppliers..."
+                value={supplierFilter}
+                onChange={(e) => setSupplierFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
+              />
+            </div>
+            {supplierFilter && (
+              <button
+                onClick={() => setSupplierFilter('')}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors"
+              >
+                Clear Filter
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1 space-y-8">
           {loading ? (
@@ -114,8 +184,8 @@ export default function ClientCart() {
             </div>
           ) : (
             grouped.map(group => (
-              <div key={group.supplier} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-4">
-                <div className="font-semibold mb-4 text-gray-900 dark:text-white">Supplier: {group.supplier}</div>
+              <div key={group.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-4">
+                <div className="font-semibold mb-4 text-gray-900 dark:text-white">Supplier: {group.name}</div>
                 <div className="divide-y divide-gray-200 dark:divide-gray-700">
                   {group.items.map(item => (
                     <div key={item.id} className="flex items-center gap-4 py-4">

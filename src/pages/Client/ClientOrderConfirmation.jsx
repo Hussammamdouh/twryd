@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { get } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../UI/Common/ToastContext';
+import { downloadOrderPDF } from '../../utils/pdfUtils';
 import Spinner from '../../UI/supplier/Spinner';
 
 export default function ClientOrderConfirmation() {
   const { orderId } = useParams();
   const { token } = useAuth();
+  const toast = useToast();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   // Group items by supplier (hook must be unconditional)
   const grouped = React.useMemo(() => {
@@ -39,6 +43,22 @@ export default function ClientOrderConfirmation() {
   const orderTotal = (order && order.items ? order.items : []).reduce((sum, item) => sum + parseFloat(item.total || 0), 0);
   const deliveryFee = order && order.delivery_fee ? order.delivery_fee : 0;
   const finalAmount = orderTotal + deliveryFee;
+
+  // Handle PDF download
+  const handleDownloadPDF = async () => {
+    if (!order) return;
+    
+    setDownloading(true);
+    try {
+      await downloadOrderPDF(order, 'client');
+      toast.show('Invoice downloaded successfully!', 'success');
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.show('Failed to download invoice. Please try again.', 'error');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (loading) return <Spinner />;
   if (!order) return (
@@ -96,6 +116,12 @@ export default function ClientOrderConfirmation() {
                     <div>
                       <h3 className="font-bold text-lg text-gray-900 dark:text-white">{group.supplier?.name || 'Supplier'}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{group.supplier?.email || ''}</p>
+                      {group.supplier?.phone && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Phone: {group.supplier.phone}</p>
+                      )}
+                      {group.supplier?.address && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Address: {group.supplier.address}</p>
+                      )}
                     </div>
                   </div>
                   <div className="overflow-x-auto">
@@ -185,11 +211,11 @@ export default function ClientOrderConfirmation() {
                   </svg>
                   Continue Shopping
                 </Link>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-xl py-3 font-semibold transition-all duration-200 flex items-center justify-center gap-2" disabled>
+                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-xl py-3 font-semibold transition-all duration-200 flex items-center justify-center gap-2" disabled={downloading} onClick={handleDownloadPDF}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Download Invoice
+                  {downloading ? 'Downloading...' : 'Download Invoice'}
                 </button>
               </div>
             </div>

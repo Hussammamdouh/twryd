@@ -318,6 +318,38 @@ export default function SupplierOrders() {
                   </div>
                 </div>
                 <div className="p-6">
+                  {/* Client Information */}
+                  {order.client && (
+                    <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
+                      <h4 className="font-semibold mb-3 text-blue-900 dark:text-blue-100 text-lg flex items-center gap-2">
+                        <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Client Information
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <span className="text-blue-700 dark:text-blue-300 font-medium">Name:</span>
+                          <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client.name}</span>
+                        </div>
+                        <div>
+                          <span className="text-blue-700 dark:text-blue-300 font-medium">Email:</span>
+                          <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client.email}</span>
+                        </div>
+                        {order.client.phone && (
+                          <div>
+                            <span className="text-blue-700 dark:text-blue-300 font-medium">Phone:</span>
+                            <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client.phone}</span>
+                          </div>
+                        )}
+                        <div>
+                          <span className="text-blue-700 dark:text-blue-300 font-medium">Client ID:</span>
+                          <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client_id}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="mb-6">
                     <h4 className="font-semibold mb-4 dark:text-white text-lg flex items-center gap-2" id={`order-items-heading-${order.id}`}> 
                       <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
