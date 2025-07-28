@@ -226,15 +226,6 @@ export default function ClientInvitations() {
     }
     
     const cleanedToken = extractInvitationToken(invitationToken);
-    console.log('Original input:', invitationToken);
-    console.log('Cleaned token:', cleanedToken);
-    console.log('Token length:', cleanedToken.length);
-    console.log('Token format check:', {
-      hasSpaces: cleanedToken.includes(' '),
-      hasSpecialChars: /[^a-zA-Z0-9\-_.]/.test(cleanedToken),
-      startsWithHttp: cleanedToken.startsWith('http'),
-      isUrl: cleanedToken.includes('/')
-    });
     
     acceptMutation.mutate(cleanedToken);
     setInvitationToken('');
@@ -477,7 +468,9 @@ export default function ClientInvitations() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {inv.supplier.categories ? inv.supplier.categories.map(cat => cat.name).join(', ') : 'N/A'}
+                        {(() => {
+                          return inv.supplier.categories ? inv.supplier.categories.map(cat => cat.name).join(', ') : 'N/A';
+                        })()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

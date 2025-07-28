@@ -188,6 +188,9 @@ export default function ClientOrders() {
                     <div>
                       <h4 className="font-semibold text-blue-900 dark:text-blue-100">Supplier: {order.supplier.name}</h4>
                       <p className="text-sm text-blue-700 dark:text-blue-300">{order.supplier.email}</p>
+                      {(() => {
+                        return null;
+                      })()}
                       {order.supplier.phone && (
                         <p className="text-sm text-blue-700 dark:text-blue-300">Phone: {order.supplier.phone}</p>
                       )}

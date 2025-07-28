@@ -17,12 +17,14 @@ export default function ClientOrderConfirmation() {
   // Group items by supplier (hook must be unconditional)
   const grouped = React.useMemo(() => {
     if (!order || !order.items) return [];
-    const map = {};
-    order.items.forEach(item => {
-      if (!map[item.supplier_id]) map[item.supplier_id] = { supplier: item.supplier, items: [] };
-      map[item.supplier_id].items.push(item);
-    });
-    return Object.entries(map).map(([supplier_id, group]) => ({ supplier_id, ...group }));
+    
+    // Since all items in an order belong to the same supplier, we can group them together
+    // using the order-level supplier information
+    return [{
+      supplier_id: order.supplier_id,
+      supplier: order.supplier,
+      items: order.items
+    }];
   }, [order]);
 
   useEffect(() => {
