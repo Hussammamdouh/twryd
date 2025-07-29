@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { LayoutProvider } from './contexts/LayoutContext.jsx';
 import RequireAuth from './components/RequireAuth';
 import RequireAdmin from './components/RequireAdmin';
 import RequireGuest from './components/RequireGuest';
@@ -59,8 +60,20 @@ export default function App() {
               <Route path="/reset-password-supplier" element={<RequireGuest><SupplierResetPassword /></RequireGuest>} />
               <Route path="/admin-dashboard/*" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
               <Route path="/client-profile" element={<RequireAuth><ClientProfile /></RequireAuth>} />
-              <Route path="/supplier/dashboard/*" element={<RequireSupplier><SupplierDashboard /></RequireSupplier>} />
-              <Route path="/supplier/invitations" element={<RequireSupplier><SupplierInvitations /></RequireSupplier>} />
+              <Route path="/supplier/dashboard/*" element={
+                <RequireSupplier>
+                  <LayoutProvider>
+                    <SupplierDashboard />
+                  </LayoutProvider>
+                </RequireSupplier>
+              } />
+              <Route path="/supplier/invitations" element={
+                <RequireSupplier>
+                  <LayoutProvider>
+                    <SupplierInvitations />
+                  </LayoutProvider>
+                </RequireSupplier>
+              } />
               <Route path="/client/dashboard/*" element={<RequireClient><ClientDashboard /></RequireClient>} />
               <Route path="*" element={<NotFound />} />
             </Routes>

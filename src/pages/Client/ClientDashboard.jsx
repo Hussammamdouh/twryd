@@ -15,6 +15,8 @@ const ClientCart = React.lazy(() => import('./ClientCart'));
 const ClientCheckout = React.lazy(() => import('./ClientCheckout'));
 const ClientOrderConfirmation = React.lazy(() => import('./ClientOrderConfirmation'));
 const ClientOrders = React.lazy(() => import('./ClientOrders'));
+const ClientDiscounts = React.lazy(() => import('./ClientDiscounts'));
+const ClientInstallments = React.lazy(() => import('./ClientInstallments'));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
@@ -64,6 +66,7 @@ function ClientSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'Orders', href: '/client/dashboard/orders', icon: 'orders', current: location.pathname.startsWith('/client/dashboard/orders') || location.pathname.startsWith('/client/dashboard/order-confirmation') },
     { name: 'My Suppliers', href: '/client/dashboard/invitations', icon: 'handshake', current: location.pathname === '/client/dashboard/invitations' },
     { name: 'Discounts', href: '/client/dashboard/discounts', icon: 'tag', current: location.pathname === '/client/dashboard/discounts' },
+    { name: 'Installments', href: '/client/dashboard/installments', icon: 'installments', current: location.pathname === '/client/dashboard/installments' },
     { name: 'Settings', href: '/client/dashboard/settings', icon: 'gear', current: location.pathname === '/client/dashboard/settings' },
   ];
 
@@ -97,6 +100,11 @@ function ClientSidebar({ sidebarOpen, setSidebarOpen }) {
       tag: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+      ),
+      installments: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
         </svg>
       ),
       gear: (
@@ -265,6 +273,7 @@ export default function ClientDashboard() {
     if (path.endsWith('/profile')) return 'Profile';
     if (path.endsWith('/orders')) return 'My Orders';
     if (path.endsWith('/discounts')) return 'Discounts';
+    if (path.endsWith('/installments')) return 'Installments';
     if (path.endsWith('/settings')) return 'Settings';
     if (path.endsWith('/cart')) return 'Shopping Cart';
     if (path.endsWith('/checkout')) return 'Checkout';
@@ -379,17 +388,17 @@ export default function ClientDashboard() {
                   element={
                     <ErrorBoundary>
                       <div className="w-full max-w-7xl mx-auto">
-                        <div className="flex flex-col items-center justify-center min-h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-                          <div className="text-center">
-                            <div className="flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full mx-auto mb-4">
-                              <svg className="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                              </svg>
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Discounts</h2>
-                            <p className="text-gray-600 dark:text-gray-400">Discounts functionality coming soon!</p>
-                          </div>
-                        </div>
+                        <ClientDiscounts />
+                      </div>
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="installments" 
+                  element={
+                    <ErrorBoundary>
+                      <div className="w-full max-w-7xl mx-auto">
+                        <ClientInstallments />
                       </div>
                     </ErrorBoundary>
                   } 

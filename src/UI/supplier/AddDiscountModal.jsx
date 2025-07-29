@@ -69,11 +69,21 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
           >
             <option value="">Choose a client...</option>
             {clients?.length > 0 ? (
-              clients.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {client.client?.name || client.name || client.company_name || 'N/A'} ({client.client?.email || client.client_email || client.email || 'No email'})
-                </option>
-              ))
+              clients.map((client) => {
+                // The actual client data is nested under the 'client' property
+                const clientData = client.client || client;
+                
+                // Extract client name from various possible fields
+                const clientName = clientData.name || clientData.company_name || 'Unknown Client';
+                // Extract email from various possible fields
+                const clientEmail = clientData.email || clientData.client_email || clientData.contact || 'No email';
+                
+                return (
+                  <option key={client.id} value={client.id}>
+                    {clientName} ({clientEmail})
+                  </option>
+                );
+              })
             ) : (
               <option value="" disabled>No clients available</option>
             )}

@@ -75,8 +75,19 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    setFormErrors((prev) => ({ ...prev, [name]: validateField(name, type === 'checkbox' ? checked : value) }));
+    const fieldValue = type === 'checkbox' ? checked : value;
+    
+    setForm((prev) => ({ ...prev, [name]: fieldValue }));
+    
+    // Clear error when user starts typing - only if there's an error
+    setFormErrors((prev) => {
+      if (prev[name]) {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      }
+      return prev;
+    });
   };
 
   const handleSubmit = async (e) => {

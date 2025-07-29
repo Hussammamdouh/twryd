@@ -54,13 +54,16 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
 
   if (!client) return null;
 
+  // The actual client data is nested under the 'client' property
+  const clientData = client.client || client;
+
   return (
     <Modal open={open} onClose={handleClose} title="Edit Client Discount">
       <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
         <div>
           <label className="block text-theme-text mb-1 font-medium">Client</label>
           <div className="px-4 py-2 bg-theme-surface border border-theme-border rounded text-theme-text">
-            {client.name || client.company_name || 'N/A'} ({client.email || 'No email'})
+            {clientData.name || clientData.company_name || 'N/A'} ({clientData.email || clientData.client_email || clientData.contact || 'No email'})
           </div>
         </div>
         

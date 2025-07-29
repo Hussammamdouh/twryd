@@ -39,9 +39,16 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
-    }
+    
+    // Clear error when user starts typing - only if there's an error
+    setErrors(prev => {
+      if (prev[name]) {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      }
+      return prev;
+    });
   };
 
   const validateForm = () => {
@@ -220,15 +227,18 @@ export default function Areas() {
       const governatesList = govRes.data?.data || [];
       setGovernates(governatesList);
       
-      // Determine which governate to fetch areas for
-      const govId = governorateId || governatesList[0]?.id || '';
-      setSelectedGovernate(govId);
-      
-      // Fetch areas for the selected governate using the new admin endpoint
-      let areasRes = { data: { data: [] } };
-      if (govId) {
-        areasRes = await get(`/api/v1/location/governorates/${govId}/areas`, { token, params: { per_page: 50 } });
+      // Set selectedGovernate based on the provided governorateId
+      if (governorateId !== undefined) {
+        setSelectedGovernate(governorateId);
       }
+      
+      // Fetch areas based on the governorateId
+      let areasRes = { data: { data: [] } };
+      if (governorateId && governorateId !== '') {
+        // Fetch areas for specific governorate
+        areasRes = await get(`/api/v1/location/governorates/${governorateId}/areas`, { token, params: { per_page: 50 } });
+      }
+      // If "All Governorates" is selected, keep areas empty (user needs to select a governorate)
       setAreas(areasRes.data?.data || []);
     } catch (err) {
       setError(err.message || 'Failed to load areas/governates');
@@ -239,7 +249,7 @@ export default function Areas() {
   };
 
   useEffect(() => {
-    if (token) fetchAll();
+    if (token) fetchAll(''); // Start with "All Governorates" selected
   }, [token]);
 
   // Add handler for governate selection
@@ -421,8 +431,15 @@ export default function Areas() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                       </svg>
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400 font-medium">No areas found</span>
-                        <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Try adjusting your search or filters</p>
+                        <span className="text-gray-500 dark:text-gray-400 font-medium">
+                          {selectedGovernate === '' ? 'Select a governorate to view areas' : 'No areas found'}
+                        </span>
+                        <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
+                          {selectedGovernate === '' 
+                            ? 'Choose a governorate from the dropdown above to see its areas' 
+                            : 'Try adjusting your search or filters'
+                          }
+                        </p>
                       </div>
                     </div>
                   </td>

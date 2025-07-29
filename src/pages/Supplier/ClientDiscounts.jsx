@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Sidebar from '../../UI/supplier/Sidebar';
-import Topbar from '../../UI/supplier/Topbar';
 import ClientDiscountsTable from '../../UI/supplier/ClientDiscountsTable';
 import Pagination from '../../UI/supplier/Pagination';
 import AddDiscountModal from '../../UI/supplier/AddDiscountModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { get, del } from '../../utils/api';
+import { useLayout } from '../../hooks/useLayout';
 
 export default function ClientDiscounts() {
   const [addDiscountOpen, setAddDiscountOpen] = useState(false);
@@ -13,12 +12,15 @@ export default function ClientDiscounts() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  // eslint-disable-next-line no-unused-vars
   const [search, setSearch] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [status, setStatus] = useState('');
   const [recentlyUpdated, setRecentlyUpdated] = useState({});
   const [actionResult, setActionResult] = useState({}); // { [clientId]: 'success' | 'error' }
   const [rowLoading, setRowLoading] = useState({});
   const { token } = useAuth();
+  const { sidebarCollapsed } = useLayout();
 
   // Fetch clients
   const fetchClients = async (pageNum = page) => {
@@ -83,24 +85,13 @@ export default function ClientDiscounts() {
 
   return (
     <div className="min-h-screen bg-theme-bg">
-      <Sidebar />
-      <Topbar
-        title="Client-Based Discounts"
-        search={search}
-        onSearch={setSearch}
-        status={status}
-        onStatusChange={setStatus}
-        onAdd={() => setAddDiscountOpen(true)}
-        addButtonText="+ Add New Discount"
-        searchPlaceholder="Search by client name or email..."
-      />
-      <main className="pl-64 pt-20 pr-8">
+      <main className={`pt-20 pr-8 transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'}`}>
         <div className="max-w-5xl mx-auto">
           <ClientDiscountsTable 
             clients={filteredClients} 
             loading={loading} 
             onAction={fetchClients} 
-            onAdd={() => setAddDiscountOpen(true)} 
+            onAdd={() => setAddDiscountOpen(true)}
             onRemoveDiscount={handleRemoveDiscount}
             recentlyUpdated={recentlyUpdated}
             actionResult={actionResult}
@@ -112,7 +103,7 @@ export default function ClientDiscounts() {
       <AddDiscountModal 
         open={addDiscountOpen} 
         onClose={() => setAddDiscountOpen(false)} 
-        onSuccess={fetchClients} 
+        onSuccess={fetchClients}
         clients={clients}
       />
     </div>

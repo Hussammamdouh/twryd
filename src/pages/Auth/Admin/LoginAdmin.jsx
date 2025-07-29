@@ -126,7 +126,7 @@ export default function LoginAdmin() {
                 autoComplete="username"
                 required
                 className={`theme-input w-full pl-10 pr-4 py-3 rounded-lg text-base shadow-sm transition-colors ${
-                  errors.email ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : ''
+                  errors.email ? 'border-red-300 bg-red-50 dark:bg-red-900/20 focus:ring-red-400 focus:border-red-400' : ''
                 }`}
                 placeholder="Enter your email address"
                 value={formData.email}
@@ -136,7 +136,7 @@ export default function LoginAdmin() {
               />
             </div>
             {errors.email && (
-              <div id="email-error" className="text-red-500 text-sm" role="alert">
+              <div id="email-error" className="text-red-500 dark:text-red-400 text-sm" role="alert">
                 {errors.email}
               </div>
             )}
@@ -160,7 +160,7 @@ export default function LoginAdmin() {
                 autoComplete="current-password"
                 required
                 className={`theme-input w-full pl-10 pr-12 py-3 rounded-lg text-base shadow-sm transition-colors ${
-                  errors.password ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : ''
+                  errors.password ? 'border-red-300 bg-red-50 dark:bg-red-900/20 focus:ring-red-400 focus:border-red-400' : ''
                 }`}
                 placeholder="Enter your password"
                 value={formData.password}
@@ -171,10 +171,11 @@ export default function LoginAdmin() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-text-muted hover:text-theme-text transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-theme-text-muted hover:text-theme-text hover:bg-theme-surface transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-card"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   {showPassword ? (
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                   ) : (
@@ -184,7 +185,7 @@ export default function LoginAdmin() {
               </button>
             </div>
             {errors.password && (
-              <div id="password-error" className="text-red-500 text-sm" role="alert">
+              <div id="password-error" className="text-red-500 dark:text-red-400 text-sm" role="alert">
                 {errors.password}
               </div>
             )}
@@ -194,7 +195,7 @@ export default function LoginAdmin() {
           <button
             type="submit"
             disabled={loading}
-            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-105"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-card disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-105"
             aria-label="Sign in to admin account"
           >
             {loading ? (
@@ -210,10 +211,10 @@ export default function LoginAdmin() {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-gray-600 text-sm">
+          <p className="text-theme-text-secondary text-sm">
             Need help? Contact your system administrator
           </p>
-          <div className="mt-4 text-xs text-gray-500">
+          <div className="mt-4 text-xs text-theme-text-muted">
             <div className="flex items-center justify-center gap-1">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

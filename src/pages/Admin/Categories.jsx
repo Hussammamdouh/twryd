@@ -67,12 +67,28 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
     const { name, value, type, checked, files } = e.target;
     if (type === 'file') {
       setForm((prev) => ({ ...prev, icon: files[0] }));
-      setFormErrors((prev) => ({ ...prev, icon: validateField('icon', '', files) }));
+      // Clear error when user selects a file
+      setFormErrors((prev) => {
+        if (prev.icon) {
+          const newErrors = { ...prev };
+          delete newErrors.icon;
+          return newErrors;
+        }
+        return prev;
+      });
     } else if (type === 'checkbox') {
       setForm((prev) => ({ ...prev, [name]: checked }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
-      setFormErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+      // Clear error when user starts typing - only if there's an error
+      setFormErrors((prev) => {
+        if (prev[name]) {
+          const newErrors = { ...prev };
+          delete newErrors[name];
+          return newErrors;
+        }
+        return prev;
+      });
     }
   };
 

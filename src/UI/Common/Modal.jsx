@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, memo } from 'react';
+import { useFormFocus } from '../../hooks/useFormFocus';
 
-export default function Modal({ 
+const Modal = memo(({ 
   open, 
   onClose, 
   children, 
@@ -10,10 +11,11 @@ export default function Modal({
   closeOnOverlayClick = true,
   closeOnEscape = true,
   showCloseButton = true
-}) {
+}) => {
   const modalRef = useRef();
   const lastActiveElement = useRef(null);
   const labelId = title ? `modal-title-${Math.random().toString(36).slice(2)}` : undefined;
+  const { focusFirstInput } = useFormFocus();
 
   // Performance: Memoize close handler
   const handleClose = useCallback(() => {
@@ -69,14 +71,20 @@ export default function Modal({
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
     
+    // Focus first input after a short delay to ensure DOM is ready
+    const focusTimer = setTimeout(() => {
+      focusFirstInput(modalRef);
+    }, 100);
+    
     return () => {
+      clearTimeout(focusTimer);
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
       
       // Restore focus
       lastActiveElement.current?.focus();
     };
-  }, [open, handleKeyDown]);
+  }, [open, handleKeyDown, focusFirstInput]);
 
   // Size classes
   const sizeClasses = {
@@ -137,4 +145,8 @@ export default function Modal({
       </div>
     </div>
   );
-} 
+});
+
+Modal.displayName = 'Modal';
+
+export default Modal; 

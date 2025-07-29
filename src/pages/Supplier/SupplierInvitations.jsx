@@ -6,6 +6,7 @@ import Pagination from '../../UI/supplier/Pagination';
 import InviteClientModal from '../../UI/supplier/InviteClientModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { get } from '../../utils/api';
+import { useLayout } from '../../hooks/useLayout';
 
 export default function SupplierInvitations() {
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -13,9 +14,12 @@ export default function SupplierInvitations() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  // eslint-disable-next-line no-unused-vars
   const [search, setSearch] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [status, setStatus] = useState('');
   const { token } = useAuth();
+  const { sidebarCollapsed } = useLayout();
 
   // Refetch invitations
   const fetchInvitations = async () => {
@@ -70,7 +74,7 @@ export default function SupplierInvitations() {
         onStatusChange={setStatus}
         onInvite={() => setInviteOpen(true)}
       />
-      <main className="pl-64 pt-20 pr-8">
+      <main className={`pt-20 pr-8 transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'}`}>
         <div className="max-w-5xl mx-auto">
           <InvitationTable invitations={filteredInvitations} loading={loading} onAction={fetchInvitations} onInvite={() => setInviteOpen(true)} />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

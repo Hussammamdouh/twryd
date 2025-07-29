@@ -1337,7 +1337,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email_or_phone\": \"hossammamdouh05@gmail.com\",\n    \"password\": \"Hussam4716#\"\n}"
+									"raw": "{\n    \"email_or_phone\": \"hamzafottoh74@gmail.com\",\n    \"password\": \"password123\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/client/login",
@@ -4419,7 +4419,7 @@
 							"response": []
 						},
 						{
-							"name": "Products Search",
+							"name": "Get Client Discounts",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -4429,88 +4429,20 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/client-management/products-search",
+									"raw": "{{base_url}}/api/client-management/discounts?supplier_id",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"api",
 										"client-management",
-										"products-search"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Products by Supplier and Category",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{client_token}}"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/client-management/products-by-supplier-category/{{supplier_id}}/{{category_id}}",
-									"host": [
-										"{{base_url}}"
+										"discounts"
 									],
-									"path": [
-										"api",
-										"client-management",
-										"products-by-supplier-category",
-										"{{supplier_id}}",
-										"{{category_id}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Available Suppliers",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{client_token}}"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/client-management/available-suppliers",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"client-management",
-										"available-suppliers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Available Categories",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{client_token}}"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/client-management/available-categories",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"client-management",
-										"available-categories"
+									"query": [
+										{
+											"key": "supplier_id",
+											"value": null
+										}
 									]
 								}
 							},
@@ -4537,7 +4469,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/admin-management/products",
+									"raw": "{{base_url}}/api/admin-management/products?search&supplier_id&category_id&is_active&per_page",
 									"host": [
 										"{{base_url}}"
 									],
@@ -4545,6 +4477,28 @@
 										"api",
 										"admin-management",
 										"products"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": null
+										},
+										{
+											"key": "supplier_id",
+											"value": null
+										},
+										{
+											"key": "category_id",
+											"value": null
+										},
+										{
+											"key": "is_active",
+											"value": null
+										},
+										{
+											"key": "per_page",
+											"value": null
+										}
 									]
 								}
 							},
@@ -4709,7 +4663,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/admin-management/products-statistics",
+									"raw": "{{base_url}}/api/admin-management/products-statistics?type",
 									"host": [
 										"{{base_url}}"
 									],
@@ -4717,6 +4671,13 @@
 										"api",
 										"admin-management",
 										"products-statistics"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": null,
+											"description": "basic, detailed"
+										}
 									]
 								}
 							},
@@ -4760,97 +4721,6 @@
 							"response": []
 						},
 						{
-							"name": "Products by Supplier",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin-management/products-by-supplier/{{supplier_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"admin-management",
-										"products-by-supplier",
-										"{{supplier_id}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Products by Category",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin-management/products-by-category/{{category_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"admin-management",
-										"products-by-category",
-										"{{category_id}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Products by Supplier and Category",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin-management/products-by-supplier-category/{{supplier_id}}/{{category_id}}",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"admin-management",
-										"products-by-supplier-category",
-										"{{supplier_id}}",
-										"{{category_id}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Suppliers with Stats",
 							"request": {
 								"method": "GET",
@@ -4866,7 +4736,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/api/admin-management/suppliers-with-stats",
+									"raw": "{{base_url}}/api/admin-management/suppliers-with-stats?type",
 									"host": [
 										"{{base_url}}"
 									],
@@ -4874,35 +4744,13 @@
 										"api",
 										"admin-management",
 										"suppliers-with-stats"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Categories with Stats",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin-management/categories-with-stats",
-									"host": [
-										"{{base_url}}"
 									],
-									"path": [
-										"api",
-										"admin-management",
-										"categories-with-stats"
+									"query": [
+										{
+											"key": "type",
+											"value": null,
+											"description": "categories, categories"
+										}
 									]
 								}
 							},
@@ -4944,35 +4792,6 @@
 										"clients",
 										"{{client_id}}",
 										"default-discount"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Products Detailed Statistics",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin-management/products-detailed-statistics",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"admin-management",
-										"products-detailed-statistics"
 									]
 								}
 							},
@@ -5755,7 +5574,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"supplier_id\": \"{{supplier_id}}\",\n  \"notes\": \"test\"\n}",
+									"raw": "{\n  \"supplier_id\": \"{{supplier_id}}\",\n  \"delivery_date\": \"2025:07:28\",\n  \"notes\": \"test\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5953,7 +5772,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    // \"warehouse_id\": \"{{warehouse_id}}\",\n    // \"shipping_driver_id\": \"{{shipping_driver_id}}\",\n    \"notes\": \"test\"\n}",
+									"raw": "{\n\n    // \"warehouse_id\": \"{{warehouse_id}}\",\n    // \"shipping_driver_id\": \"{{shipping_driver_id}}\",\n    \"delivery_date\": \"2025:07:28\",\n    \"notes\": \"test\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6510,6 +6329,125 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Twryd - Merge API",
+			"item": [
+				{
+					"name": "Create Virtual Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response has success true\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('virtual_client', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{supplier_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"John Doe\",\r\n  \"name_ar\": \"جون دو\",\r\n  \"phone\": \"0123456789\",\r\n  \"email\": \"john.doe@virtual.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/supplier/clients",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"supplier",
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Merge Virtual Client with Real Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response has success true\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('virtual_client', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{supplier_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/supplier/clients/{{virtual_client_id}}/merge/{{client_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"supplier",
+								"clients",
+								"{{virtual_client_id}}",
+								"merge",
+								"{{client_id}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

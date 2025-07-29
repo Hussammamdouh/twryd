@@ -31,10 +31,17 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
 
   // Helper function to get contact information
   const getContactInfo = (invitation) => {
-    // Prefer client_email, then email, then contact
+    // Debug: Log the invitation object to see its structure
+    console.log('Invitation object:', invitation);
+    
+    // Check all possible email field names in order of preference
     if (invitation.client_email) return invitation.client_email;
     if (invitation.email) return invitation.email;
     if (invitation.contact) return invitation.contact;
+    if (invitation.client?.email) return invitation.client.email;
+    if (invitation.client?.contact) return invitation.client.contact;
+    if (invitation.user?.email) return invitation.user.email;
+    
     // Fallback to localStorage
     try {
       const storedInvitations = JSON.parse(localStorage.getItem('supplier_invitations') || '{}');
@@ -45,7 +52,9 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
     } catch (error) {
       console.error('Error reading from localStorage:', error);
     }
-    return 'N/A';
+    
+    // If still no email found, return a more descriptive message
+    return 'Email not available';
   };
 
   const handleAction = async (type, inv) => {

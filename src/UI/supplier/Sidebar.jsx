@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLayout } from '../../hooks/useLayout';
 
 // Performance: Memoize navigation items
 const navItems = [
@@ -88,10 +89,28 @@ const navItems = [
       </svg>
     ) 
   },
+  { 
+    name: 'Installments Management', 
+    to: '/supplier/dashboard/installments', 
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+      </svg>
+    ) 
+  },
+  { 
+    name: 'Virtual Client Management', 
+    to: '/supplier/dashboard/virtual-client-management', 
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    ) 
+  },
 ];
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { sidebarCollapsed, toggleSidebar } = useLayout();
   const { logout, user } = useAuth();
   const location = useLocation();
 
@@ -105,16 +124,11 @@ export default function Sidebar() {
     }
   }, [logout]);
 
-  // Performance: Memoize toggle handler
-  const handleToggle = useCallback(() => {
-    setIsCollapsed(prev => !prev);
-  }, []);
-
   return (
     <aside
       className={`
         theme-sidebar h-full bg-gradient-to-b from-primary-600 via-primary-500 to-primary-400 text-white flex flex-col py-8 px-4 fixed left-0 top-0 z-20 min-h-screen shadow-xl border-r border-primary-700 transition-all duration-300
-        ${isCollapsed ? 'w-16' : 'w-64'}
+        ${sidebarCollapsed ? 'w-16' : 'w-64'}
       `}
       aria-label="Supplier sidebar navigation"
       role="complementary"
@@ -127,16 +141,16 @@ export default function Sidebar() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 12l2 2 4-4" />
           </svg>
         </div>
-        {!isCollapsed && (
+        {!sidebarCollapsed && (
           <span className="text-2xl font-extrabold tracking-tight font-display">Twryd</span>
         )}
       </div>
 
       {/* Toggle Button */}
       <button
-        onClick={handleToggle}
+        onClick={toggleSidebar}
         className="absolute top-4 right-2 p-2 text-white hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
-        aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         tabIndex={0}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,19 +169,19 @@ export default function Sidebar() {
               ${isActive
                 ? 'bg-primary-700 text-white shadow border-l-4 border-white'
                 : 'text-primary-100 hover:bg-primary-400/40 hover:text-white focus:bg-primary-400/60 focus:text-white'}
-              ${isCollapsed ? 'justify-center px-3' : ''}
+              ${sidebarCollapsed ? 'justify-center px-3' : ''}
               `
             }
 
             tabIndex={0}
             aria-label={item.name}
-            title={isCollapsed ? item.name : undefined}
+            title={sidebarCollapsed ? item.name : undefined}
           >
             <span className="w-6 h-6 flex items-center justify-center flex-shrink-0">{item.icon}</span>
-            {!isCollapsed && <span>{item.name}</span>}
+            {!sidebarCollapsed && <span>{item.name}</span>}
             
             {/* Active indicator for collapsed state */}
-            {isCollapsed && currentPath === item.to && (
+            {sidebarCollapsed && currentPath === item.to && (
               <div className="absolute right-1 w-2 h-2 bg-white rounded-full border border-primary-700"></div>
             )}
           </NavLink>
@@ -175,7 +189,7 @@ export default function Sidebar() {
       </nav>
 
       {/* User Info & Logout */}
-      {!isCollapsed && user && (
+      {!sidebarCollapsed && user && (
         <div className="mt-auto pt-6 border-t border-primary-500">
           <div className="flex items-center gap-3 px-6 py-3">
             <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg shadow">

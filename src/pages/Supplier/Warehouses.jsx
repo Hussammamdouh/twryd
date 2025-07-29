@@ -25,10 +25,16 @@ function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+    
+    // Clear error when user starts typing - only if there's an error
+    setErrors(prev => {
+      if (prev[name]) {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      }
+      return prev;
+    });
   };
 
   const validateForm = () => {

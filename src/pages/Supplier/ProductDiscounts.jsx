@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Sidebar from '../../UI/supplier/Sidebar';
-import Topbar from '../../UI/supplier/Topbar';
 import ProductDiscountsTable from '../../UI/supplier/ProductDiscountsTable';
 import Pagination from '../../UI/supplier/Pagination';
 import AddProductDiscountModal from '../../UI/supplier/AddProductDiscountModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { get } from '../../utils/api';
+import { useLayout } from '../../hooks/useLayout';
 
 export default function ProductDiscounts() {
   const [addDiscountOpen, setAddDiscountOpen] = useState(false);
@@ -15,9 +14,12 @@ export default function ProductDiscounts() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  // eslint-disable-next-line no-unused-vars
   const [search, setSearch] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [status, setStatus] = useState('');
   const { token } = useAuth();
+  const { sidebarCollapsed } = useLayout();
 
   // Fetch products
   const fetchProducts = async () => {
@@ -121,24 +123,13 @@ export default function ProductDiscounts() {
 
   return (
     <div className="min-h-screen bg-theme-bg">
-      <Sidebar />
-      <Topbar
-        title="Product Discounts"
-        search={search}
-        onSearch={setSearch}
-        status={status}
-        onStatusChange={setStatus}
-        onAdd={() => setAddDiscountOpen(true)}
-        addButtonText="+ Add Product Discount"
-        searchPlaceholder="Search by product name..."
-      />
-      <main className="pl-64 pt-20 pr-8">
+      <main className={`pt-20 pr-8 transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'}`}>
         <div className="max-w-5xl mx-auto">
           <ProductDiscountsTable 
             productDiscounts={filteredProductDiscounts} 
             loading={loading} 
-            onAction={fetchProductDiscounts} 
-            onAdd={() => setAddDiscountOpen(true)} 
+            onAction={fetchProductDiscounts}
+            onAdd={() => setAddDiscountOpen(true)}
           />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
@@ -146,7 +137,7 @@ export default function ProductDiscounts() {
       <AddProductDiscountModal 
         open={addDiscountOpen} 
         onClose={() => setAddDiscountOpen(false)} 
-        onSuccess={fetchProductDiscounts} 
+        onSuccess={fetchProductDiscounts}
         products={products}
         clients={clients}
       />

@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { post } from '../../../utils/api';
 import { useToast } from '../../../UI/Common/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 export default function ClientLogin() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const invitationToken = searchParams.get('invitation');
+  const [showPassword, setShowPassword] = useState(false);
   const { login, token } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const invitationToken = new URLSearchParams(location.search).get('invitation_token');
 
   // Auto-accept invitation if user is already logged in and has invitation token
   useEffect(() => {
@@ -28,7 +30,15 @@ export default function ClientLogin() {
             navigate('/client/dashboard/invitations');
           }, 1500);
         } catch (err) {
-          toast.show(err.message || 'Failed to accept invitation', 'error');
+          console.error('Error accepting invitation after login:', err);
+          if (err.message.includes('Invalid') || err.message.includes('not found') || err.message.includes('expired')) {
+            toast.show('This invitation link is invalid or has expired. Please contact the supplier for a new invitation.', 'error');
+          } else {
+            toast.show(err.message || 'Failed to accept invitation', 'error');
+          }
+          setTimeout(() => {
+            navigate('/client/dashboard');
+          }, 1000);
         }
       }
     };
@@ -124,14 +134,29 @@ export default function ClientLogin() {
               </span>
               <input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
+                className="theme-input w-full pl-10 pr-12 py-3 rounded-md text-base shadow-sm"
                 placeholder="Enter your password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-theme-text-muted hover:text-theme-text hover:bg-theme-surface transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-card"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  {showPassword ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  )}
+                </svg>
+              </button>
             </div>
           </div>
           <div className="flex justify-between text-sm mt-4">

@@ -83,24 +83,28 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
           </tr>
         </thead>
         <tbody className="bg-white dark:bg-gray-900" role="rowgroup">
-          {clients.map((client) => (
-            <tr
-              key={client.id}
-              className={`border-b border-gray-100 dark:border-gray-800 transition-colors duration-300 ${recentlyUpdated[client.id] ? (actionResult[client.id] === 'success' ? 'ring-2 ring-green-400 bg-green-50 dark:bg-green-900/20' : 'ring-2 ring-red-400 bg-red-50 dark:bg-red-900/20') : ''}`}
-              role="row"
-              tabIndex={0}
-              aria-label={`Client: ${client.client?.name || client.name || client.company_name || 'N/A'}, Email: ${client.client?.email || client.client_email || client.email || 'No email'}`}
-            >
-              <td className="px-4 md:px-6 py-4 whitespace-nowrap">
-                <div>
-                  <div className="font-medium text-gray-900 dark:text-gray-100">
-                    {client.client?.name || client.name || client.company_name || 'N/A'}
+          {clients.map((client) => {
+            // The actual client data is nested under the 'client' property
+            const clientData = client.client || client;
+            
+            return (
+              <tr
+                key={client.id}
+                className={`border-b border-gray-100 dark:border-gray-800 transition-colors duration-300 ${recentlyUpdated[client.id] ? (actionResult[client.id] === 'success' ? 'ring-2 ring-green-400 bg-green-50 dark:bg-green-900/20' : 'ring-2 ring-red-400 bg-red-50 dark:bg-red-900/20') : ''}`}
+                role="row"
+                tabIndex={0}
+                aria-label={`Client: ${clientData.name || clientData.company_name || 'N/A'}, Email: ${clientData.email || clientData.client_email || clientData.contact || 'No email'}`}
+              >
+                <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
+                      {clientData.name || clientData.company_name || 'N/A'}
+                    </div>
+                    <div className="text-gray-500 dark:text-gray-300 text-xs">
+                      {clientData.email || clientData.client_email || clientData.contact || 'No email'}
+                    </div>
                   </div>
-                  <div className="text-gray-500 dark:text-gray-300 text-xs">
-                    {client.client?.email || client.client_email || client.email || 'No email'}
-                  </div>
-                </div>
-              </td>
+                </td>
               <td className="px-4 md:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                 {client.default_discount ? `${client.default_discount}%` : 'No discount'}
               </td>
@@ -122,7 +126,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                   onClick={() => openEditModal(client)}
                   disabled={rowLoading[client.id]}
                   tabIndex={0}
-                  aria-label={`Edit discount for ${client.client?.name || client.name || client.company_name || 'N/A'}`}
+                  aria-label={`Edit discount for ${clientData.name || clientData.company_name || 'N/A'}`}
                 >
                   Edit
                 </button>
@@ -131,7 +135,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                   onClick={() => onRemoveDiscount(client)}
                   disabled={rowLoading[client.id]}
                   tabIndex={0}
-                  aria-label={`Remove discount for ${client.client?.name || client.name || client.company_name || 'N/A'}`}
+                  aria-label={`Remove discount for ${clientData.name || clientData.company_name || 'N/A'}`}
                 >
                   {rowLoading[client.id] ? (
                     <svg className="w-4 h-4 animate-spin text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -151,7 +155,8 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                 )}
               </td>
             </tr>
-          ))}
+          );
+        })}
         </tbody>
       </table>
       <ConfirmActionModal
