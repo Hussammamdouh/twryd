@@ -1,1 +1,0 @@
-import{j as n}from"./index-Cclg67os.js";function o({size:r=16,color:e="border-blue-600"}){return n.jsx("span",{className:`animate-spin inline-block border-2 border-t-transparent rounded-full ${e}`,style:{width:r,height:r}})}export{o as S};
