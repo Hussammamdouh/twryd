@@ -50,13 +50,13 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/login-client"
+              href={import.meta.env.BASE_URL + 'login-client'}
               className="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors text-center"
             >
               Client Login
             </a>
             <a
-              href="/login-supplier"
+              href={import.meta.env.BASE_URL + 'login-supplier'}
               className="px-8 py-3 bg-theme-surface border border-theme-border text-theme-text hover:bg-theme-card font-semibold rounded-lg transition-colors text-center"
             >
               Supplier Login
