@@ -37,7 +37,28 @@ export default function ClientCart() {
   const grouped = useMemo(() => {
     if (!cart || !cart.items) return [];
     
-    // Get all unique suppliers from cart items
+    // If cart has a single supplier (as per your data structure), group all items under that supplier
+    if (cart.supplier && cart.supplier.id) {
+      const supplierGroup = {
+        id: cart.supplier.id,
+        name: cart.supplier.name,
+        email: cart.supplier.email || '',
+        items: cart.items
+      };
+      
+      // Apply filter if set
+      if (supplierFilter) {
+        if (supplierGroup.name.toLowerCase().includes(supplierFilter.toLowerCase()) || 
+            supplierGroup.id === supplierFilter) {
+          return [supplierGroup];
+        }
+        return [];
+      }
+      
+      return [supplierGroup];
+    }
+    
+    // Fallback: Group items by individual supplier (for cases with multiple suppliers)
     const suppliers = new Map();
     cart.items.forEach(item => {
       const supplierId = item.supplier_id || item.supplier?.id || 'unknown';

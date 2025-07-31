@@ -22,6 +22,7 @@ export default function SupplierOrders() {
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, orderId: null, action: null });
   const [recentlyUpdated, setRecentlyUpdated] = useState({});
   const [actionResult, setActionResult] = useState({}); // { [orderId]: 'success' | 'error' }
+  const [expandedOrders, setExpandedOrders] = useState(new Set());
 
   // Fetch orders
   const fetchOrders = async (pageNum = page) => {
@@ -65,6 +66,19 @@ export default function SupplierOrders() {
     const clients = orders.map(order => order.client).filter(Boolean);
     return [...new Map(clients.map(client => [client.id, client])).values()];
   }, [orders]);
+
+  // Toggle order expansion
+  const toggleOrderExpansion = (orderId) => {
+    setExpandedOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
 
   // Handle order status updates
   const handleStatusUpdate = async (orderId, action, data = {}) => {
@@ -350,38 +364,65 @@ export default function SupplierOrders() {
                     </div>
                   )}
 
-                  <div className="mb-6">
-                    <h4 className="font-semibold mb-4 dark:text-white text-lg flex items-center gap-2" id={`order-items-heading-${order.id}`}> 
-                      <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                      </svg>
-                      Order Items
-                    </h4>
-                    <div className="space-y-4" role="list" aria-labelledby={`order-items-heading-${order.id}`}> 
-                      {order.items?.map((item) => (
-                        <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600" tabIndex={0} aria-label={`Product: ${item.product?.name || item.name || 'Unknown Product'}, Quantity: ${item.quantity || 0}`}> 
-                          <div className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                          </div>
-                          <div className="flex-1">
-                            <h5 className="font-semibold dark:text-white text-lg">
-                              {item.product?.name || item.name || 'Unknown Product'}
-                            </h5>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Qty: {item.quantity || 0} × ${parseFloat(item.unit_price || 0).toFixed(2)}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-bold text-lg dark:text-white text-blue-600">
-                              ${parseFloat(item.total || 0).toFixed(2)}
+                  {/* Toggle Products Button */}
+                  <div className="mb-4">
+                    <button
+                      onClick={() => toggleOrderExpansion(order.id)}
+                      className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    >
+                      {expandedOrders.has(order.id) ? (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                          Hide Products
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          Show Products
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Order Items - Hidden by default */}
+                  {expandedOrders.has(order.id) && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-4 dark:text-white text-lg flex items-center gap-2" id={`order-items-heading-${order.id}`}> 
+                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                        Order Items
+                      </h4>
+                      <div className="space-y-4" role="list" aria-labelledby={`order-items-heading-${order.id}`}> 
+                        {order.items?.map((item) => (
+                          <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600" tabIndex={0} aria-label={`Product: ${item.product?.name || item.name || 'Unknown Product'}, Quantity: ${item.quantity || 0}`}> 
+                            <div className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+                              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold dark:text-white text-lg">
+                                {item.product?.name || item.name || 'Unknown Product'}
+                              </h5>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Qty: {item.quantity || 0} × ${parseFloat(item.unit_price || 0).toFixed(2)}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-lg dark:text-white text-blue-600">
+                                ${parseFloat(item.total || 0).toFixed(2)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Link

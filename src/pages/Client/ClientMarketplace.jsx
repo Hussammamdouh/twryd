@@ -20,6 +20,7 @@ export default function ClientMarketplace() {
   const [filterCategory, setFilterCategory] = useState('');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
+  const [quantities, setQuantities] = useState({});
 
   // Fetch categories
   useEffect(() => {
@@ -107,18 +108,32 @@ export default function ClientMarketplace() {
 
   // Quick Add to Cart
   const handleAddToCart = async (product) => {
+    const quantity = quantities[product.id] || 1;
+    if (quantity < 1) {
+      toast.show('Quantity must be at least 1', 'error');
+      return;
+    }
+    
     setCartLoading(l => ({ ...l, [product.id]: true }));
     try {
       await post('/api/client/cart/items', {
         token,
-        data: { product_id: product.id, quantity: 1 },
+        data: { product_id: product.id, quantity: quantity },
       });
-      toast.show('Added to cart!', 'success');
+      toast.show(`Added ${quantity} ${quantity === 1 ? 'item' : 'items'} to cart!`, 'success');
+      // Reset quantity after successful add
+      setQuantities(prev => ({ ...prev, [product.id]: 1 }));
     } catch (err) {
       toast.show(err.message || 'Failed to add to cart', 'error');
     } finally {
       setCartLoading(l => ({ ...l, [product.id]: false }));
     }
+  };
+
+  // Handle quantity change
+  const handleQuantityChange = (productId, value) => {
+    const numValue = parseInt(value) || 1;
+    setQuantities(prev => ({ ...prev, [productId]: Math.max(1, numValue) }));
   };
 
   // UI
@@ -215,16 +230,28 @@ export default function ClientMarketplace() {
               <div className="text-xs text-gray-500 mb-2">
                 by {product.supplier_name || product.supplier?.name || 'Unknown'}
               </div>
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded mt-auto disabled:opacity-60"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddToCart(product);
-                }}
-                disabled={cartLoading[product.id]}
-              >
-                {cartLoading[product.id] ? 'Adding...' : 'Add to Cart'}
-              </button>
+              
+              {/* Quantity Input and Add to Cart */}
+              <div className="flex items-center gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
+                <input
+                  type="number"
+                  min="1"
+                  value={quantities[product.id] || 1}
+                  onChange={(e) => handleQuantityChange(product.id, e.target.value)}
+                  className="w-16 px-2 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-sm focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <button
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded disabled:opacity-60 text-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(product);
+                  }}
+                  disabled={cartLoading[product.id]}
+                >
+                  {cartLoading[product.id] ? 'Adding...' : 'Add to Cart'}
+                </button>
+              </div>
             </div>
           ))}
         </div>

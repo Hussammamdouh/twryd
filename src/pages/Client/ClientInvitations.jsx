@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { get, post } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
@@ -289,15 +289,26 @@ export default function ClientInvitations() {
       );
     } else if (invitation.status === 'accepted' || invitation.status === 'active') {
       return (
-        <button
-          onClick={() => handleVisitStore(invitation)}
-          className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors flex items-center gap-1"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-          Visit Store
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => handleVisitStore(invitation)}
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Visit Store
+          </button>
+          <Link
+            to={`/client/dashboard/orders?supplier=${invitation.supplier_id || invitation.supplier?.id}`}
+            className="text-purple-600 hover:text-purple-700 font-medium text-sm transition-colors flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            View Orders
+          </Link>
+        </div>
       );
     } else if (invitation.status === 'rejected') {
       return (

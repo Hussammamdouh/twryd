@@ -35,7 +35,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter basename="/twryd">
+        <BrowserRouter>
           <Toaster 
             position="top-right" 
             toastOptions={{ 

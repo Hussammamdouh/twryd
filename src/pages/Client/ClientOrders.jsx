@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { get } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
 import Spinner from '../../UI/supplier/Spinner';
+import Pagination from '../../UI/supplier/Pagination';
 
 export default function ClientOrders() {
   const { token } = useAuth();
   const toast = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [supplierFilter, setSupplierFilter] = useState(searchParams.get('supplier') || '');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedOrders, setExpandedOrders] = useState(new Set());
+  const itemsPerPage = 10;
 
   // Fetch orders
   const fetchOrders = async () => {
@@ -29,6 +36,81 @@ export default function ClientOrders() {
     fetchOrders();
     // eslint-disable-next-line
   }, []);
+
+  // Filter orders by status and supplier
+  const filteredOrders = useMemo(() => {
+    let filtered = orders;
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(order => 
+        order.status?.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+
+    // Supplier filter
+    if (supplierFilter) {
+      // Check if supplierFilter is a numeric ID (from URL parameter)
+      const isNumericId = !isNaN(supplierFilter) && supplierFilter !== '';
+      
+      if (isNumericId) {
+        // Filter by supplier ID
+        filtered = filtered.filter(order => 
+          order.supplier?.id?.toString() === supplierFilter ||
+          order.supplier_id?.toString() === supplierFilter
+        );
+      } else {
+        // Filter by supplier name or email (from dropdown)
+        filtered = filtered.filter(order => 
+          order.supplier?.name?.toLowerCase().includes(supplierFilter.toLowerCase()) ||
+          order.supplier?.email?.toLowerCase().includes(supplierFilter.toLowerCase())
+        );
+      }
+    }
+
+    return filtered;
+  }, [orders, statusFilter, supplierFilter]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Toggle order expansion
+  const toggleOrderExpansion = (orderId) => {
+    setExpandedOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
+
+  // Get unique suppliers for filter dropdown
+  const uniqueSuppliers = useMemo(() => {
+    const suppliers = new Set();
+    orders.forEach(order => {
+      if (order.supplier?.name) {
+        suppliers.add(order.supplier.name);
+      }
+    });
+    return Array.from(suppliers).sort();
+  }, [orders]);
+
+  // Handle supplier filter change and update URL
+  const handleSupplierFilterChange = (supplierName) => {
+    setSupplierFilter(supplierName);
+    if (supplierName) {
+      setSearchParams({ supplier: supplierName });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -120,148 +202,275 @@ export default function ClientOrders() {
         </Link>
       </div>
 
-      {orders.length === 0 ? (
+      {/* Status Tabs */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'all'
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            All Orders ({orders.length})
+          </button>
+          <button
+            onClick={() => setStatusFilter('pending')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'pending'
+                ? 'bg-yellow-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            Pending ({orders.filter(o => o.status?.toLowerCase() === 'pending').length})
+          </button>
+          <button
+            onClick={() => setStatusFilter('processing')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'processing'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            Processing ({orders.filter(o => o.status?.toLowerCase() === 'processing').length})
+          </button>
+          <button
+            onClick={() => setStatusFilter('delivered')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'delivered'
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            Delivered ({orders.filter(o => o.status?.toLowerCase() === 'delivered').length})
+          </button>
+          <button
+            onClick={() => setStatusFilter('cancelled')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'cancelled'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            Cancelled ({orders.filter(o => o.status?.toLowerCase() === 'cancelled').length})
+          </button>
+        </div>
+      </div>
+
+      {/* Supplier Filter */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Filter by Supplier
+            </label>
+            <select
+              value={supplierFilter}
+              onChange={(e) => handleSupplierFilterChange(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
+            >
+              <option value="">All Suppliers</option>
+              {uniqueSuppliers.map(supplier => (
+                <option key={supplier} value={supplier}>{supplier}</option>
+              ))}
+            </select>
+          </div>
+          {supplierFilter && (
+            <button
+              onClick={() => handleSupplierFilterChange('')}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors"
+            >
+              Clear Filter
+            </button>
+          )}
+        </div>
+      </div>
+
+      {paginatedOrders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24">
           <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">No orders yet</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-4">Start shopping to see your orders here.</p>
-          <Link
-            to="/client/dashboard/my-marketplace"
-            className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition-all duration-200"
-          >
-            Browse Products
-          </Link>
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">No orders found</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
+            {statusFilter !== 'all' || supplierFilter 
+              ? 'Try adjusting your filters to see more orders.' 
+              : 'Start shopping to see your orders here.'}
+          </p>
+          {!statusFilter && !supplierFilter && (
+            <Link
+              to="/client/dashboard/my-marketplace"
+              className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition-all duration-200"
+            >
+              Browse Products
+            </Link>
+          )}
         </div>
       ) : (
-        <div className="space-y-8">
-          {orders.map((order) => (
-            <div key={order.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              {/* Order Header */}
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                  <div className="flex items-center gap-4 mb-4 md:mb-0">
+        <>
+          <div className="space-y-8">
+            {paginatedOrders.map((order) => (
+              <div key={order.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                {/* Order Header */}
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                    <div className="flex items-center gap-4 mb-4 md:mb-0">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                            Order #{order.order_number || order.id}
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {formatDate(order.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                      <span className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ${getStatusColor(order.status)}`}>
+                        {getStatusIcon(order.status)}
+                        {order.status || 'Unknown'}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                        ${parseFloat(order.total || 0).toFixed(2)}
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {order.items?.length || 0} items
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Supplier Information */}
+                {order.supplier && (
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                         </svg>
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                          Order #{order.order_number || order.id}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          {formatDate(order.created_at)}
-                        </p>
+                        <h4 className="font-semibold text-blue-900 dark:text-blue-100">Supplier: {order.supplier.name}</h4>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">{order.supplier.email}</p>
+                        {order.supplier.phone && (
+                          <p className="text-sm text-blue-700 dark:text-blue-300">Phone: {order.supplier.phone}</p>
+                        )}
                       </div>
                     </div>
-                    <span className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ${getStatusColor(order.status)}`}>
-                      {getStatusIcon(order.status)}
-                      {order.status || 'Unknown'}
-                    </span>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                      ${parseFloat(order.total || 0).toFixed(2)}
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {order.items?.length || 0} items
-                    </p>
-                  </div>
-                </div>
-              </div>
+                )}
 
-              {/* Supplier Information */}
-              {order.supplier && (
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
+                {/* Order Content */}
+                <div className="p-6">
+                  {/* Toggle Products Button */}
+                  <div className="mb-4">
+                    <button
+                      onClick={() => toggleOrderExpansion(order.id)}
+                      className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                    >
+                      {expandedOrders.has(order.id) ? (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                          Hide Products
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          Show Products
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Order Items - Hidden by default */}
+                  {expandedOrders.has(order.id) && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-4 text-gray-900 dark:text-white text-lg flex items-center gap-2">
+                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                        Order Items
+                      </h4>
+                      <div className="space-y-4">
+                        {order.items?.map((item) => (
+                          <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                            <div className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+                              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-gray-900 dark:text-white text-lg">
+                                {item.product?.name || item.name || 'Unknown Product'}
+                              </h5>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Qty: {item.quantity || 0} × ${parseFloat(item.unit_price || 0).toFixed(2)}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-lg text-primary-600 dark:text-primary-400">
+                                ${parseFloat(item.total || 0).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-blue-900 dark:text-blue-100">Supplier: {order.supplier.name}</h4>
-                      <p className="text-sm text-blue-700 dark:text-blue-300">{order.supplier.email}</p>
-                      {(() => {
-                        return null;
-                      })()}
-                      {order.supplier.phone && (
-                        <p className="text-sm text-blue-700 dark:text-blue-300">Phone: {order.supplier.phone}</p>
+                  )}
+
+                  {/* Order Actions */}
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Link
+                        to={`/client/dashboard/order-confirmation/${order.id}`}
+                        className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 text-center flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View Details
+                      </Link>
+                      {order.status?.toLowerCase() === 'pending' && (
+                        <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Request Cancellation
+                        </button>
                       )}
                     </div>
                   </div>
                 </div>
-              )}
-
-              {/* Order Content */}
-              <div className="p-6">
-                {/* Order Items */}
-                <div className="mb-6">
-                  <h4 className="font-semibold mb-4 text-gray-900 dark:text-white text-lg flex items-center gap-2">
-                    <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                    Order Items
-                  </h4>
-                  <div className="space-y-4">
-                    {order.items?.map((item) => (
-                      <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
-                        <div className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
-                          <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          <h5 className="font-semibold text-gray-900 dark:text-white text-lg">
-                            {item.product?.name || item.name || 'Unknown Product'}
-                          </h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Qty: {item.quantity || 0} × ${parseFloat(item.unit_price || 0).toFixed(2)}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-lg text-primary-600 dark:text-primary-400">
-                            ${parseFloat(item.total || 0).toFixed(2)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Order Actions */}
-                <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Link
-                      to={`/client/dashboard/order-confirmation/${order.id}`}
-                      className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 text-center flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      View Details
-                    </Link>
-                    {order.status?.toLowerCase() === 'pending' && (
-                      <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Request Cancellation
-                      </button>
-                    )}
-                  </div>
-                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );
