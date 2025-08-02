@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { post } from '../../../utils/api';
 import { useToast } from '../../../UI/Common/ToastContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const SupplierResetPassword = () => {
   const [code, setCode] = useState('');
@@ -13,21 +14,22 @@ const SupplierResetPassword = () => {
   const location = useLocation();
   const email = location.state?.email || '';
   const toast = useToast();
+  const { t } = useLanguage();
 
   // Password validation function
   const validatePassword = (password) => {
     const errors = [];
     if (password.length < 8) {
-      errors.push('Password must be at least 8 characters long');
+      errors.push(t('supplier_auth.password_min_length'));
     }
     if (!/[A-Z]/.test(password)) {
-      errors.push('Password must contain at least one uppercase letter');
+      errors.push(t('supplier_auth.password_uppercase'));
     }
     if (!/[a-z]/.test(password)) {
-      errors.push('Password must contain at least one lowercase letter');
+      errors.push(t('supplier_auth.password_lowercase'));
     }
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('Password must contain at least one symbol');
+      errors.push(t('supplier_auth.password_symbol'));
     }
     return errors;
   };
@@ -39,7 +41,7 @@ const SupplierResetPassword = () => {
 
     // Validate reset code
     if (!code.trim()) {
-      setError('Reset code is required');
+      setError(t('supplier_auth.code_required'));
       setLoading(false);
       return;
     }
@@ -54,7 +56,7 @@ const SupplierResetPassword = () => {
 
     // Check password confirmation
     if (password !== confirmPassword) {
-      setError('Password confirmation does not match');
+      setError(t('supplier_auth.password_confirmation_mismatch'));
       setLoading(false);
       return;
     }
@@ -68,11 +70,11 @@ const SupplierResetPassword = () => {
           password_confirmation: confirmPassword 
         } 
       });
-      toast.show('Password reset successful!', 'success');
+      toast.show(t('supplier_auth.reset_successful'), 'success');
       navigate('/login-supplier');
     } catch (err) {
-      setError(err.message || 'Failed to reset password');
-      toast.show(err.message || 'Failed to reset password', 'error');
+      setError(err.message || t('supplier_auth.reset_failed'));
+      toast.show(err.message || t('supplier_auth.reset_failed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -82,15 +84,15 @@ const SupplierResetPassword = () => {
     <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
       <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
-          Reset Password
+          {t('supplier_auth.reset_password_title')}
         </h2>
         <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
         <p className="text-theme-text-secondary text-center mb-6">
-          Enter the reset code sent to your email and your new password.
+          {t('supplier_auth.reset_password_description')}
         </p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="code" className="text-base font-medium text-theme-text">Reset Code</label>
+            <label htmlFor="code" className="text-base font-medium text-theme-text">{t('supplier_auth.reset_code')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -100,7 +102,7 @@ const SupplierResetPassword = () => {
                 type="text"
                 required
                 className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
-                placeholder="Enter reset code"
+                placeholder={t('supplier_auth.reset_code_placeholder')}
                 value={code}
                 onChange={e => setCode(e.target.value)}
                 disabled={loading}
@@ -110,7 +112,7 @@ const SupplierResetPassword = () => {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-base font-medium text-theme-text">New Password</label>
+            <label htmlFor="password" className="text-base font-medium text-theme-text">{t('supplier_auth.new_password')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Z"/></svg>
@@ -121,7 +123,7 @@ const SupplierResetPassword = () => {
                 autoComplete="new-password"
                 required
                 className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
-                placeholder="Enter new password"
+                placeholder={t('supplier_auth.new_password_placeholder')}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 disabled={loading}
@@ -130,11 +132,11 @@ const SupplierResetPassword = () => {
               />
             </div>
             <p className="text-xs text-theme-text-muted mt-1">
-              Password must be at least 8 characters with uppercase, lowercase, and symbol
+              {t('supplier_auth.password_requirements')}
             </p>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="confirmPassword" className="text-base font-medium text-theme-text">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="text-base font-medium text-theme-text">{t('supplier_auth.confirm_new_password')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Z"/></svg>
@@ -145,7 +147,7 @@ const SupplierResetPassword = () => {
                 autoComplete="new-password"
                 required
                 className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
-                placeholder="Confirm new password"
+                placeholder={t('supplier_auth.confirm_new_password_placeholder')}
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 disabled={loading}
@@ -158,7 +160,7 @@ const SupplierResetPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            aria-label="Reset password"
+            aria-label={t('supplier_auth.reset_password_button')}
             className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
@@ -167,11 +169,11 @@ const SupplierResetPassword = () => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             )}
-            {loading ? 'Resetting...' : 'Reset Password'}
+            {loading ? t('supplier_auth.resetting') : t('supplier_auth.reset_password_button')}
           </button>
           <div className="text-center">
             <Link to="/login-supplier" className="text-primary-600 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 rounded">
-              Back to Login
+              {t('supplier_auth.back_to_login')}
             </Link>
           </div>
     </form>

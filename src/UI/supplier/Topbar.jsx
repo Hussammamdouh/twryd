@@ -1,6 +1,7 @@
 import React from 'react';
 import ThemeToggle from '../../components/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
+import LanguageSwitcher from '../Common/LanguageSwitcher';
 
 export default function Topbar({ 
   title, 
@@ -20,6 +21,8 @@ export default function Topbar({
     <header className="theme-topbar flex items-center justify-between h-16 px-8 fixed left-64 top-0 right-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
       <h1 className="text-2xl font-bold text-theme-text tracking-tight drop-shadow-sm flex items-center h-full">{title}</h1>
       <div className="flex items-center gap-4 h-full">
+        {/* Language Switcher */}
+        <LanguageSwitcher variant="dropdown" size="small" />
         {/* Theme Toggle */}
         <ThemeToggle variant="button" />
         <div className="relative flex items-center h-full">

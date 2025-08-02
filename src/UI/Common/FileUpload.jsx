@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const FileUpload = ({
   id,
@@ -15,6 +16,7 @@ const FileUpload = ({
   ariaInvalid,
   ariaDescribedby
 }) => {
+  const { t } = useLanguage();
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragError, setDragError] = useState('');
@@ -26,7 +28,7 @@ const FileUpload = ({
 
     // Validate file size
     if (file.size > maxSize) {
-      setDragError(`File size must be less than ${Math.round(maxSize / 1024 / 1024)}MB`);
+      setDragError(t('file_upload.file_size_error', { size: Math.round(maxSize / 1024 / 1024) }));
       return;
     }
 
@@ -38,7 +40,7 @@ const FileUpload = ({
       }
       return file.type.match(new RegExp(cleanType.replace('*', '.*')));
     })) {
-      setDragError(`Please select a valid file type: ${accept}`);
+      setDragError(t('file_upload.file_type_error', { types: accept }));
       return;
     }
 
@@ -107,9 +109,9 @@ const FileUpload = ({
   };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return `0 ${t('file_upload.bytes')}`;
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = [t('file_upload.bytes'), t('file_upload.kb'), t('file_upload.mb'), t('file_upload.gb')];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
@@ -198,7 +200,7 @@ const FileUpload = ({
                   removeFile();
                 }}
                 className="flex-shrink-0 p-1 text-theme-text-muted hover:text-red-500 transition-colors"
-                title="Remove file"
+                title={t('file_upload.remove_file')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -214,13 +216,13 @@ const FileUpload = ({
                 </svg>
               </div>
               <p className="text-sm font-medium text-theme-text mb-1">
-                {isDragOver ? 'Drop your file here' : 'Click to upload or drag and drop'}
+                {isDragOver ? t('file_upload.drop_here') : t('file_upload.click_to_upload')}
               </p>
               <p className="text-xs text-theme-text-muted">
-                {accept ? `Accepted formats: ${accept}` : 'All file types accepted'}
+                {accept ? t('file_upload.accepted_formats', { formats: accept }) : t('file_upload.all_formats_accepted')}
               </p>
               <p className="text-xs text-theme-text-muted mt-1">
-                Max size: {Math.round(maxSize / 1024 / 1024)}MB
+                {t('file_upload.max_size', { size: Math.round(maxSize / 1024 / 1024) })}
               </p>
             </div>
           )}

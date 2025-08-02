@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { post } from '../../../utils/api';
 import { useToast } from '../../../UI/Common/ToastContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const ClientForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ const ClientForgotPassword = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,11 +18,11 @@ const ClientForgotPassword = () => {
     setError('');
     try {
       await post('/api/client/forgot-password', { data: { email_or_phone: email } });
-      toast.show('Password reset link sent!', 'success');
+      toast.show(t('client_auth.reset_link_sent'), 'success');
       navigate('/reset-password-client', { state: { email } });
     } catch (err) {
-      setError(err.message || 'Failed to send reset link');
-      toast.show(err.message || 'Failed to send reset link', 'error');
+      setError(err.message || t('client_auth.reset_link_failed'));
+      toast.show(err.message || t('client_auth.reset_link_failed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -30,15 +32,15 @@ const ClientForgotPassword = () => {
     <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
       <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
-          Forgot Password
+          {t('client_auth.forgot_password_title')}
         </h2>
         <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
         <p className="text-theme-text-secondary text-center mb-6">
-          Enter your email address and we'll send you a link to reset your password.
+          {t('client_auth.forgot_password_description')}
         </p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium text-theme-text">Email Address</label>
+            <label htmlFor="email" className="text-base font-medium text-theme-text">{t('client_auth.email_address')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/></svg>
@@ -49,7 +51,7 @@ const ClientForgotPassword = () => {
                 autoComplete="email"
                 required
                 className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
-                placeholder="Enter your email address"
+                placeholder={t('client_auth.email_placeholder')}
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 disabled={loading}
@@ -62,7 +64,7 @@ const ClientForgotPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            aria-label="Send reset link"
+            aria-label={t('client_auth.send_reset_link')}
             className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
@@ -71,11 +73,11 @@ const ClientForgotPassword = () => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             )}
-            {loading ? 'Sending...' : 'Send Reset Link'}
+            {loading ? t('client_auth.sending') : t('client_auth.send_reset_link')}
           </button>
           <div className="text-center">
             <Link to="/login-client" className="text-primary-600 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 rounded">
-              Back to Login
+              {t('client_auth.back_to_login')}
             </Link>
           </div>
     </form>

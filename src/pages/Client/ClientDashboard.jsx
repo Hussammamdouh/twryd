@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import ThemeToggle from '../../components/ThemeToggle';
+import LanguageSwitcher from '../../UI/Common/LanguageSwitcher';
 
 // Lazy load components for better performance
 const ClientInvitations = React.lazy(() => import('./ClientInvitations'));
@@ -240,6 +241,8 @@ function ClientTopbar({ title, sidebarOpen, setSidebarOpen }) {
             />
           </div>
 
+          {/* Language Switcher */}
+          <LanguageSwitcher variant="dropdown" size="small" />
           {/* Theme Toggle */}
           <ThemeToggle variant="button" />
           

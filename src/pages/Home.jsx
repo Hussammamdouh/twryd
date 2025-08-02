@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useToast } from '../UI/Common/ToastContext';
 import ThemeToggle from '../components/ThemeToggle';
+import LanguageSwitcher from '../UI/Common/LanguageSwitcher';
 
 export default function Home() {
   const { token, logout } = useAuth();
@@ -21,6 +22,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-theme-text">Twryd</h1>
           <div className="flex items-center gap-4">
+            <LanguageSwitcher variant="dropdown" size="small" />
             <ThemeToggle variant="dropdown" />
             {token && (
               <button

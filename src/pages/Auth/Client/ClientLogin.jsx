@@ -4,6 +4,7 @@ import { post } from '../../../utils/api';
 import { useToast } from '../../../UI/Common/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function ClientLogin() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
@@ -14,6 +15,7 @@ export default function ClientLogin() {
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
   const invitationToken = new URLSearchParams(location.search).get('invitation_token');
 
   // Auto-accept invitation if user is already logged in and has invitation token
@@ -25,16 +27,16 @@ export default function ClientLogin() {
             token, 
             data: { token: invitationToken } 
           });
-          toast.show('Invitation accepted successfully!', 'success');
+          toast.show(t('client_auth.invitation_accepted'), 'success');
           setTimeout(() => {
             navigate('/client/dashboard/invitations');
           }, 1500);
         } catch (err) {
           console.error('Error accepting invitation after login:', err);
           if (err.message.includes('Invalid') || err.message.includes('not found') || err.message.includes('expired')) {
-            toast.show('This invitation link is invalid or has expired. Please contact the supplier for a new invitation.', 'error');
+            toast.show(t('client_auth.invitation_invalid_expired'), 'error');
           } else {
-            toast.show(err.message || 'Failed to accept invitation', 'error');
+            toast.show(err.message || t('client_auth.invitation_failed'), 'error');
           }
           setTimeout(() => {
             navigate('/client/dashboard');
@@ -54,7 +56,7 @@ export default function ClientLogin() {
       
       if (data.data && data.data.token && data.data.client) {
         login(data.data.token, { ...data.data.client, role: 'client' });
-        toast.show('Login successful!', 'success');
+        toast.show(t('client_auth.login_successful'), 'success');
         
         // If there's an invitation token, accept it after login
         if (invitationToken) {
@@ -64,16 +66,16 @@ export default function ClientLogin() {
               token: data.data.token, 
               data: { token: invitationToken } 
             });
-            toast.show('Invitation accepted successfully!', 'success');
+            toast.show(t('client_auth.invitation_accepted'), 'success');
             setTimeout(() => {
               navigate('/client/dashboard/invitations');
             }, 1500);
           } catch (err) {
             console.error('Error accepting invitation after login:', err);
             if (err.message.includes('Invalid') || err.message.includes('not found') || err.message.includes('expired')) {
-              toast.show('This invitation link is invalid or has expired. Please contact the supplier for a new invitation.', 'error');
+              toast.show(t('client_auth.invitation_invalid_expired'), 'error');
             } else {
-              toast.show(err.message || 'Failed to accept invitation', 'error');
+              toast.show(err.message || t('client_auth.invitation_failed'), 'error');
             }
             setTimeout(() => {
               navigate('/client/dashboard');
@@ -84,10 +86,10 @@ export default function ClientLogin() {
           setTimeout(() => navigate('/client/dashboard'), 1000);
         }
       } else {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || t('client_auth.login_failed'));
       }
     } catch (err) {
-      toast.show(err.message, 'error');
+      toast.show(err.message || t('client_auth.login_failed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -97,19 +99,19 @@ export default function ClientLogin() {
     <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
       <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
-          Client Login
+          {t('client_auth.login_title')}
         </h2>
         {invitationToken && (
           <div className="w-full mb-4 p-3 bg-primary-50 border border-primary-200 rounded-lg dark:bg-primary-900/30 dark:border-primary-700">
             <p className="text-sm text-primary-800 dark:text-primary-200">
-              <strong>Invitation detected!</strong> After login, your invitation will be automatically accepted.
+              <strong>{t('client_auth.invitation_detected')}</strong> {t('client_auth.invitation_auto_accept')}
             </p>
           </div>
         )}
         <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-7" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="emailOrPhone" className="text-base font-medium text-theme-text">Email or Phone</label>
+            <label htmlFor="emailOrPhone" className="text-base font-medium text-theme-text">{t('client_auth.email_or_phone')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/></svg>
@@ -120,14 +122,14 @@ export default function ClientLogin() {
                 autoComplete="username"
                 required
                 className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
-                placeholder="Enter your email or phone"
+                placeholder={t('client_auth.email_or_phone_placeholder')}
                 value={emailOrPhone}
                 onChange={e => setEmailOrPhone(e.target.value)}
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-base font-medium text-theme-text">Password</label>
+            <label htmlFor="password" className="text-base font-medium text-theme-text">{t('client_auth.password')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Z"/></svg>
@@ -138,7 +140,7 @@ export default function ClientLogin() {
                 autoComplete="current-password"
                 required
                 className="theme-input w-full pl-10 pr-12 py-3 rounded-md text-base shadow-sm"
-                placeholder="Enter your password"
+                placeholder={t('client_auth.password_placeholder')}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
               />
@@ -146,8 +148,8 @@ export default function ClientLogin() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-theme-text-muted hover:text-theme-text hover:bg-theme-surface transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-card"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                title={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? t('client_auth.hide_password') : t('client_auth.show_password')}
+                title={showPassword ? t('client_auth.hide_password') : t('client_auth.show_password')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   {showPassword ? (
@@ -160,12 +162,12 @@ export default function ClientLogin() {
             </div>
           </div>
           <div className="flex justify-between text-sm mt-4">
-            <Link to="/forgot-password-client" className="text-primary-600 hover:underline">Forgot Password?</Link>
+            <Link to="/forgot-password-client" className="text-primary-600 hover:underline">{t('client_auth.forgot_password')}</Link>
           </div>
           <button
             type="submit"
             disabled={loading}
-            aria-label="Login"
+            aria-label={t('client_auth.login_button')}
             className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
           >
             {loading && (
@@ -174,7 +176,7 @@ export default function ClientLogin() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
               </svg>
             )}
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? t('client_auth.logging_in') : t('client_auth.login_button')}
           </button>
         </form>
       </div>
