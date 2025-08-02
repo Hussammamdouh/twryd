@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { get, post, put, del } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import Modal from '../../UI/Common/Modal';
 import ConfirmModal from '../../UI/supplier/ConfirmModal';
 
@@ -19,6 +20,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const toast = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (open) {
@@ -54,13 +56,13 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
   const validateForm = () => {
     const newErrors = {};
     if (!form.name.trim()) {
-      newErrors.name = 'Area name is required';
+      newErrors.name = t('areas.name') + ' ' + t('form.required').toLowerCase();
     }
     if (!form.governorate_id) {
-      newErrors.governorate_id = 'Please select a governorate';
+      newErrors.governorate_id = t('areas.select_governorate');
     }
     if (!form.polygon || form.polygon.length < 3) {
-      newErrors.polygon = 'At least 3 polygon points are required';
+      newErrors.polygon = t('areas.polygon_points') + ' ' + t('form.required').toLowerCase();
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,7 +75,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
     setLoading(true);
     try {
       await onSubmit(form);
-      toast.show(isEdit ? 'Area updated successfully!' : 'Area created successfully!', 'success');
+      toast.show(isEdit ? t('areas.updated') : t('areas.created'), 'success');
       onClose();
     } catch (err) {
       toast.show(err.message || 'Failed to submit', 'error');
@@ -83,11 +85,11 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Area' : 'Add New Area'} size="large">
+    <Modal open={open} onClose={onClose} title={isEdit ? t('modal.edit_area') : t('modal.add_area')} size="large">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto" noValidate>
           <div>
             <label htmlFor="name" className="block text-sm font-semibold text-theme-text mb-1">
-              Area Name <span className="text-red-500">*</span>
+              {t('areas.name')} <span className="text-red-500">*</span>
             </label>
             <input 
               id="name"
@@ -101,7 +103,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
                   ? 'border-red-300 bg-red-50 dark:bg-red-900/30 focus:ring-red-400 focus:border-red-400' 
                   : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
               }`}
-              placeholder="Enter area name"
+              placeholder={t('form.placeholder.area_name')}
               aria-invalid={!!errors.name}
               aria-describedby={errors.name ? 'name-error' : undefined}
             />
@@ -117,7 +119,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
         
           <div>
             <label htmlFor="governorate_id" className="block text-sm font-semibold text-theme-text mb-1">
-              Governorate <span className="text-red-500">*</span>
+              {t('areas.governorate')} <span className="text-red-500">*</span>
             </label>
             <select
               id="governorate_id"
@@ -133,7 +135,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
               aria-invalid={!!errors.governorate_id}
               aria-describedby={errors.governorate_id ? 'governorate-error' : undefined}
             >
-              <option value="">Select Governorate</option>
+              <option value="">{t('areas.select_governorate')}</option>
               {governates.map(g => (
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
@@ -150,7 +152,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
 
           <div>
             <label className="block text-sm font-semibold text-theme-text mb-1">
-              Polygon Coordinates <span className="text-red-500">*</span>
+              {t('areas.polygon_points')} <span className="text-red-500">*</span>
             </label>
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
               Default coordinates are provided. For production, implement a map interface to set coordinates.
@@ -180,7 +182,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
               disabled={loading}
               className="flex-1 py-2 px-4 rounded-lg font-semibold transition-all duration-200 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50"
             >
-              Cancel
+              {t('form.cancel')}
             </button>
             <button 
               type="submit" 
@@ -193,7 +195,7 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
               )}
-              {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Area')}
+              {loading ? (isEdit ? t('form.save') + '...' : t('form.create') + '...') : (isEdit ? t('form.save') + ' ' + t('common.changes') : t('form.create') + ' ' + t('nav.areas').slice(0, -1))}
             </button>
           </div>
         </form>
@@ -203,19 +205,20 @@ function AreaFormModal({ open, onClose, onSubmit, initialData, isEdit, governate
 
 export default function Areas() {
   const { token } = useAuth();
+  const toast = useToast();
+  const { t } = useLanguage();
   const [areas, setAreas] = useState([]);
   const [governates, setGovernates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedGovernate, setSelectedGovernate] = useState('');
-  const [actionLoading, setActionLoading] = useState({});
-  const toast = useToast();
+  const [search, setSearch] = useState('');
+  const [actionLoading, setActionLoading] = useState({ add: false, edit: false, delete: false });
 
   // Fetch governates and areas
   const fetchAll = async (governorateId) => {
@@ -286,12 +289,12 @@ export default function Areas() {
     setDeleteLoading(true);
     try {
       await del(`/api/v1/location/admin/areas/${deleteTarget.id}`, { token });
-      toast.show('Area deleted successfully!', 'success');
+      toast.show(t('areas.deleted'), 'success');
       setDeleteModalOpen(false);
       setDeleteTarget(null);
       await fetchAll(selectedGovernate);
     } catch (err) {
-      toast.show(err.message || 'Failed to delete area', 'error');
+      toast.show(err.message || t('messages.failed_to_delete'), 'error');
     } finally {
       setDeleteLoading(false);
     }
@@ -300,12 +303,13 @@ export default function Areas() {
   // Search
   const filteredAreas = useMemo(() => {
     return areas.filter((a) => {
+      const governorateName = governates.find(g => g.id === a.governorate_id)?.name || '';
       const matchesSearch = !search || 
         (a.name && a.name.toLowerCase().includes(search.toLowerCase())) || 
-        (a.governorate?.name && a.governorate.name.toLowerCase().includes(search.toLowerCase()));
+        (governorateName && governorateName.toLowerCase().includes(search.toLowerCase()));
       return matchesSearch;
     });
-  }, [areas, search]);
+  }, [areas, search, governates]);
 
   const handleSearch = (value) => {
     setSearch(value);
@@ -323,11 +327,11 @@ export default function Areas() {
             </svg>
           </div>
           <div>
-            <span className="text-gray-900 dark:text-white">Areas</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Management</span>
+            <span className="text-gray-900 dark:text-white">{t('areas.title')}</span>
+            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">{t('common.management')}</span>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">Manage delivery areas and their geographic boundaries</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">{t('areas.subtitle')}</p>
       </div>
 
       {/* Search and Filter Controls */}
@@ -343,11 +347,11 @@ export default function Areas() {
               </span>
               <input
                 type="text"
-                placeholder="Search areas by name or governorate..."
+                placeholder={t('areas.search_placeholder')}
                 className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
-                aria-label="Search areas"
+                aria-label={t('areas.search_placeholder')}
               />
             </div>
           </div>
@@ -357,7 +361,7 @@ export default function Areas() {
             onChange={handleGovernateChange}
             aria-label="Filter by governorate"
           >
-            <option value="">All Governorates</option>
+            <option value="">{t('areas.all_governorates')}</option>
             {governates.map(g => (
               <option key={g.id} value={g.id}>{g.name}</option>
             ))}
@@ -373,14 +377,14 @@ export default function Areas() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
-                Adding...
+                {t('areas.adding')}
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Add Area
+                {t('areas.add')}
               </>
             )}
           </button>
@@ -393,10 +397,10 @@ export default function Areas() {
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Governorate</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Polygon Points</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('areas.table_name')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('areas.table_governorate')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('areas.table_polygon_points')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('areas.table_actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -408,7 +412,7 @@ export default function Areas() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                       </svg>
-                      <span className="text-gray-500 dark:text-gray-400 font-medium">Loading areas...</span>
+                      <span className="text-gray-500 dark:text-gray-400 font-medium">{t('areas.loading')}</span>
                     </div>
                   </td>
                 </tr>
@@ -432,12 +436,12 @@ export default function Areas() {
                       </svg>
                       <div>
                         <span className="text-gray-500 dark:text-gray-400 font-medium">
-                          {selectedGovernate === '' ? 'Select a governorate to view areas' : 'No areas found'}
+                          {selectedGovernate === '' ? t('areas.select_governorate') : t('areas.no_areas')}
                         </span>
                         <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
                           {selectedGovernate === '' 
-                            ? 'Choose a governorate from the dropdown above to see its areas' 
-                            : 'Try adjusting your search or filters'
+                            ? t('areas.choose_governorate') 
+                            : t('messages.try_adjusting_filters')
                           }
                         </p>
                       </div>
@@ -451,7 +455,7 @@ export default function Areas() {
                       {area.name}
                     </td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-                      {area.governorate?.name || 'N/A'}
+                      {governates.find(g => g.id === area.governorate_id)?.name || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
@@ -464,8 +468,8 @@ export default function Areas() {
                           onClick={() => { setEditData(area); setModalOpen(true); }}
                           disabled={actionLoading.edit}
                           className="p-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 text-blue-700 dark:text-blue-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                          title="Edit area"
-                          aria-label="Edit area"
+                          title={t('areas.edit')}
+                          aria-label={t('areas.edit')}
                         >
                           <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
                             <path d="M16.862 5.487a2.06 2.06 0 1 1 2.915 2.914l-9.193 9.193-3.06.34a.75.75 0 0 1-.83-.83l.34-3.06 9.193-9.193Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -475,8 +479,8 @@ export default function Areas() {
                           onClick={() => { setDeleteTarget(area); setDeleteModalOpen(true); }}
                           disabled={actionLoading.delete}
                           className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
-                          title="Delete area"
-                          aria-label="Delete area"
+                          title={t('areas.delete')}
+                          aria-label={t('areas.delete')}
                         >
                           <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
                             <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12ZM9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

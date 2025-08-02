@@ -5,8 +5,8 @@ import Topbar from '../../UI/admin/Topbar';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../UI/Common/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { get } from '../../utils/api';
 
 // Lazy load components for better performance
@@ -31,30 +31,34 @@ const RouteLoading = () => (
 );
 
 // Error component for failed route loads
-const RouteError = ({ error, retry }) => (
-  <div className="min-h-screen bg-theme-bg flex items-center justify-center">
-    <div className="theme-card p-8 max-w-md text-center">
-      <div className="text-red-500 mb-4">
-        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
+const RouteError = ({ error, retry }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+      <div className="theme-card p-8 max-w-md text-center">
+        <div className="text-red-500 mb-4">
+          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-theme-text mb-2">{t('messages.failed_to_load')}</h2>
+        <p className="text-theme-text-secondary mb-4">{error || t('messages.something_went_wrong')}</p>
+        <button
+          onClick={retry}
+          className="theme-button"
+        >
+          {t('common.retry')}
+        </button>
       </div>
-      <h2 className="text-xl font-bold text-theme-text mb-2">Failed to load page</h2>
-      <p className="text-theme-text-secondary mb-4">Something went wrong while loading this page.</p>
-      <button
-        onClick={retry}
-        className="theme-button"
-      >
-        Try Again
-      </button>
     </div>
-  </div>
-);
+  );
+};
 
 // Profile component with error handling
 const ProfileComponent = () => {
   const { token, logout } = useAuth();
   const toast = useToast();
+  const { t } = useLanguage();
   const [profile, setProfile] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -94,13 +98,13 @@ const ProfileComponent = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-theme-text mb-2">Failed to load profile</h3>
+          <h3 className="text-lg font-semibold text-theme-text mb-2">{t('profile.failed_to_load')}</h3>
           <p className="text-theme-text-secondary mb-4">{error}</p>
           <button
             onClick={fetchProfile}
             className="theme-button"
           >
-            Retry
+            {t('common.retry')}
           </button>
         </div>
       </div>
@@ -125,18 +129,19 @@ const ProfileComponent = () => {
 export default function AdminDashboard() {
   const { token } = useAuth();
   const location = useLocation();
+  const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   // Performance: Memoize title calculation
   const title = useMemo(() => {
     const path = location.pathname;
-    if (path.endsWith('/admins')) return 'Admins';
-    if (path.endsWith('/suppliers')) return 'Suppliers';
-    if (path.endsWith('/categories')) return 'Categories';
-    if (path.endsWith('/governates')) return 'Governates';
-    if (path.endsWith('/areas')) return 'Areas';
-    return 'Profile';
-  }, [location.pathname]);
+    if (path.endsWith('/admins')) return t('nav.administrators');
+    if (path.endsWith('/suppliers')) return t('nav.suppliers');
+    if (path.endsWith('/categories')) return t('nav.categories');
+    if (path.endsWith('/governates')) return t('nav.governorates');
+    if (path.endsWith('/areas')) return t('nav.areas');
+    return t('nav.profile');
+  }, [location.pathname, t]);
 
   // Performance: Memoize sidebar handlers
   const handleMenuClick = useCallback(() => setSidebarOpen(true), []);

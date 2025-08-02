@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { get, post, put, del } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import Modal from '../../UI/Common/Modal';
 import FileUpload from '../../UI/Common/FileUpload';
 
@@ -10,7 +11,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://back.twryd.co
 function getIconUrl(icon) {
   if (!icon) return null;
   if (icon.startsWith('http')) return icon;
-  return `${API_BASE_URL}/${icon.replace(/^\//, '')}`;
+  // For Laravel storage, we need to add /storage to the path
+  const cleanPath = icon.replace(/^\//, '');
+  return `${API_BASE_URL}/storage/${cleanPath}`;
 }
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -18,6 +21,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   const [form, setForm] = useState({
     name: '',
+    name_ar: '',
     icon: null,
     is_active: true,
     remove_icon: false,
@@ -25,11 +29,13 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const toast = useToast();
+  const { t } = useLanguage();
 
   React.useEffect(() => {
     if (open) {
       setForm({
         name: initialData?.name || '',
+        name_ar: initialData?.name_ar || '',
         icon: null,
         is_active: initialData?.is_active ?? true,
         remove_icon: false,
@@ -41,13 +47,16 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   function validateField(name, value, files) {
     switch (name) {
       case 'name':
-        if (!value) return 'Name is required.';
+        if (!value) return t('form.name_required');
+        return '';
+      case 'name_ar':
+        if (!value) return t('categories.name_ar') + ' ' + t('form.required').toLowerCase() + '.';
         return '';
       case 'icon': {
         const file = files ? files[0] : form.icon;
-        if (!isEdit && !file) return 'Icon is required.';
-        if (file && !file.type.startsWith('image/')) return 'Icon must be an image.';
-        if (file && file.size > MAX_FILE_SIZE) return 'Icon must be less than 2MB.';
+        if (!isEdit && !file) return t('categories.icon_required');
+        if (file && !file.type.startsWith('image/')) return t('validation.image_type');
+        if (file && file.size > MAX_FILE_SIZE) return t('validation.file_size', { size: 2 });
         return '';
       }
       default:
@@ -58,6 +67,7 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   function validateAll() {
     const errors = {};
     errors.name = validateField('name', form.name);
+    errors.name_ar = validateField('name_ar', form.name_ar);
     errors.icon = validateField('icon', form.icon);
     setFormErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -95,18 +105,19 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateAll()) {
-      toast.show('Please fix the errors in the form.', 'error');
+      toast.show(t('messages.please_fix_errors'), 'error');
       return;
     }
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append('name', form.name);
+      formData.append('name_ar', form.name_ar);
       if (form.icon) formData.append('icon', form.icon);
       formData.append('is_active', form.is_active ? '1' : '0');
       if (isEdit && form.remove_icon) formData.append('remove_icon', '1');
       await onSubmit(formData);
-      toast.show(isEdit ? 'Category updated!' : 'Category created!', 'success');
+      toast.show(isEdit ? t('categories.updated') : t('categories.created'), 'success');
       onClose();
     } catch (err) {
       toast.show(err.message || 'Failed to submit', 'error');
@@ -116,11 +127,11 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Category' : 'Add New Category'} size="large">
+    <Modal open={open} onClose={onClose} title={isEdit ? t('modal.edit_category') : t('modal.add_category')} size="large">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto" noValidate>
         <div>
           <label htmlFor="name" className="block text-sm font-semibold text-theme-text mb-1">
-            Category Name <span className="text-red-500">*</span>
+            {t('categories.name_en')} <span className="text-red-500">*</span>
           </label>
           <input 
             id="name"
@@ -134,7 +145,7 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/30 focus:ring-red-400 focus:border-red-400' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
             }`}
-            placeholder="Enter category name"
+            placeholder={t('form.placeholder.category_name_en')}
             aria-invalid={!!formErrors.name}
             aria-describedby={formErrors.name ? 'name-error' : undefined}
           />
@@ -147,6 +158,37 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
             </div>
           )}
         </div>
+
+        <div>
+          <label htmlFor="name_ar" className="block text-sm font-semibold text-theme-text mb-1">
+            {t('categories.name_ar')} <span className="text-red-500">*</span>
+          </label>
+          <input 
+            id="name_ar"
+            name="name_ar" 
+            value={form.name_ar} 
+            onChange={handleChange} 
+            required 
+            maxLength={50}
+            className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 ${
+              formErrors.name_ar 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/30 focus:ring-red-400 focus:border-red-400' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
+            }`}
+            placeholder={t('form.placeholder.category_name_ar')}
+            dir="rtl"
+            aria-invalid={!!formErrors.name_ar}
+            aria-describedby={formErrors.name_ar ? 'name-ar-error' : undefined}
+          />
+          {formErrors.name_ar && (
+            <div id="name-ar-error" className="text-red-500 text-xs mt-1 flex items-center gap-1" role="alert">
+              <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              {formErrors.name_ar}
+            </div>
+          )}
+        </div>
         
         <FileUpload
           id="icon"
@@ -154,7 +196,7 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
           accept="image/*"
           required={!isEdit}
           onChange={handleChange}
-          label={`Icon ${isEdit ? '(optional)' : '(required)'}`}
+          label={`${t('categories.icon')} ${isEdit ? `(${t('form.optional')})` : `(${t('form.required')})`}`}
           error={formErrors.icon}
           maxSize={1 * 1024 * 1024} // 1MB
         />
@@ -170,7 +212,7 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
                 onChange={handleChange}
                 className="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
               /> 
-              Remove current icon
+              {t('categories.remove_icon')}
             </label>
           </div>
         )}
@@ -185,10 +227,10 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
             className="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
           />
           <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Active Category
+            {t('categories.active_category')}
           </label>
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            (Inactive categories won't appear in product listings)
+            ({t('categories.inactive_categories_warning')})
           </span>
         </div>
 
@@ -199,7 +241,7 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
             disabled={loading}
             className="flex-1 py-2 px-4 rounded-lg font-semibold transition-all duration-200 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50"
           >
-            Cancel
+            {t('form.cancel')}
           </button>
           <button 
             type="submit" 
@@ -212,7 +254,7 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
               </svg>
             )}
-            {loading ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Category')}
+            {loading ? (isEdit ? t('form.save') + '...' : t('form.create') + '...') : (isEdit ? t('form.save') + ' ' + t('common.changes') : t('form.create') + ' ' + t('nav.categories').slice(0, -1))}
           </button>
         </div>
       </form>
@@ -221,18 +263,19 @@ function CategoryFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
 }
 
 function ConfirmDeleteModal({ open, onClose, onConfirm, categoryName, loading }) {
+  const { t } = useLanguage();
   return (
-    <Modal open={open} onClose={onClose} title="Delete Category" size="medium">
+    <Modal open={open} onClose={onClose} title={t('categories.delete')} size="medium">
       <div className="text-center">
         <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
           <svg className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Delete Category</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('categories.delete')}</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Are you sure you want to delete <span className="font-semibold text-gray-900 dark:text-white">{categoryName}</span>? 
-          This action cannot be undone.
+          {t('categories.delete_confirm')} <span className="font-semibold text-gray-900 dark:text-white">{categoryName}</span>? 
+          {t('categories.delete_warning')}
         </p>
         <div className="flex gap-4 w-full">
           <button 
@@ -240,7 +283,7 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, categoryName, loading })
             disabled={loading}
             className="flex-1 py-2 px-4 rounded-lg font-semibold transition-all duration-200 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50"
           >
-            Cancel
+            {t('form.cancel')}
           </button>
           <button 
             onClick={onConfirm} 
@@ -253,7 +296,7 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, categoryName, loading })
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
               </svg>
             )}
-            {loading ? 'Deleting...' : 'Delete'}
+            {loading ? t('common.delete') + '...' : t('common.delete')}
           </button>
         </div>
       </div>
@@ -263,12 +306,13 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, categoryName, loading })
 
 export default function Categories() {
   const { token } = useAuth();
+  const toast = useToast();
+  const { t, currentLanguage } = useLanguage();
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const toast = useToast();
 
   const {
     data,
@@ -311,12 +355,12 @@ export default function Categories() {
     setDeleteLoading(true);
     try {
       await del(`/api/v1/manage-categories/${deleteTarget.id}`, { token });
-      toast.show('Category deleted!', 'success');
+      toast.show(t('categories.deleted'), 'success');
       setDeleteModalOpen(false);
       setDeleteTarget(null);
       await refetch();
     } catch (err) {
-      toast.show(err.message || 'Failed to delete', 'error');
+      toast.show(err.message || t('messages.failed_to_delete'), 'error');
     } finally {
       setDeleteLoading(false);
     }
@@ -331,7 +375,7 @@ export default function Categories() {
       });
       await refetch();
     } catch (err) {
-      toast.show(err.message || 'Failed to update status', 'error');
+      toast.show(err.message || t('messages.failed_to_update'), 'error');
     }
   };
 
@@ -346,18 +390,18 @@ export default function Categories() {
             </svg>
           </div>
           <div>
-            <span className="text-gray-900 dark:text-white">Categories</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Management</span>
+            <span className="text-gray-900 dark:text-white">{t('categories.title')}</span>
+            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">{t('common.management')}</span>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">Organize products with categories and manage their visibility</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">{t('categories.subtitle')}</p>
       </div>
 
       {/* Action Bar */}
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 mb-6">
         <div className="flex justify-between items-center">
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            {categories.length} {categories.length === 1 ? 'category' : 'categories'} total
+            {categories.length} {categories.length === 1 ? t('nav.categories').slice(0, -1) : t('nav.categories')} {t('common.total')}
           </div>
           <button
             className="px-4 py-2 rounded-lg font-semibold shadow-lg transition-all duration-200 bg-primary-600 hover:bg-primary-700 focus:bg-primary-800 text-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 flex items-center gap-2"
@@ -366,7 +410,7 @@ export default function Categories() {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
-            Add Category
+            {t('categories.add')}
           </button>
         </div>
       </div>
@@ -379,7 +423,7 @@ export default function Categories() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
-            <span className="text-gray-500 dark:text-gray-400 font-medium">Loading categories...</span>
+            <span className="text-gray-500 dark:text-gray-400 font-medium">{t('categories.loading')}</span>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center py-16">
@@ -393,8 +437,8 @@ export default function Categories() {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-gray-400 mb-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0A9 9 0 11.75 12a9 9 0 0117.25 0z" />
             </svg>
-            <span className="text-gray-500 dark:text-gray-400 font-medium mb-2">No categories found</span>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">Get started by creating your first category</p>
+            <span className="text-gray-500 dark:text-gray-400 font-medium mb-2">{t('categories.no_categories')}</span>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">{t('categories.get_started')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -429,7 +473,9 @@ export default function Categories() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white truncate mb-2">{cat.name}</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white truncate mb-2">
+                      {currentLanguage === 'ar' && cat.name_ar ? cat.name_ar : cat.name}
+                    </h3>
                     <div className="flex items-center gap-2 mb-3">
                       <button
                         className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
@@ -443,7 +489,7 @@ export default function Categories() {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        {cat.is_active ? 'Active' : 'Inactive'}
+                        {cat.is_active ? t('common.active') : t('common.inactive')}
                       </button>
                     </div>
                     <div className="flex gap-2">
@@ -454,7 +500,7 @@ export default function Categories() {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 inline mr-1">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6 6M3 21h6a2 2 0 002-2v-6a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z" />
                         </svg>
-                        Edit
+                        {t('common.edit')}
                       </button>
                       <button
                         className="flex-1 px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -463,7 +509,7 @@ export default function Categories() {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 inline mr-1">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                        Delete
+                        {t('common.delete')}
                       </button>
                     </div>
                   </div>
@@ -485,7 +531,7 @@ export default function Categories() {
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteCategory}
-        categoryName={deleteTarget?.name}
+        categoryName={currentLanguage === 'ar' && deleteTarget?.name_ar ? deleteTarget.name_ar : deleteTarget?.name}
         loading={deleteLoading}
       />
     </div>

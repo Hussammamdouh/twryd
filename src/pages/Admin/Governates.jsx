@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { get } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Governates() {
   const { token } = useAuth();
@@ -9,6 +10,7 @@ export default function Governates() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const toast = useToast();
+  const { t } = useLanguage();
 
   // Fetch governates
   const fetchGovernates = async () => {
@@ -18,8 +20,8 @@ export default function Governates() {
       const res = await get('/api/v1/location/governorates', { token, params: { per_page: 50 } });
       setGovernates(res.data?.data || []);
     } catch (err) {
-      setError(err.message || 'Failed to load governates');
-      toast.show(err.message || 'Failed to load governates', 'error');
+      setError(err.message || t('messages.failed_to_load'));
+      toast.show(err.message || t('messages.failed_to_load'), 'error');
     } finally {
       setLoading(false);
     }
@@ -41,20 +43,23 @@ export default function Governates() {
             </svg>
           </div>
           <div>
-            <span className="text-gray-900 dark:text-white">Governorates</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">View</span>
+            <span className="text-gray-900 dark:text-white">{t('governorates.title')}</span>
+            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">{t('governorates.view')}</span>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">View all available governorates in the system</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">{t('governorates.subtitle')}</p>
       </div>
 
         {/* Governorates List */}
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Governorates</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('governorates.all_governorates')}</h2>
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              {governates.length} governorate{governates.length !== 1 ? 's' : ''}
+              {t('governorates.count', { 
+                count: governates.length, 
+                plural: governates.length !== 1 ? 's' : '' 
+              })}
             </div>
             </div>
           </div>
@@ -65,7 +70,7 @@ export default function Governates() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
-              <span className="text-gray-500 dark:text-gray-400 text-sm">Loading governorates...</span>
+              <span className="text-gray-500 dark:text-gray-400 text-sm">{t('governorates.loading')}</span>
               </div>
             ) : error ? (
               <div className="text-red-500 text-sm text-center py-4">{error}</div>
@@ -74,7 +79,7 @@ export default function Governates() {
                 <svg className="h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 </svg>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">No governorates found</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{t('governorates.no_governorates')}</p>
               </div>
             ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -91,7 +96,7 @@ export default function Governates() {
                       </div>
                     <div>
                       <h3 className="font-medium text-gray-900 dark:text-white">{g.name}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">ID: {g.id}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{t('governorates.id')}: {g.id}</p>
                     </div>
           </div>
         </div>

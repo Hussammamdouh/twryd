@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { get, post, del } from '../../utils/api';
 import { useToast } from '../Common/ToastContext';
 import ConfirmModal from '../supplier/ConfirmModal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const SuppliersTable = function SuppliersTable({ token }) {
   const [suppliers, setSuppliers] = useState([]);
@@ -16,6 +17,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
   const [confirmModal, setConfirmModal] = useState({ open: false, action: '', supplier: null });
   const [actionLoading, setActionLoading] = useState({});
   const toast = useToast();
+  const { t } = useLanguage();
 
   // Fetch all suppliers with pagination and filters
   const fetchSuppliers = async () => {
@@ -55,8 +57,8 @@ const SuppliersTable = function SuppliersTable({ token }) {
       setTotalPages(pagination.last_page || 1);
       setTotalSuppliers(pagination.total || suppliersArr.length);
     } catch (err) {
-      setError(err.message || 'Failed to load suppliers');
-      toast.show(err.message || 'Failed to load suppliers', 'error');
+      setError(err.message || t('messages.failed_to_load'));
+      toast.show(err.message || t('messages.failed_to_load'), 'error');
     } finally {
       setLoading(false);
     }
@@ -74,23 +76,23 @@ const SuppliersTable = function SuppliersTable({ token }) {
       switch (action) {
         case 'approve':
           await post(`/api/v1/suppliers/${supplier.id}/approve`, { token });
-          toast.show('Supplier approved successfully', 'success');
+          toast.show(t('suppliers.approved'), 'success');
           break;
         case 'reject':
           await post(`/api/v1/suppliers/${supplier.id}/reject`, { token });
-          toast.show('Supplier rejected successfully', 'success');
+          toast.show(t('suppliers.rejected_success'), 'success');
           break;
         case 'toggle-status':
           await post(`/api/v1/suppliers/${supplier.id}/toggle-status`, { token });
-          toast.show('Supplier status toggled successfully', 'success');
+          toast.show(t('suppliers.status_toggled'), 'success');
           break;
         case 'verify-email':
           await post(`/api/v1/suppliers/${supplier.id}/verify-email`, { token });
-          toast.show('Supplier email verified successfully', 'success');
+          toast.show(t('suppliers.email_verified'), 'success');
           break;
         case 'delete':
           await del(`/api/v1/suppliers/${supplier.id}`, { token });
-          toast.show('Supplier deleted successfully', 'success');
+          toast.show(t('suppliers.deleted'), 'success');
           break;
         default:
           throw new Error('Invalid action');
@@ -99,7 +101,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
       // Refresh the list after successful action
       await fetchSuppliers();
     } catch (err) {
-      toast.show(err.message || `Failed to ${action} supplier`, 'error');
+      toast.show(err.message || t('messages.operation_failed'), 'error');
     } finally {
       setActionLoading(prev => ({ ...prev, [supplier.id]: false }));
       setConfirmModal({ open: false, action: '', supplier: null });
@@ -117,15 +119,18 @@ const SuppliersTable = function SuppliersTable({ token }) {
   const getConfirmMessage = (action, supplier) => {
     switch (action) {
       case 'approve':
-        return `Are you sure you want to approve ${supplier.name}?`;
+        return t('suppliers.approve_confirm', { name: supplier.name });
       case 'reject':
-        return `Are you sure you want to reject ${supplier.name}?`;
+        return t('suppliers.reject_confirm', { name: supplier.name });
       case 'delete':
-        return `Are you sure you want to delete ${supplier.name}? This action cannot be undone.`;
+        return t('suppliers.delete_confirm', { name: supplier.name });
       case 'toggle-status':
-        return `Are you sure you want to ${supplier.is_active ? 'deactivate' : 'activate'} ${supplier.name}?`;
+        return t('suppliers.toggle_confirm', { 
+          action: supplier.is_active ? t('suppliers.deactivate') : t('suppliers.activate'),
+          name: supplier.name 
+        });
       default:
-        return 'Are you sure you want to perform this action?';
+        return t('messages.confirm_action');
     }
   };
 
@@ -142,8 +147,8 @@ const SuppliersTable = function SuppliersTable({ token }) {
   return (
     <div className="w-full max-w-7xl mx-auto py-4 sm:py-8 px-1 sm:px-2 md:px-0">
       <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-8 text-primary-700 flex items-center gap-2 drop-shadow-sm">
-        <span className="inline-block bg-primary-100 text-primary-600 rounded-full px-2 sm:px-3 py-1 text-base sm:text-lg shadow">Suppliers</span>
-        <span className="text-theme-text-secondary font-normal text-base sm:text-lg">Management</span>
+        <span className="inline-block bg-primary-100 text-primary-600 rounded-full px-2 sm:px-3 py-1 text-base sm:text-lg shadow">{t('nav.suppliers')}</span>
+        <span className="text-theme-text-secondary font-normal text-base sm:text-lg">{t('common.management')}</span>
       </h1>
       
       {/* Search and Filter Controls */}
@@ -159,11 +164,11 @@ const SuppliersTable = function SuppliersTable({ token }) {
               </span>
               <input
                 type="text"
-                placeholder="Search suppliers by name, email, or phone..."
+                placeholder={t('suppliers.search_placeholder')}
                 className="theme-input pl-10 pr-4 py-2 w-full rounded-lg"
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
-                aria-label="Search suppliers"
+                aria-label={t('suppliers.search_placeholder')}
               />
             </div>
           </div>
@@ -173,11 +178,11 @@ const SuppliersTable = function SuppliersTable({ token }) {
             onChange={(e) => handleStatusFilter(e.target.value)}
             aria-label="Filter by status"
           >
-            <option value="">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="pending">Pending</option>
-            <option value="rejected">Rejected</option>
+            <option value="">{t('suppliers.all_statuses')}</option>
+            <option value="active">{t('common.active')}</option>
+            <option value="inactive">{t('common.inactive')}</option>
+            <option value="pending">{t('suppliers.pending')}</option>
+            <option value="rejected">{t('suppliers.rejected')}</option>
           </select>
           <select
             className="theme-input px-4 py-2 rounded-lg"
@@ -185,9 +190,9 @@ const SuppliersTable = function SuppliersTable({ token }) {
             onChange={(e) => setPerPage(Number(e.target.value))}
             aria-label="Items per page"
           >
-            <option value={10}>10 per page</option>
-            <option value={25}>25 per page</option>
-            <option value={50}>50 per page</option>
+            <option value={10}>10 {t('suppliers.per_page')}</option>
+            <option value={25}>25 {t('suppliers.per_page')}</option>
+            <option value={50}>50 {t('suppliers.per_page')}</option>
           </select>
         </div>
       </div>
@@ -199,11 +204,11 @@ const SuppliersTable = function SuppliersTable({ token }) {
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Logo</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Phone</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('common.name')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('common.email')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('common.phone')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('common.status')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -214,7 +219,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                       <svg className="w-8 h-8 text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
-                      <span className="text-gray-500 dark:text-gray-400">Loading suppliers...</span>
+                      <span className="text-gray-500 dark:text-gray-400">{t('suppliers.loading')}</span>
                     </div>
                   </td>
                 </tr>
@@ -236,8 +241,8 @@ const SuppliersTable = function SuppliersTable({ token }) {
                       <svg className="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10-5v4a1 1 0 001 1h3m-7 4v4m0 0H7a2 2 0 01-2-2v-5a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2h-5z" />
                       </svg>
-                      <div className="text-lg font-semibold text-gray-500 dark:text-gray-400">No suppliers found</div>
-                      <p className="text-gray-400 dark:text-gray-500">No suppliers match your current filters</p>
+                      <div className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('suppliers.no_suppliers')}</div>
+                      <p className="text-gray-400 dark:text-gray-500">{t('suppliers.no_matches')}</p>
                     </div>
                   </td>
                 </tr>
@@ -274,9 +279,9 @@ const SuppliersTable = function SuppliersTable({ token }) {
                         supplier.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
                         'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
-                        {supplier.status === 'pending' ? 'Pending' :
-                         supplier.status === 'rejected' ? 'Rejected' :
-                         supplier.is_active ? 'Active' : 'Inactive'}
+                        {supplier.status === 'pending' ? t('suppliers.pending') :
+                         supplier.status === 'rejected' ? t('suppliers.rejected') :
+                         supplier.is_active ? t('common.active') : t('common.inactive')}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -287,7 +292,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => openConfirmModal('approve', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/40 text-green-700 dark:text-green-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-60" 
-                              title="Approve"
+                              title={t('suppliers.approve')}
                               aria-label="Approve supplier"
                             >
                               {actionLoading[supplier.id] ? (
@@ -304,7 +309,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => openConfirmModal('reject', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-60" 
-                              title="Reject"
+                              title={t('suppliers.reject')}
                               aria-label="Reject supplier"
                             >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -320,7 +325,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => openConfirmModal('toggle-status', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-800/40 text-primary-700 dark:text-primary-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-400 disabled:opacity-60" 
-                              title="Toggle Status"
+                              title={t('suppliers.toggle_status')}
                               aria-label="Toggle supplier status"
                             >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -331,7 +336,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => handleAction('verify-email', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-800/40 text-purple-700 dark:text-purple-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:opacity-60" 
-                              title="Verify Email"
+                              title={t('suppliers.verify_email')}
                               aria-label="Verify supplier email"
                             >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -345,7 +350,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                           onClick={() => openConfirmModal('delete', supplier)} 
                           disabled={actionLoading[supplier.id]}
                           className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-60" 
-                          title="Delete"
+                          title={t('common.delete')}
                           aria-label="Delete supplier"
                         >
                           <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -366,27 +371,31 @@ const SuppliersTable = function SuppliersTable({ token }) {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
             <div className="text-sm text-theme-text-secondary">
-              Showing {((page - 1) * perPage) + 1} to {Math.min(page * perPage, totalSuppliers)} of {totalSuppliers} suppliers
+              {t('suppliers.showing', { 
+                from: ((page - 1) * perPage) + 1, 
+                to: Math.min(page * perPage, totalSuppliers), 
+                total: totalSuppliers 
+              })}
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="theme-button-secondary px-3 py-2 rounded-lg font-semibold disabled:opacity-60"
-                aria-label="Previous page"
+                aria-label={t('common.previous')}
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="px-3 py-2 text-sm font-semibold text-theme-text">
-                Page {page} of {totalPages}
+                {t('suppliers.page', { current: page, total: totalPages })}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="theme-button px-3 py-2 rounded-lg font-semibold disabled:opacity-60"
-                aria-label="Next page"
+                aria-label={t('common.next')}
               >
-                Next
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -396,7 +405,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
       {/* Confirmation Modal */}
       <ConfirmModal
         open={confirmModal.open}
-        title={`${confirmModal.action.charAt(0).toUpperCase() + confirmModal.action.slice(1)} Supplier`}
+        title={`${confirmModal.action.charAt(0).toUpperCase() + confirmModal.action.slice(1)} ${t('nav.suppliers').slice(0, -1)}`}
         message={confirmModal.supplier ? getConfirmMessage(confirmModal.action, confirmModal.supplier) : ''}
         onConfirm={() => handleAction(confirmModal.action, confirmModal.supplier)}
         onCancel={closeConfirmModal}

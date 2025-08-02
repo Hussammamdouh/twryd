@@ -1,81 +1,83 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-
-// Performance: Memoize navigation items
-const navItems = [
-  { 
-    name: 'Profile', 
-    to: '/admin-dashboard/profile', 
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ) 
-  },
-  { 
-    name: 'Admins', 
-    to: '/admin-dashboard/admins', 
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ) 
-  },
-  { 
-    name: 'Suppliers', 
-    to: '/admin-dashboard/suppliers', 
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v4a1 1 0 001 1h3m10-5v4a1 1 0 001 1h3m-7 4v4m0 0H7a2 2 0 01-2-2v-5a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2h-5z" />
-      </svg>
-    ) 
-  },
-  { 
-    name: 'Categories', 
-    to: '/admin-dashboard/categories', 
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
-        <path d="M8 9h8M8 15h8" stroke="currentColor" strokeWidth="2" />
-      </svg>
-    ) 
-  },
-  { 
-    name: 'Governates', 
-    to: '/admin-dashboard/governates', 
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm0-14a6 6 0 100 12 6 6 0 000-12z" />
-      </svg>
-    ) 
-  },
-  { 
-    name: 'Areas', 
-    to: '/admin-dashboard/areas', 
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ) 
-  },
-];
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Sidebar({ open, onClose }) {
   const { logout, user } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Performance: Memoize navigation items
+  const navItems = useMemo(() => [
+    { 
+      name: t('nav.profile'), 
+      to: '/admin-dashboard/profile', 
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ) 
+    },
+    { 
+      name: t('nav.administrators'), 
+      to: '/admin-dashboard/admins', 
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ) 
+    },
+    { 
+      name: t('nav.suppliers'), 
+      to: '/admin-dashboard/suppliers', 
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v4a1 1 0 001 1h3m10-5v4a1 1 0 001 1h3m-7 4v4m0 0H7a2 2 0 01-2-2v-5a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2h-5z" />
+        </svg>
+      ) 
+    },
+    { 
+      name: t('nav.categories'), 
+      to: '/admin-dashboard/categories', 
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
+          <path d="M8 9h8M8 15h8" stroke="currentColor" strokeWidth="2" />
+        </svg>
+      ) 
+    },
+    { 
+      name: t('nav.governorates'), 
+      to: '/admin-dashboard/governates', 
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm0-14a6 6 0 100 12 6 6 0 000-12z" />
+        </svg>
+      ) 
+    },
+    { 
+      name: t('nav.areas'), 
+      to: '/admin-dashboard/areas', 
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ) 
+    },
+  ], [t]);
 
   // Performance: Memoize current path
   const currentPath = useMemo(() => location.pathname, [location.pathname]);
 
   // Performance: Memoize logout handler
   const handleLogout = useCallback(() => {
-    if (window.confirm('Are you sure you want to logout?')) {
+    if (window.confirm(t('profile.logout_confirm'))) {
       logout();
     }
-  }, [logout]);
+  }, [logout, t]);
 
   // Performance: Memoize toggle handler
   const handleToggle = useCallback(() => {
@@ -175,20 +177,20 @@ export default function Sidebar({ open, onClose }) {
                 {user.name || user.email}
               </div>
               <div className="text-xs text-primary-200">
-                {user.role === 'admin' ? 'Administrator' : 'User'}
+                {user.role === 'admin' ? t('profile.administrator') : t('common.user')}
               </div>
             </div>
           </div>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-6 py-3 text-primary-100 hover:bg-primary-400/40 hover:text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white"
-            aria-label="Logout"
+            aria-label={t('nav.logout')}
             tabIndex={0}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span>Logout</span>
+            <span>{t('nav.logout')}</span>
           </button>
         </div>
       )}

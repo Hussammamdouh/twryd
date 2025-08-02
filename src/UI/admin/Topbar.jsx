@@ -1,9 +1,12 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import ThemeToggle from '../../components/ThemeToggle';
+import LanguageSwitcher from '../Common/LanguageSwitcher';
 
 export default function Topbar({ title, onMenuClick }) {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [searchValue, setSearchValue] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -26,12 +29,13 @@ export default function Topbar({ title, onMenuClick }) {
     setShowUserMenu(prev => !prev);
   }, []);
 
+  // Performance: Memoize logout handler
   const handleLogout = useCallback(() => {
-    if (window.confirm('Are you sure you want to logout?')) {
+    if (window.confirm(t('profile.logout_confirm'))) {
       logout();
     }
     setShowUserMenu(false);
-  }, [logout]);
+  }, [logout, t]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') {
@@ -76,6 +80,9 @@ export default function Topbar({ title, onMenuClick }) {
 
       {/* Search and User Menu */}
       <div className="flex items-center gap-4 h-full">
+        {/* Language Switcher */}
+        <LanguageSwitcher size="small" />
+        
         {/* Theme Toggle */}
         <ThemeToggle variant="button" />
         
@@ -89,7 +96,7 @@ export default function Topbar({ title, onMenuClick }) {
           </span>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t('search.placeholder')}
             value={searchValue}
             onChange={handleSearchChange}
             className="theme-input pl-10 pr-3 py-2 rounded text-sm transition-shadow focus:shadow-lg w-56 h-10"
@@ -125,7 +132,7 @@ export default function Topbar({ title, onMenuClick }) {
                 onClick={handleLogout}
                 className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus:outline-none focus:bg-red-50 dark:focus:bg-red-900/20"
               >
-                Logout
+                {t('profile.logout')}
               </button>
             </div>
           )}

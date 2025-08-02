@@ -4,6 +4,7 @@ import Modal from '../Common/Modal';
 import Spinner from '../supplier/Spinner';
 import { createFormChangeHandler } from '../../utils/formUtils';
 import { useFormFocus } from '../../hooks/useFormFocus';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Security: Enhanced validation patterns
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -28,6 +29,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
   const toast = useToast();
   const formRef = useRef();
   const { handleInputFocus } = useFormFocus();
+  const { t } = useLanguage();
 
   // Create memoized change handler
   const handleChange = useCallback(
@@ -57,35 +59,35 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
   const validateField = useCallback((name, value) => {
     switch (name) {
       case 'name':
-        if (!value.trim()) return 'Name is required.';
-        if (value.trim().length < 2) return 'Name must be at least 2 characters.';
-        if (value.trim().length > 50) return 'Name must be less than 50 characters.';
+        if (!value.trim()) return t('form.name_required');
+        if (value.trim().length < 2) return t('form.name_min_length');
+        if (value.trim().length > 50) return t('form.name_max_length');
         return '';
       case 'email':
-        if (!value.trim()) return 'Email is required.';
-        if (!EMAIL_REGEX.test(value)) return 'Please enter a valid email address.';
+        if (!value.trim()) return t('form.email_required');
+        if (!EMAIL_REGEX.test(value)) return t('form.email_invalid');
         return '';
       case 'phone':
-        if (!value.trim()) return 'Phone number is required.';
-        if (!PHONE_REGEX.test(value)) return 'Please enter a valid phone number.';
+        if (!value.trim()) return t('form.phone_required');
+        if (!PHONE_REGEX.test(value)) return t('form.phone_invalid');
         return '';
       case 'password':
-        if (!isEdit && !value) return 'Password is required.';
+        if (!isEdit && !value) return t('form.password_required');
         if (value && !PASSWORD_REGEX.test(value)) {
-          return 'Password must be at least 8 characters and contain: uppercase letter, lowercase letter, number, and special character.';
+          return t('form.password_requirements');
         }
         return '';
       case 'password_confirmation':
-        if (!isEdit && !value) return 'Password confirmation is required.';
-        if (value && value !== form.password) return 'Passwords do not match.';
+        if (!isEdit && !value) return t('form.confirm_password_required');
+        if (value && value !== form.password) return t('form.passwords_not_match');
         return '';
       case 'role':
-        if (!value) return 'Role is required.';
+        if (!value) return t('form.role_required');
         return '';
       default:
         return '';
     }
-  }, [isEdit, form.password]);
+  }, [isEdit, form.password, t]);
 
   // Performance: Memoize form submission
   const handleSubmit = useCallback(async (e) => {
@@ -102,7 +104,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
     
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      toast.show('Please fix the errors in the form.', 'error');
+      toast.show(t('messages.please_fix_errors'), 'error');
       return;
     }
     
@@ -128,14 +130,14 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
     <Modal 
       open={open} 
       onClose={handleClose} 
-      title={isEdit ? 'Edit Administrator' : 'Add New Administrator'}
+      title={isEdit ? t('modal.edit_administrator') : t('modal.add_administrator')}
       size="large"
     >
       <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto" noValidate>
         {/* Name Field */}
         <div>
           <label htmlFor="name" className="block text-sm font-semibold text-theme-text mb-1">
-            Full Name <span className="text-red-500">*</span>
+            {t('form.full_name')} <span className="text-red-500">*</span>
           </label>
           <input
             id="name"
@@ -153,7 +155,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
             }`}
             aria-invalid={!!formErrors.name}
             aria-describedby={formErrors.name ? 'name-error' : undefined}
-            placeholder="Enter administrator's full name"
+            placeholder={t('form.placeholder.full_name')}
           />
           {formErrors.name && (
             <div id="name-error" className="text-red-500 text-xs mt-1 flex items-center gap-1" role="alert">
@@ -169,7 +171,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
         {!isEdit && (
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-theme-text mb-1">
-              Email Address <span className="text-red-500">*</span>
+              {t('form.email_address')} <span className="text-red-500">*</span>
             </label>
             <input
               id="email"
@@ -186,7 +188,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
               }`}
               aria-invalid={!!formErrors.email}
               aria-describedby={formErrors.email ? 'email-error' : undefined}
-              placeholder="Enter email address"
+              placeholder={t('form.placeholder.email')}
             />
             {formErrors.email && (
               <div id="email-error" className="text-red-500 text-xs mt-1 flex items-center gap-1" role="alert">
@@ -202,7 +204,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
         {/* Phone Field */}
         <div>
           <label htmlFor="phone" className="block text-sm font-semibold text-theme-text mb-1">
-            Phone Number <span className="text-red-500">*</span>
+            {t('form.phone_number')} <span className="text-red-500">*</span>
           </label>
           <input
             id="phone"
@@ -219,7 +221,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
             }`}
             aria-invalid={!!formErrors.phone}
             aria-describedby={formErrors.phone ? 'phone-error' : undefined}
-            placeholder="Enter phone number (e.g., 01234567890)"
+            placeholder={t('form.placeholder.phone')}
           />
           {formErrors.phone && (
             <div id="phone-error" className="text-red-500 text-xs mt-1 flex items-center gap-1" role="alert">
@@ -236,7 +238,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
           <>
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-theme-text mb-1">
-                Password <span className="text-red-500">*</span>
+                {t('form.password')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -254,13 +256,13 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
                   }`}
                   aria-invalid={!!formErrors.password}
                   aria-describedby={formErrors.password ? 'password-error' : undefined}
-                  placeholder="Enter secure password"
+                  placeholder={t('form.placeholder.password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? t('form.hide_password') : t('form.show_password')}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,14 +286,14 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
               )}
               {!formErrors.password && (
                 <div className="text-gray-500 text-xs mt-1">
-                  Password must contain: at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character
+                  {t('form.password_requirements')}
                 </div>
               )}
             </div>
 
             <div>
               <label htmlFor="password_confirmation" className="block text-sm font-semibold text-theme-text mb-1">
-                Confirm Password <span className="text-red-500">*</span>
+                {t('form.confirm_password')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -309,13 +311,13 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
                   }`}
                   aria-invalid={!!formErrors.password_confirmation}
                   aria-describedby={formErrors.password_confirmation ? 'password-confirmation-error' : undefined}
-                  placeholder="Confirm your password"
+                  placeholder={t('form.placeholder.confirm_password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showConfirmPassword ? t('form.hide_password') : t('form.show_password')}
                 >
                   {showConfirmPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -344,7 +346,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
         {/* Role Field */}
         <div>
           <label htmlFor="role" className="block text-sm font-semibold text-theme-text mb-1">
-            Role <span className="text-red-500">*</span>
+            {t('form.role')} <span className="text-red-500">*</span>
           </label>
           <select
             id="role"
@@ -361,10 +363,10 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
             aria-invalid={!!formErrors.role}
             aria-describedby={formErrors.role ? 'role-error' : undefined}
           >
-            <option value="">Select a role</option>
-            <option value="admin">Administrator</option>
+            <option value="">{t('form.select_role')}</option>
+            <option value="admin">{t('profile.administrator')}</option>
             <option value="manager">Manager</option>
-            <option value="support">Support</option>
+            <option value="support">{t('profile.it_support')}</option>
           </select>
           {formErrors.role && (
             <div id="role-error" className="text-red-500 text-xs mt-1 flex items-center gap-1" role="alert">
@@ -387,7 +389,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
             className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
           />
           <label htmlFor="is_active" className="ml-2 text-sm font-medium text-theme-text">
-            Active Account
+            {t('form.active_account')}
           </label>
         </div>
 
@@ -399,7 +401,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
             disabled={loading}
             className="px-4 py-2 text-theme-text-secondary hover:text-theme-text transition-colors duration-200 disabled:opacity-50"
           >
-            Cancel
+            {t('form.cancel')}
           </button>
           <button
             type="submit"
@@ -407,7 +409,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
             className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {loading && <Spinner size={16} color="border-white" />}
-            {isEdit ? 'Update Administrator' : 'Create Administrator'}
+            {isEdit ? t('form.update') + ' ' + t('profile.administrator') : t('form.create') + ' ' + t('profile.administrator')}
           </button>
         </div>
       </form>

@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LayoutProvider } from './contexts/LayoutContext.jsx';
+import { LanguageProvider } from './contexts/LanguageContext';
 import RequireAuth from './components/RequireAuth';
 import RequireAdmin from './components/RequireAdmin';
 import RequireGuest from './components/RequireGuest';
@@ -33,53 +34,55 @@ const InvitationHandler = lazy(() => import('./pages/InvitationHandler'));
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Toaster 
-            position="top-right" 
-            toastOptions={{ 
-              duration: 4000,
-              className: 'dark:bg-dark-800 dark:text-white dark:border-dark-600',
-            }} 
-          />
-          <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-theme-bg text-theme-text">Loading...</div>}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/invitation/:token" element={<InvitationHandler />} />
-              <Route path="/login-admin" element={<RequireGuest><LoginAdmin /></RequireGuest>} />
-              <Route path="/login-client" element={<RequireGuest><ClientLogin /></RequireGuest>} />
-              <Route path="/register-client" element={<RequireGuest><ClientsRegisteration /></RequireGuest>} />
-              <Route path="/register-supplier" element={<RequireGuest><SupplierRegisteration /></RequireGuest>} />
-              <Route path="/login-supplier" element={<RequireGuest><SupplierLogin /></RequireGuest>} />
-              <Route path="/forgot-password-client" element={<RequireGuest><ClientForgotPassword /></RequireGuest>} />
-              <Route path="/reset-password-client" element={<RequireGuest><ClientResetPassword /></RequireGuest>} />
-              <Route path="/verify-client" element={<RequireGuest><ClientVerifyPage /></RequireGuest>} />
-              <Route path="/verify-supplier" element={<RequireGuest><SupplierVerifyPage /></RequireGuest>} />
-              <Route path="/forgot-password-supplier" element={<RequireGuest><SupplierForgotPassword /></RequireGuest>} />
-              <Route path="/reset-password-supplier" element={<RequireGuest><SupplierResetPassword /></RequireGuest>} />
-              <Route path="/admin-dashboard/*" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
-              <Route path="/client-profile" element={<RequireAuth><ClientProfile /></RequireAuth>} />
-              <Route path="/supplier/dashboard/*" element={
-                <RequireSupplier>
-                  <LayoutProvider>
-                    <SupplierDashboard />
-                  </LayoutProvider>
-                </RequireSupplier>
-              } />
-              <Route path="/supplier/invitations" element={
-                <RequireSupplier>
-                  <LayoutProvider>
-                    <SupplierInvitations />
-                  </LayoutProvider>
-                </RequireSupplier>
-              } />
-              <Route path="/client/dashboard/*" element={<RequireClient><ClientDashboard /></RequireClient>} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Toaster 
+              position="top-right" 
+              toastOptions={{ 
+                duration: 4000,
+                className: 'dark:bg-dark-800 dark:text-white dark:border-dark-600',
+              }} 
+            />
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-theme-bg text-theme-text">Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/invitation/:token" element={<InvitationHandler />} />
+                <Route path="/login-admin" element={<RequireGuest><LoginAdmin /></RequireGuest>} />
+                <Route path="/login-client" element={<RequireGuest><ClientLogin /></RequireGuest>} />
+                <Route path="/register-client" element={<RequireGuest><ClientsRegisteration /></RequireGuest>} />
+                <Route path="/register-supplier" element={<RequireGuest><SupplierRegisteration /></RequireGuest>} />
+                <Route path="/login-supplier" element={<RequireGuest><SupplierLogin /></RequireGuest>} />
+                <Route path="/forgot-password-client" element={<RequireGuest><ClientForgotPassword /></RequireGuest>} />
+                <Route path="/reset-password-client" element={<RequireGuest><ClientResetPassword /></RequireGuest>} />
+                <Route path="/verify-client" element={<RequireGuest><ClientVerifyPage /></RequireGuest>} />
+                <Route path="/verify-supplier" element={<RequireGuest><SupplierVerifyPage /></RequireGuest>} />
+                <Route path="/forgot-password-supplier" element={<RequireGuest><SupplierForgotPassword /></RequireGuest>} />
+                <Route path="/reset-password-supplier" element={<RequireGuest><SupplierResetPassword /></RequireGuest>} />
+                <Route path="/admin-dashboard/*" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+                <Route path="/client-profile" element={<RequireAuth><ClientProfile /></RequireAuth>} />
+                <Route path="/supplier/dashboard/*" element={
+                  <RequireSupplier>
+                    <LayoutProvider>
+                      <SupplierDashboard />
+                    </LayoutProvider>
+                  </RequireSupplier>
+                } />
+                <Route path="/supplier/invitations" element={
+                  <RequireSupplier>
+                    <LayoutProvider>
+                      <SupplierInvitations />
+                    </LayoutProvider>
+                  </RequireSupplier>
+                } />
+                <Route path="/client/dashboard/*" element={<RequireClient><ClientDashboard /></RequireClient>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </AuthProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
