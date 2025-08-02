@@ -8,7 +8,8 @@ import { useFormFocus } from '../../hooks/useFormFocus';
 // Security: Enhanced validation patterns
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^01[0-9]{9}$|^\+?[0-9]{10,15}$/;
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// Simplified password regex that requires: at least 8 chars, 1 lowercase, 1 uppercase, 1 number, 1 special char
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 
 export default function AdminFormModal({ open, onClose, onSubmit, initialData, isEdit }) {
   const [form, setForm] = useState({
@@ -71,7 +72,7 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
       case 'password':
         if (!isEdit && !value) return 'Password is required.';
         if (value && !PASSWORD_REGEX.test(value)) {
-          return 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.';
+          return 'Password must be at least 8 characters and contain: uppercase letter, lowercase letter, number, and special character.';
         }
         return '';
       case 'password_confirmation':
@@ -279,6 +280,11 @@ export default function AdminFormModal({ open, onClose, onSubmit, initialData, i
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                   {formErrors.password}
+                </div>
+              )}
+              {!formErrors.password && (
+                <div className="text-gray-500 text-xs mt-1">
+                  Password must contain: at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character
                 </div>
               )}
             </div>
