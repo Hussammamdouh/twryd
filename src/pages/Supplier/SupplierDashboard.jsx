@@ -19,6 +19,7 @@ const SupplierOrderDetails = React.lazy(() => import('./SupplierOrderDetails'));
 const SupplierDashboardHome = React.lazy(() => import('./SupplierDashboardHome'));
 const SupplierInstallments = React.lazy(() => import('./SupplierInstallments'));
 const VirtualClientManagement = React.lazy(() => import('./VirtualClientManagement'));
+const SupplierSubscriptions = React.lazy(() => import('./SupplierSubscriptions'));
 
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
@@ -65,6 +66,7 @@ function SupplierDashboardContent() {
     if (path.includes('/orders')) return 'Orders Management';
     if (path.includes('/installments')) return 'Installments Management';
     if (path.includes('/virtual-client-management')) return 'Virtual Client Management';
+    if (path.includes('/subscriptions')) return 'Subscription Management';
     return 'Profile';
   }, [location.pathname]);
 
@@ -163,6 +165,14 @@ function SupplierDashboardContent() {
                   element={
                     <ErrorBoundary>
                       <VirtualClientManagement />
+                    </ErrorBoundary>
+                  } 
+                />
+                <Route 
+                  path="subscriptions" 
+                  element={
+                    <ErrorBoundary>
+                      <SupplierSubscriptions />
                     </ErrorBoundary>
                   } 
                 />
