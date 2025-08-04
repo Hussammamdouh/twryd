@@ -1,6 +1,7 @@
-import React, { Suspense, useMemo, useState } from 'react';
+import React, { Suspense, useMemo, useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLayout } from '../../hooks/useLayout';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import ThemeToggle from '../../components/ThemeToggle';
@@ -24,9 +25,9 @@ const RouteLoading = () => (
   <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div className="flex">
       <ClientSidebar />
-      <div className="flex-1 ml-64">
+      <div className="flex-1 ml-0 md:ml-72">
         <ClientTopbar title="Loading..." />
-        <main className="pt-20 px-8 pb-8">
+        <main className="pt-16 md:pt-20 px-4 sm:px-8 pb-8">
           <LoadingSkeleton type="dashboard" />
         </main>
       </div>
@@ -36,14 +37,14 @@ const RouteLoading = () => (
 
 // Error component for failed route loads
 const RouteError = ({ retry }) => (
-  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md text-center border border-gray-200 dark:border-gray-700">
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 max-w-md text-center border border-gray-200 dark:border-gray-700 w-full">
       <div className="text-red-500 mb-4">
-        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 sm:w-16 h-12 sm:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
       </div>
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Failed to load page</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Failed to load page</h2>
       <p className="text-gray-600 dark:text-gray-400 mb-4">Something went wrong while loading this page.</p>
       <button
         onClick={retry}
@@ -56,9 +57,11 @@ const RouteError = ({ retry }) => (
 );
 
 // Client Sidebar Component
-function ClientSidebar({ sidebarOpen, setSidebarOpen }) {
+function ClientSidebar() {
   const location = useLocation();
   const { logout, user } = useAuth();
+  const { sidebarCollapsed, toggleSidebar, setSidebarCollapsed } = useLayout();
+  const [isMobile, setIsMobile] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/client/dashboard/home', icon: 'grid', current: location.pathname === '/client/dashboard/home' },
@@ -121,112 +124,219 @@ function ClientSidebar({ sidebarOpen, setSidebarOpen }) {
   // Calculate user initials for avatar
   const initials = user?.name ? user.name[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'U');
 
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Close mobile sidebar when route changes
+  useEffect(() => {
+    if (isMobile && !sidebarCollapsed) {
+      setSidebarCollapsed(true);
+    }
+  }, [location.pathname, isMobile, sidebarCollapsed, setSidebarCollapsed]);
+
+  // Close mobile sidebar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const sidebar = document.getElementById('client-sidebar');
+      const mobileToggle = document.getElementById('mobile-sidebar-toggle');
+      
+      if (isMobile && 
+          sidebar && 
+          !sidebar.contains(event.target) && 
+          mobileToggle && 
+          !mobileToggle.contains(event.target) && 
+          !sidebarCollapsed) {
+        setSidebarCollapsed(true);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobile, sidebarCollapsed, setSidebarCollapsed]);
+
   return (
-    <div className={`h-full bg-gradient-to-b from-primary-600 via-primary-500 to-primary-400 text-white flex flex-col py-8 px-6 fixed left-0 top-0 z-30 min-h-screen shadow-xl border-r border-primary-700 transition-all duration-300 ${sidebarOpen ? 'w-72' : 'w-20'} ${sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'}`} style={{ width: sidebarOpen ? '18rem' : '5rem' }}>
-      <div className="flex flex-col h-full">
-        {/* Logo/Brand and Toggle */}
-        <div className="flex items-center justify-between mb-12">
-          <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            {sidebarOpen && <span className="ml-3 text-xl font-bold font-display">Twryd</span>}
-          </div>
-          <button
-            className="sm:hidden p-2 rounded-lg hover:bg-primary-400/40 focus:outline-none focus:ring-2 focus:ring-white"
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Close sidebar"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        {/* Navigation */}
-        <nav className="flex-1 mt-2 overflow-y-auto scrollbar-thin scrollbar-thumb-primary-700 scrollbar-track-transparent">
-          <div className="space-y-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                  item.current
-                    ? 'bg-primary-700 text-white shadow border-l-4 border-white'
-                    : 'text-primary-100 hover:bg-primary-400/40 hover:text-white focus:bg-primary-400/60 focus:text-white'
-                }`}
-                tabIndex={sidebarOpen ? 0 : -1}
-              >
-                <span className="flex-shrink-0">{getIcon(item.icon)}</span>
-                {sidebarOpen && <span>{item.name}</span>}
-                {item.current && sidebarOpen && (
-                  <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
-                )}
-              </Link>
-            ))}
-          </div>
-        </nav>
-        {/* User Info & Logout */}
-        {sidebarOpen && (
-          <div className="pt-6 border-t border-primary-700">
-            <div className="flex items-center gap-3 mb-4 px-4">
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg shadow">
-                {initials}
+    <>
+      {/* Mobile Overlay */}
+      {!sidebarCollapsed && isMobile && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={() => setSidebarCollapsed(true)}
+        />
+      )}
+      
+      <div 
+        id="client-sidebar"
+        className={`h-full bg-gradient-to-b from-primary-600 via-primary-500 to-primary-400 text-white flex flex-col py-8 px-6 fixed left-0 top-0 z-30 min-h-screen shadow-xl border-r border-primary-700 transition-all duration-300 ${
+          sidebarCollapsed ? 'w-20' : 'w-72'
+        } ${
+          isMobile ? 'transform transition-transform duration-300' : ''
+        } ${
+          sidebarCollapsed && isMobile ? '-translate-x-full' : 'translate-x-0'
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Logo/Brand and Toggle */}
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center">
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shadow-lg">
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
-                  {user?.name || 'Client User'}
-                </p>
-                <p className="text-xs text-primary-100 truncate">
-                  {user?.email || 'client@example.com'}
-                </p>
-              </div>
+              {!sidebarCollapsed && <span className="ml-3 text-xl font-bold font-display">Twryd</span>}
             </div>
+            
+            {/* Desktop Toggle Button */}
             <button
-              onClick={logout}
-              className="flex items-center w-full gap-4 px-4 py-3 text-sm font-medium text-primary-100 rounded-xl hover:bg-primary-400/40 hover:text-white transition-all duration-200"
+              onClick={toggleSidebar}
+              className="absolute top-4 right-2 p-2 text-white hover:bg-primary-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600 hidden md:block"
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              tabIndex={0}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-              Logout
+            </button>
+            
+            {/* Mobile Close Button */}
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-primary-400/40 focus:outline-none focus:ring-2 focus:ring-white"
+              onClick={() => setSidebarCollapsed(true)}
+              aria-label="Close sidebar"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
-        )}
+          
+          {/* Navigation */}
+          <nav className="flex-1 mt-2 overflow-y-auto scrollbar-thin scrollbar-thumb-primary-700 scrollbar-track-transparent">
+            <div className="space-y-4">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+                    item.current
+                      ? 'bg-primary-700 text-white shadow border-l-4 border-white'
+                      : 'text-primary-100 hover:bg-primary-400/40 hover:text-white focus:bg-primary-400/60 focus:text-white'
+                  } ${sidebarCollapsed ? 'justify-center px-3' : ''}`}
+                  tabIndex={sidebarCollapsed ? -1 : 0}
+                  onClick={() => {
+                    // Close mobile sidebar when clicking a link
+                    if (isMobile) {
+                      setSidebarCollapsed(true);
+                    }
+                  }}
+                >
+                  <span className="flex-shrink-0">{getIcon(item.icon)}</span>
+                  {!sidebarCollapsed && <span className="text-sm sm:text-base">{item.name}</span>}
+                  {item.current && !sidebarCollapsed && (
+                    <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
+                  )}
+                  
+                  {/* Active indicator for collapsed state */}
+                  {sidebarCollapsed && item.current && (
+                    <div className="absolute right-1 w-2 h-2 bg-white rounded-full border border-primary-700"></div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </nav>
+          
+          {/* User Info & Logout */}
+          {!sidebarCollapsed && (
+            <div className="pt-6 border-t border-primary-700">
+              <div className="flex items-center gap-3 mb-4 px-4">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg shadow">
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">
+                    {user?.name || 'Client User'}
+                  </p>
+                  <p className="text-xs text-primary-100 truncate">
+                    {user?.email || 'client@example.com'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={logout}
+                className="flex items-center w-full gap-4 px-4 py-3 text-sm font-medium text-primary-100 rounded-xl hover:bg-primary-400/40 hover:text-white transition-all duration-200"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                </svg>
+                <span className="text-sm sm:text-base">Logout</span>
+              </button>
+            </div>
+          )}
+
+          {/* Mobile User Info - Collapsed State */}
+          {sidebarCollapsed && (
+            <div className="pt-6 border-t border-primary-700">
+              <div className="flex justify-center">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg shadow">
+                  {initials}
+                </div>
+              </div>
+              <button
+                onClick={logout}
+                className="w-full flex justify-center p-3 text-primary-100 hover:bg-primary-400/40 hover:text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white mt-2"
+                aria-label="Logout"
+                tabIndex={0}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 // Client Topbar Component
-function ClientTopbar({ title, sidebarOpen, setSidebarOpen }) {
+function ClientTopbar({ title }) {
   const { user } = useAuth();
+  const { sidebarCollapsed, setSidebarCollapsed } = useLayout();
   
   // Calculate user initials for avatar
   const initials = user?.name ? user.name[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'U');
 
   return (
-    <div className={`h-16 px-8 fixed ${sidebarOpen ? 'left-72' : 'left-20'} top-0 right-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300`}>
+    <div className={`h-16 px-4 sm:px-8 fixed ${sidebarCollapsed ? 'left-0 md:left-20' : 'left-0 md:left-72'} top-0 right-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300`}>
       <div className="flex items-center justify-between h-full">
         <div className="flex items-center h-full gap-2">
           <button
-            className="sm:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-400"
-            onClick={() => setSidebarOpen((open) => !open)}
+            id="mobile-sidebar-toggle"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-400"
+            onClick={() => setSidebarCollapsed((open) => !open)}
             aria-label="Open sidebar"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white tracking-tight drop-shadow-sm flex items-center h-full">
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white tracking-tight drop-shadow-sm flex items-center h-full truncate">
             {title}
           </h1>
         </div>
         
-        <div className="flex items-center gap-4 h-full">
-          {/* Search Bar */}
-          <div className="relative">
+        <div className="flex items-center gap-2 sm:gap-4 h-full">
+          {/* Search Bar - Hidden on mobile */}
+          <div className="relative hidden md:block">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -246,8 +356,8 @@ function ClientTopbar({ title, sidebarOpen, setSidebarOpen }) {
           {/* Theme Toggle */}
           <ThemeToggle variant="button" />
           
-          {/* Notifications */}
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          {/* Notifications - Hidden on mobile */}
+          <button className="hidden sm:block p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 00-6 6v3.75a6 6 0 006 6h3a6 6 0 006-6V9.75a6 6 0 00-6-6h-3z" />
             </svg>
@@ -267,7 +377,7 @@ function ClientTopbar({ title, sidebarOpen, setSidebarOpen }) {
 
 export default function ClientDashboard() {
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 640);
+  const { sidebarCollapsed } = useLayout();
 
   // Performance: Memoize title calculation
   const title = useMemo(() => {
@@ -289,10 +399,10 @@ export default function ClientDashboard() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-        <ClientSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <div className={`flex-1 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-72' : 'ml-20'}`}> 
-          <ClientTopbar title={title} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          <main className="pt-20 px-8 pb-8">
+        <ClientSidebar />
+        <div className={`flex-1 min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'ml-0 md:ml-20' : 'ml-0 md:ml-72'}`}> 
+          <ClientTopbar title={title} />
+          <main className="pt-16 md:pt-20 px-4 sm:px-8 pb-8">
             <Suspense fallback={<RouteLoading />}>
               <Routes>
                 <Route index element={<Navigate to="home" replace />} />
@@ -411,15 +521,15 @@ export default function ClientDashboard() {
                   element={
                     <ErrorBoundary>
                       <div className="w-full max-w-7xl mx-auto">
-                        <div className="flex flex-col items-center justify-center min-h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+                        <div className="flex flex-col items-center justify-center min-h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
                           <div className="text-center">
-                            <div className="flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full mx-auto mb-4">
-                              <svg className="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full mx-auto mb-4">
+                              <svg className="w-6 sm:w-8 h-6 sm:h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                               </svg>
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Settings</h2>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Settings</h2>
                             <p className="text-gray-600 dark:text-gray-400">Settings functionality coming soon!</p>
                           </div>
                         </div>

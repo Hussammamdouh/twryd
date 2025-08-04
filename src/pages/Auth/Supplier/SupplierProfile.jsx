@@ -186,9 +186,9 @@ export default function SupplierProfile() {
 
   if (authUser.role !== 'supplier') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-theme-bg py-12">
-        <div className="theme-card p-8 max-w-md text-center">
-          <h2 className="text-2xl font-bold mb-4 text-theme-text">Access Denied</h2>
+      <div className="min-h-screen flex items-center justify-center bg-theme-bg py-12 px-4">
+        <div className="theme-card p-6 sm:p-8 max-w-md text-center w-full">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-theme-text">Access Denied</h2>
           <p className="text-theme-text-secondary">This page is only available for supplier users.</p>
         </div>
       </div>
@@ -197,8 +197,8 @@ export default function SupplierProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-theme-bg">
-        <div className="theme-card p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-theme-bg px-4">
+        <div className="theme-card p-6 sm:p-8 text-center w-full max-w-md">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
           <p className="text-theme-text-secondary">Loading profile...</p>
         </div>
@@ -207,35 +207,35 @@ export default function SupplierProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg py-8 px-4">
+    <div className="min-h-screen bg-theme-bg py-4 sm:py-8 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="theme-card p-6 mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="theme-card p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-theme-text">Supplier Profile</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-theme-text">Supplier Profile</h1>
               <p className="text-theme-text-secondary mt-1">Manage your account information</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="theme-button px-6 py-2 font-medium"
+                  className="theme-button px-4 sm:px-6 py-2 font-medium w-full sm:w-auto"
                 >
                   Edit Profile
                 </button>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                   <button
                     onClick={handleCancel}
-                    className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                    className="px-4 sm:px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium w-full sm:w-auto"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleUpdate}
                     disabled={updating}
-                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 sm:px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
                     {updating && (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -246,7 +246,7 @@ export default function SupplierProfile() {
               )}
               <button
                 onClick={logout}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                className="px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium w-full sm:w-auto"
               >
                 Logout
               </button>
@@ -255,10 +255,10 @@ export default function SupplierProfile() {
         </div>
 
         {/* Profile Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Personal Information */}
-          <div className="theme-card p-6">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Personal Information</h2>
+          <div className="theme-card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Personal Information</h2>
             
             <div className="space-y-4">
               <div>
@@ -271,13 +271,13 @@ export default function SupplierProfile() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.name ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter company name"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.name || 'Not provided'}
                   </div>
                 )}
@@ -294,13 +294,13 @@ export default function SupplierProfile() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.email ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter email address"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.email || 'Not provided'}
                   </div>
                 )}
@@ -317,13 +317,13 @@ export default function SupplierProfile() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.phone ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter phone number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.phone || 'Not provided'}
                   </div>
                 )}
@@ -340,11 +340,11 @@ export default function SupplierProfile() {
                     name="whatsapp"
                     value={formData.whatsapp}
                     onChange={handleInputChange}
-                    className="theme-input w-full px-4 py-3 rounded-lg"
+                    className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                     placeholder="Enter WhatsApp number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.whatsapp || 'Not provided'}
                   </div>
                 )}
@@ -353,8 +353,8 @@ export default function SupplierProfile() {
           </div>
 
           {/* Business Information */}
-          <div className="theme-card p-6">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Business Information</h2>
+          <div className="theme-card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Business Information</h2>
             
             <div className="space-y-4">
               <div>
@@ -367,13 +367,13 @@ export default function SupplierProfile() {
                     name="tax_card_number"
                     value={formData.tax_card_number}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.tax_card_number ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter tax card number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.tax_card_number || 'Not provided'}
                   </div>
                 )}
@@ -390,13 +390,13 @@ export default function SupplierProfile() {
                     name="cr_number"
                     value={formData.cr_number}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.cr_number ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter CR number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.cr_number || 'Not provided'}
                   </div>
                 )}
@@ -413,11 +413,11 @@ export default function SupplierProfile() {
                     name="area_id"
                     value={formData.area_id}
                     onChange={handleInputChange}
-                    className="theme-input w-full px-4 py-3 rounded-lg"
+                    className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                     placeholder="Enter area ID"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.area_id || 'Not provided'}
                   </div>
                 )}
@@ -426,8 +426,8 @@ export default function SupplierProfile() {
           </div>
 
           {/* Location Information */}
-          <div className="theme-card p-6 lg:col-span-2">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Location Information</h2>
+          <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Location Information</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -441,20 +441,20 @@ export default function SupplierProfile() {
                       name="latitude"
                       value={formData.latitude}
                       onChange={handleInputChange}
-                      className="theme-input flex-1 px-4 py-3 rounded-lg"
+                      className="theme-input flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                       placeholder="Latitude"
                     />
                     <button
                       type="button"
                       onClick={getCurrentLocation}
-                      className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                      className="px-3 sm:px-4 py-2 sm:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
                       title="Get current location"
                     >
                       📍
                     </button>
                   </div>
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.latitude || 'Not provided'}
                   </div>
                 )}
@@ -470,11 +470,11 @@ export default function SupplierProfile() {
                     name="longitude"
                     value={formData.longitude}
                     onChange={handleInputChange}
-                    className="theme-input w-full px-4 py-3 rounded-lg"
+                    className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                     placeholder="Longitude"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.longitude || 'Not provided'}
                   </div>
                 )}
@@ -483,44 +483,44 @@ export default function SupplierProfile() {
           </div>
 
           {/* Account Status */}
-          <div className="theme-card p-6 lg:col-span-2">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Account Status</h2>
+          <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Account Status</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-theme-surface rounded-lg">
-                <div className="text-2xl font-bold text-theme-text">{user?.id || 'N/A'}</div>
-                <div className="text-sm text-theme-text-secondary">Supplier ID</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="text-center p-3 sm:p-4 bg-theme-surface rounded-lg">
+                <div className="text-xl sm:text-2xl font-bold text-theme-text">{user?.id || 'N/A'}</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary">Supplier ID</div>
               </div>
               
-              <div className="text-center p-4 bg-theme-surface rounded-lg">
-                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              <div className="text-center p-3 sm:p-4 bg-theme-surface rounded-lg">
+                <div className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
                   user?.is_active 
                     ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
                     : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                 }`}>
                   {user?.is_active ? 'Active' : 'Pending'}
                 </div>
-                <div className="text-sm text-theme-text-secondary mt-1">Status</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary mt-1">Status</div>
               </div>
               
-              <div className="text-center p-4 bg-theme-surface rounded-lg">
-                <div className="text-2xl font-bold text-theme-text">
+              <div className="text-center p-3 sm:p-4 bg-theme-surface rounded-lg">
+                <div className="text-xl sm:text-2xl font-bold text-theme-text">
                   {user?.email_verified_at ? '✓' : '✗'}
                 </div>
-                <div className="text-sm text-theme-text-secondary">Email Verified</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary">Email Verified</div>
               </div>
             </div>
           </div>
 
           {/* Logo Section */}
           {user?.logo_url && (
-            <div className="theme-card p-6 lg:col-span-2">
-              <h2 className="text-xl font-bold text-theme-text mb-6">Company Logo</h2>
+            <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+              <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Company Logo</h2>
               <div className="flex justify-center">
                 <img 
                   src={user.logo_url} 
                   alt="Company Logo" 
-                  className="w-32 h-32 object-contain rounded-lg border border-theme-border"
+                  className="w-24 h-24 sm:w-32 sm:h-32 object-contain rounded-lg border border-theme-border"
                 />
               </div>
             </div>
@@ -528,14 +528,14 @@ export default function SupplierProfile() {
 
           {/* Categories Section */}
           {user?.categories && user.categories.length > 0 && (
-            <div className="theme-card p-6 lg:col-span-2">
-              <h2 className="text-xl font-bold text-theme-text mb-6">Business Categories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+              <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Business Categories</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {user.categories.map((category, index) => (
                   <div key={index} className="p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg border border-primary-200 dark:border-primary-700">
-                    <div className="font-medium text-primary-900 dark:text-primary-100">{category.name}</div>
+                    <div className="font-medium text-primary-900 dark:text-primary-100 text-sm sm:text-base">{category.name}</div>
                     {category.description && (
-                      <div className="text-sm text-primary-700 dark:text-primary-300 mt-1">{category.description}</div>
+                      <div className="text-xs sm:text-sm text-primary-700 dark:text-primary-300 mt-1">{category.description}</div>
                     )}
                   </div>
                 ))}
@@ -545,13 +545,13 @@ export default function SupplierProfile() {
 
           {/* Key Persons Section */}
           {user?.key_persons && user.key_persons.length > 0 && (
-            <div className="theme-card p-6 lg:col-span-2">
-              <h2 className="text-xl font-bold text-theme-text mb-6">Key Personnel</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+              <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Key Personnel</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {user.key_persons.map((person, index) => (
-                  <div key={index} className="p-4 bg-theme-surface rounded-lg border border-theme-border">
-                    <div className="font-medium text-theme-text mb-2">{person.name}</div>
-                    <div className="text-sm text-theme-text-secondary space-y-1">
+                  <div key={index} className="p-3 sm:p-4 bg-theme-surface rounded-lg border border-theme-border">
+                    <div className="font-medium text-theme-text mb-2 text-sm sm:text-base">{person.name}</div>
+                    <div className="text-xs sm:text-sm text-theme-text-secondary space-y-1">
                       <div><span className="font-medium">Role:</span> {person.role || person.type}</div>
                       <div><span className="font-medium">Phone:</span> {person.phone}</div>
                       <div><span className="font-medium">Email:</span> {person.email}</div>
@@ -564,30 +564,30 @@ export default function SupplierProfile() {
 
           {/* Documents Section */}
           {(user?.tax_card_file_url || user?.cr_file_url) && (
-            <div className="theme-card p-6 lg:col-span-2">
-              <h2 className="text-xl font-bold text-theme-text mb-6">Business Documents</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+              <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Business Documents</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {user?.tax_card_file_url && (
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div className="font-medium text-green-900 mb-2">Tax Card Document</div>
+                  <div className="p-3 sm:p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="font-medium text-green-900 mb-2 text-sm sm:text-base">Tax Card Document</div>
                     <a 
                       href={user.tax_card_file_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-green-600 hover:text-green-800 text-sm underline"
+                      className="text-green-600 hover:text-green-800 text-xs sm:text-sm underline"
                     >
                       View Document
                     </a>
                   </div>
                 )}
                 {user?.cr_file_url && (
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="font-medium text-blue-900 mb-2">Commercial Registration Document</div>
+                  <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="font-medium text-blue-900 mb-2 text-sm sm:text-base">Commercial Registration Document</div>
                     <a 
                       href={user.cr_file_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 text-sm underline"
+                      className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm underline"
                     >
                       View Document
                     </a>

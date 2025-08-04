@@ -352,41 +352,43 @@ export default function ClientInvitations() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
-          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-          </div>
-          <div>
-            <span className="text-gray-900 dark:text-white">Invitations</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Manage supplier invitations</span>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg sm:rounded-xl">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+            </div>
+            <div>
+              <span className="text-gray-900 dark:text-white">Invitations</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal text-base sm:text-lg lg:text-xl ml-0 sm:ml-2">Manage supplier invitations</span>
+            </div>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">Accept, reject, or visit your connected suppliers.</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm sm:text-base">Accept, reject, or visit your connected suppliers.</p>
       </div>
 
       {/* Invitation Token Input */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Accept Invitation</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Accept Invitation</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base">
           If you received an invitation link from a supplier, enter the invitation token here to accept it.
         </p>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <input
             type="text"
             placeholder="Enter invitation token"
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
+            className="flex-1 px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
             value={invitationToken}
             onChange={(e) => setInvitationToken(e.target.value)}
           />
           <button
             onClick={handleAcceptByToken}
             disabled={!invitationToken.trim() || acceptMutation.isPending}
-            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-4 sm:px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
           >
             {acceptMutation.isPending ? 'Accepting...' : 'Accept Invitation'}
           </button>
@@ -394,22 +396,22 @@ export default function ClientInvitations() {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1">
             <input
               type="text"
               placeholder="Search by supplier name or email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
+              className="w-full px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
             />
           </div>
           <div className="sm:w-48">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
+              className="w-full px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -423,30 +425,31 @@ export default function ClientInvitations() {
       </div>
 
       {/* Invitations Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Supplier Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Supplier Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Categories
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Sent Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Actions
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-900 dark:text-primary-100 uppercase tracking-wider">
                   Access
                 </th>
               </tr>
@@ -454,50 +457,50 @@ export default function ClientInvitations() {
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {paginatedInvitations.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
+                  <td colSpan="7" className="px-4 sm:px-6 py-8 sm:py-12 text-center text-gray-400 dark:text-gray-500">
                     <div className="flex flex-col items-center">
-                      <svg className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 sm:w-12 sm:h-12 text-gray-300 dark:text-gray-600 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                       </svg>
-                      <p className="text-lg font-medium text-gray-700 dark:text-gray-200">No invitations found</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+                      <p className="text-base sm:text-lg font-medium text-gray-700 dark:text-gray-200">No invitations found</p>
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 paginatedInvitations.map((inv) => (
                   <tr key={`${inv.type}-${inv.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {inv.supplier.name}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500 dark:text-gray-400">
                         {inv.supplier.email}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500 dark:text-gray-400">
                         {(() => {
                           return inv.supplier.categories ? inv.supplier.categories.map(cat => cat.name).join(', ') : 'N/A';
                         })()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(inv.status)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(inv.sent_date)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="flex space-x-3">
                         {getActionButtons(inv)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       {getAccessBadge(inv.access)}
                     </td>
                   </tr>
@@ -506,11 +509,74 @@ export default function ClientInvitations() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden">
+          {paginatedInvitations.length === 0 ? (
+            <div className="p-6 text-center text-gray-400 dark:text-gray-500">
+              <div className="flex flex-col items-center">
+                <svg className="w-8 h-8 text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p className="text-base font-medium text-gray-700 dark:text-gray-200">No invitations found</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+              </div>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              {paginatedInvitations.map((inv) => (
+                <div key={`${inv.type}-${inv.id}`} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {inv.supplier.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {inv.supplier.email}
+                        </p>
+                      </div>
+                      <div className="ml-3 flex-shrink-0">
+                        {getStatusBadge(inv.status)}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <span className="text-gray-500 dark:text-gray-400">Categories:</span>
+                        <p className="text-gray-900 dark:text-white truncate">
+                          {(() => {
+                            return inv.supplier.categories ? inv.supplier.categories.map(cat => cat.name).join(', ') : 'N/A';
+                          })()}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 dark:text-gray-400">Sent Date:</span>
+                        <p className="text-gray-900 dark:text-white">
+                          {formatDate(inv.sent_date)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex-shrink-0">
+                        {getAccessBadge(inv.access)}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {getActionButtons(inv)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6">
+        <div className="mt-4 sm:mt-6">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

@@ -179,9 +179,9 @@ export default function ClientProfile() {
 
   if (authUser.role !== 'client') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-theme-bg py-12">
-        <div className="theme-card p-8 max-w-md text-center">
-          <h2 className="text-2xl font-bold mb-4 text-theme-text">Access Denied</h2>
+      <div className="min-h-screen flex items-center justify-center bg-theme-bg py-12 px-4">
+        <div className="theme-card p-6 sm:p-8 max-w-md text-center w-full">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-theme-text">Access Denied</h2>
           <p className="text-theme-text-secondary">This page is only available for client users.</p>
         </div>
       </div>
@@ -190,8 +190,8 @@ export default function ClientProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-theme-bg">
-        <div className="theme-card p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-theme-bg px-4">
+        <div className="theme-card p-6 sm:p-8 text-center w-full max-w-md">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
           <p className="text-theme-text-secondary">Loading profile...</p>
         </div>
@@ -200,35 +200,35 @@ export default function ClientProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg py-8 px-4">
+    <div className="min-h-screen bg-theme-bg py-4 sm:py-8 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="theme-card p-6 mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="theme-card p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-theme-text">Client Profile</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-theme-text">Client Profile</h1>
               <p className="text-theme-text-secondary mt-1">Manage your account information</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="theme-button px-6 py-2 font-medium"
+                  className="theme-button px-4 sm:px-6 py-2 font-medium w-full sm:w-auto"
                 >
                   Edit Profile
                 </button>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                   <button
                     onClick={handleCancel}
-                    className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                    className="px-4 sm:px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium w-full sm:w-auto"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleUpdate}
                     disabled={updating}
-                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 sm:px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
                   >
                     {updating && (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -239,7 +239,7 @@ export default function ClientProfile() {
               )}
               <button
                 onClick={logout}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                className="px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium w-full sm:w-auto"
               >
                 Logout
               </button>
@@ -248,10 +248,10 @@ export default function ClientProfile() {
         </div>
 
         {/* Profile Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Personal Information */}
-          <div className="theme-card p-6">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Personal Information</h2>
+          <div className="theme-card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Personal Information</h2>
             
             <div className="space-y-4">
               <div>
@@ -264,13 +264,13 @@ export default function ClientProfile() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.name ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter company name"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.name || 'Not provided'}
                   </div>
                 )}
@@ -287,13 +287,13 @@ export default function ClientProfile() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.email ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter email address"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.email || 'Not provided'}
                   </div>
                 )}
@@ -310,13 +310,13 @@ export default function ClientProfile() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.phone ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter phone number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.phone || 'Not provided'}
                   </div>
                 )}
@@ -333,11 +333,11 @@ export default function ClientProfile() {
                     name="whatsapp"
                     value={formData.whatsapp}
                     onChange={handleInputChange}
-                    className="theme-input w-full px-4 py-3 rounded-lg"
+                    className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                     placeholder="Enter WhatsApp number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.whatsapp || 'Not provided'}
                   </div>
                 )}
@@ -346,8 +346,8 @@ export default function ClientProfile() {
           </div>
 
           {/* Business Information */}
-          <div className="theme-card p-6">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Business Information</h2>
+          <div className="theme-card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Business Information</h2>
             
             <div className="space-y-4">
               <div>
@@ -360,13 +360,13 @@ export default function ClientProfile() {
                     name="tax_card_number"
                     value={formData.tax_card_number}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.tax_card_number ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter tax card number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.tax_card_number || 'Not provided'}
                   </div>
                 )}
@@ -383,13 +383,13 @@ export default function ClientProfile() {
                     name="cr_number"
                     value={formData.cr_number}
                     onChange={handleInputChange}
-                    className={`theme-input w-full px-4 py-3 rounded-lg ${
+                    className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
                       errors.cr_number ? 'border-red-500' : ''
                     }`}
                     placeholder="Enter CR number"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.cr_number || 'Not provided'}
                   </div>
                 )}
@@ -406,11 +406,11 @@ export default function ClientProfile() {
                     name="area_id"
                     value={formData.area_id}
                     onChange={handleInputChange}
-                    className="theme-input w-full px-4 py-3 rounded-lg"
+                    className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                     placeholder="Enter area ID"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.area_id || 'Not provided'}
                   </div>
                 )}
@@ -419,8 +419,8 @@ export default function ClientProfile() {
           </div>
 
           {/* Location Information */}
-          <div className="theme-card p-6 lg:col-span-2">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Location Information</h2>
+          <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Location Information</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -434,20 +434,20 @@ export default function ClientProfile() {
                       name="latitude"
                       value={formData.latitude}
                       onChange={handleInputChange}
-                      className="theme-input flex-1 px-4 py-3 rounded-lg"
+                      className="theme-input flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                       placeholder="Latitude"
                     />
                     <button
                       type="button"
                       onClick={getCurrentLocation}
-                      className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                      className="px-3 sm:px-4 py-2 sm:py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
                       title="Get current location"
                     >
                       📍
                     </button>
                   </div>
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.latitude || 'Not provided'}
                   </div>
                 )}
@@ -463,11 +463,11 @@ export default function ClientProfile() {
                     name="longitude"
                     value={formData.longitude}
                     onChange={handleInputChange}
-                    className="theme-input w-full px-4 py-3 rounded-lg"
+                    className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                     placeholder="Longitude"
                   />
                 ) : (
-                  <div className="px-4 py-3 bg-theme-surface rounded-lg text-theme-text">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface rounded-lg text-theme-text text-sm sm:text-base">
                     {user?.longitude || 'Not provided'}
                   </div>
                 )}
@@ -476,31 +476,31 @@ export default function ClientProfile() {
           </div>
 
           {/* Account Status */}
-          <div className="theme-card p-6 lg:col-span-2">
-            <h2 className="text-xl font-bold text-theme-text mb-6">Account Status</h2>
+          <div className="theme-card p-4 sm:p-6 lg:col-span-2">
+            <h2 className="text-lg sm:text-xl font-bold text-theme-text mb-4 sm:mb-6">Account Status</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-theme-surface rounded-lg">
-                <div className="text-2xl font-bold text-theme-text">{user?.id || 'N/A'}</div>
-                <div className="text-sm text-theme-text-secondary">Client ID</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="text-center p-3 sm:p-4 bg-theme-surface rounded-lg">
+                <div className="text-xl sm:text-2xl font-bold text-theme-text">{user?.id || 'N/A'}</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary">Client ID</div>
               </div>
               
-              <div className="text-center p-4 bg-theme-surface rounded-lg">
-                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              <div className="text-center p-3 sm:p-4 bg-theme-surface rounded-lg">
+                <div className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
                   user?.is_active 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-yellow-100 text-yellow-800'
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                 }`}>
                   {user?.is_active ? 'Active' : 'Pending'}
                 </div>
-                <div className="text-sm text-theme-text-secondary mt-1">Status</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary mt-1">Status</div>
               </div>
               
-              <div className="text-center p-4 bg-theme-surface rounded-lg">
-                <div className="text-2xl font-bold text-theme-text">
+              <div className="text-center p-3 sm:p-4 bg-theme-surface rounded-lg">
+                <div className="text-xl sm:text-2xl font-bold text-theme-text">
                   {user?.email_verified_at ? '✓' : '✗'}
                 </div>
-                <div className="text-sm text-theme-text-secondary">Email Verified</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary">Email Verified</div>
               </div>
             </div>
           </div>

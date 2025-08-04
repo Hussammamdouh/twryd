@@ -29,18 +29,18 @@ const SupplierForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
-      <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-4 sm:px-6 py-4 sm:py-8" role="main">
+      <div className="theme-card w-full max-w-sm sm:max-w-md p-6 sm:p-8 lg:p-10 flex flex-col items-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           {t('supplier_auth.forgot_password_title')}
         </h2>
-        <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
-        <p className="text-theme-text-secondary text-center mb-6">
+        <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-6 sm:mb-8" />
+        <p className="text-theme-text-secondary text-center mb-4 sm:mb-6 text-sm sm:text-base">
           {t('supplier_auth.forgot_password_description')}
         </p>
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" aria-busy={loading}>
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5 sm:gap-6" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium text-theme-text">{t('supplier_auth.email_address')}</label>
+            <label htmlFor="email" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.email_address')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/></svg>
@@ -65,7 +65,7 @@ const SupplierForgotPassword = () => {
             type="submit"
             disabled={loading}
             aria-label={t('supplier_auth.send_reset_link')}
-            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 min-h-[44px]"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -76,7 +76,7 @@ const SupplierForgotPassword = () => {
             {loading ? t('supplier_auth.sending') : t('supplier_auth.send_reset_link')}
           </button>
           <div className="text-center">
-            <Link to="/login-supplier" className="text-primary-600 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 rounded">
+            <Link to="/login-supplier" className="text-primary-600 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 rounded text-sm sm:text-base">
               {t('supplier_auth.back_to_login')}
             </Link>
           </div>

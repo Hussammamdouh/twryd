@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
+export { LanguageContext };
+
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
@@ -286,8 +288,6 @@ export const LanguageProvider = ({ children }) => {
       'modal.edit_area': 'Edit Area',
       
       // Language
-      'language.english': 'English',
-      'language.arabic': 'العربية',
       'language.switch': 'Switch Language',
       
       // Login
@@ -508,8 +508,6 @@ export const LanguageProvider = ({ children }) => {
       'client_auth.password_symbol': 'Password must contain at least one symbol',
       
       // Language
-      'language.english': 'English',
-      'language.arabic': 'Arabic',
       'language.switch_to_english': 'Switch to English',
       'language.switch_to_arabic': 'Switch to Arabic',
       
@@ -796,8 +794,6 @@ export const LanguageProvider = ({ children }) => {
       'modal.edit_area': 'تعديل المنطقة',
       
       // Language
-      'language.english': 'English',
-      'language.arabic': 'العربية',
       'language.switch': 'تغيير اللغة',
       
       // Login
@@ -1018,8 +1014,6 @@ export const LanguageProvider = ({ children }) => {
       'client_auth.password_symbol': 'يجب أن تحتوي كلمة المرور على رمز واحد على الأقل',
       
       // Language
-      'language.english': 'الإنجليزية',
-      'language.arabic': 'العربية',
       'language.switch_to_english': 'التبديل إلى الإنجليزية',
       'language.switch_to_arabic': 'التبديل إلى العربية',
       

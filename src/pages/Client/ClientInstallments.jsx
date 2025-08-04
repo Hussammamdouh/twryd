@@ -165,7 +165,7 @@ export default function ClientInstallments() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-theme-bg p-6">
+      <div className="min-h-screen bg-theme-bg p-4 sm:p-6">
         <div className="max-w-7xl mx-auto">
           <LoadingSkeleton type="dashboard" />
         </div>
@@ -174,82 +174,91 @@ export default function ClientInstallments() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-theme-bg p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-theme-text mb-2">My Installments</h1>
-          <p className="text-theme-text-secondary">
-            View and track your installment plans for orders
-          </p>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-theme-text">My Installments</h1>
+              <p className="text-sm sm:text-base text-theme-text-secondary">
+                View and track your installment plans for orders
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-theme-border p-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl shadow-sm border border-theme-border p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                 </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-theme-text-secondary">Total Orders</p>
-                <p className="text-2xl font-bold text-theme-text">{summaryStats.totalOrders}</p>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-theme-text-secondary">Total Orders</p>
+                <p className="text-lg sm:text-2xl font-bold text-theme-text">{summaryStats.totalOrders}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-theme-border p-6">
+          <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl shadow-sm border border-theme-border p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-theme-text-secondary">Paid Amount</p>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-theme-text-secondary">Paid Amount</p>
+                <p className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">
                   ${formatCurrency(summaryStats.paidAmount)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-theme-border p-6">
+          <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl shadow-sm border border-theme-border p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-theme-text-secondary">Pending Amount</p>
-                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-theme-text-secondary">Pending Amount</p>
+                <p className="text-lg sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                   ${formatCurrency(summaryStats.pendingAmount)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-theme-border p-6">
+          <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl shadow-sm border border-theme-border p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-theme-text-secondary">Overdue Amount</p>
-                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-theme-text-secondary">Overdue Amount</p>
+                <p className="text-lg sm:text-2xl font-bold text-red-600 dark:text-red-400">
                   ${formatCurrency(summaryStats.overdueAmount)}
                 </p>
               </div>
@@ -258,52 +267,115 @@ export default function ClientInstallments() {
         </div>
 
         {/* Orders Table */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-theme-border">
-          <div className="px-6 py-4 border-b border-theme-border">
-            <h2 className="text-lg font-semibold text-theme-text">Orders with Installments</h2>
-            <p className="text-sm text-theme-text-secondary mt-1">
+        <div className="bg-white dark:bg-gray-900 rounded-lg sm:rounded-xl shadow-sm border border-theme-border">
+          <div className="px-4 sm:px-6 py-4 sm:py-6 border-b border-theme-border">
+            <h2 className="text-lg sm:text-xl font-semibold text-theme-text">Orders with Installments</h2>
+            <p className="text-sm sm:text-base text-theme-text-secondary mt-1 sm:mt-2">
               View your orders that have installment plans
             </p>
           </div>
           
           {orders.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="text-theme-text-muted mb-4">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="p-6 sm:p-8 text-center">
+              <div className="text-theme-text-muted mb-4 sm:mb-6">
+                <svg className="mx-auto h-12 w-12 sm:h-16 sm:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-theme-text mb-2">No installment orders</h3>
-              <p className="text-theme-text-secondary">
+              <h3 className="text-lg sm:text-xl font-medium text-theme-text mb-2 sm:mb-3">No installment orders</h3>
+              <p className="text-sm sm:text-base text-theme-text-secondary">
                 You don't have any orders with installment plans at the moment.
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-theme-border">
-                <thead className="bg-theme-surface">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                      Order
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                      Supplier
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                      Total Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                      Order Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                      Installment Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-900 divide-y divide-theme-border">
+            <div>
+              {/* Desktop Table */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-theme-border">
+                  <thead className="bg-theme-surface">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                        Order
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                        Supplier
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                        Total Amount
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                        Order Date
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                        Installment Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-theme-border">
+                    {orders.map((order) => {
+                      // Calculate installment summary for this order
+                      const orderInstallments = order.installments || [];
+                      const totalInstallments = orderInstallments.length;
+                      const paidInstallments = orderInstallments.filter(inst => inst.status === 'paid').length;
+                      const overdueInstallments = orderInstallments.filter(inst => 
+                        inst.status === 'overdue' || new Date(inst.due_date) < new Date()
+                      ).length;
+
+                      return (
+                        <tr key={order.id} className="hover:bg-theme-surface transition-colors duration-200">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-theme-text">
+                              #{order.order_number || order.id}
+                            </div>
+                            <div className="text-sm text-theme-text-secondary">
+                              {order.status || 'Pending'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-theme-text">
+                              {order.supplier?.name || `Supplier #${order.supplier_id?.slice(0, 8)}`}
+                            </div>
+                            <div className="text-sm text-theme-text-secondary">
+                              {order.supplier?.email || 'Email not available'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-text">
+                            ${formatCurrency(order.total)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-text-secondary">
+                            {formatDate(order.created_at)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-theme-text">
+                              {paidInstallments}/{totalInstallments} Paid
+                            </div>
+                            {overdueInstallments > 0 && (
+                              <div className="text-sm text-red-600 dark:text-red-400">
+                                {overdueInstallments} Overdue
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              onClick={() => openModal(order)}
+                              className="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300"
+                            >
+                              View Details
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Cards */}
+              <div className="md:hidden">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                   {orders.map((order) => {
                     // Calculate installment summary for this order
                     const orderInstallments = order.installments || [];
@@ -314,52 +386,69 @@ export default function ClientInstallments() {
                     ).length;
 
                     return (
-                      <tr key={order.id} className="hover:bg-theme-surface transition-colors duration-200">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-theme-text">
-                            #{order.order_number || order.id}
-                          </div>
-                          <div className="text-sm text-theme-text-secondary">
-                            {order.status || 'Pending'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-theme-text">
-                            {order.supplier?.name || `Supplier #${order.supplier_id?.slice(0, 8)}`}
-                          </div>
-                          <div className="text-sm text-theme-text-secondary">
-                            {order.supplier?.email || 'Email not available'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-text">
-                          ${formatCurrency(order.total)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-text-secondary">
-                          {formatDate(order.created_at)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-theme-text">
-                            {paidInstallments}/{totalInstallments} Paid
-                          </div>
-                          {overdueInstallments > 0 && (
-                            <div className="text-sm text-red-600 dark:text-red-400">
-                              {overdueInstallments} Overdue
+                      <div key={order.id} className="bg-theme-surface rounded-lg sm:rounded-xl p-4 sm:p-6 border border-theme-border">
+                        <div className="flex items-start justify-between mb-3 sm:mb-4">
+                          <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                              </svg>
                             </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div>
+                              <div className="text-sm sm:text-base font-medium text-theme-text">
+                                #{order.order_number || order.id}
+                              </div>
+                              <div className="text-xs sm:text-sm text-theme-text-secondary">
+                                {order.status || 'Pending'}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm sm:text-base font-medium text-theme-text">
+                              ${formatCurrency(order.total)}
+                            </div>
+                            <div className="text-xs sm:text-sm text-theme-text-secondary">
+                              {formatDate(order.created_at)}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 sm:space-y-3">
+                          <div className="flex items-center justify-between text-xs sm:text-sm">
+                            <span className="text-theme-text-secondary">Supplier:</span>
+                            <span className="text-theme-text font-medium">
+                              {order.supplier?.name || `Supplier #${order.supplier_id?.slice(0, 8)}`}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between text-xs sm:text-sm">
+                            <span className="text-theme-text-secondary">Installments:</span>
+                            <div className="text-right">
+                              <div className="text-theme-text font-medium">
+                                {paidInstallments}/{totalInstallments} Paid
+                              </div>
+                              {overdueInstallments > 0 && (
+                                <div className="text-red-600 dark:text-red-400">
+                                  {overdueInstallments} Overdue
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 sm:mt-6">
                           <button
                             onClick={() => openModal(order)}
-                            className="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300"
+                            className="w-full py-2 sm:py-3 px-4 sm:px-6 bg-primary-600 hover:bg-primary-700 text-white rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-colors duration-200"
                           >
                             View Details
                           </button>
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -371,15 +460,15 @@ export default function ClientInstallments() {
           title={`Installment Details - Order #${selectedOrder?.order_number || selectedOrder?.id}`}
         >
           {installments.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-theme-text-secondary">No installments found for this order.</p>
+            <div className="text-center py-6 sm:py-8">
+              <p className="text-sm sm:text-base text-theme-text-secondary">No installments found for this order.</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 sm:space-y-6">
               {/* Order Summary */}
-              <div className="bg-theme-surface rounded-lg p-4 mb-4">
-                <h3 className="text-lg font-semibold text-theme-text mb-2">Order Summary</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-theme-surface rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-theme-text mb-3 sm:mb-4">Order Summary</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm sm:text-base">
                   <div>
                     <span className="text-theme-text-secondary">Supplier:</span>
                     <span className="ml-2 text-theme-text">{selectedOrder?.supplier?.name || `Supplier #${selectedOrder?.supplier_id?.slice(0, 8)}`}</span>
@@ -408,71 +497,113 @@ export default function ClientInstallments() {
               </div>
 
               {/* Installments Table */}
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-theme-border">
-                  <thead className="bg-theme-surface">
-                    <tr>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                        Installment #
-                      </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                        Due Date
-                      </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                        Amount
-                      </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
-                        Paid Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-theme-border">
-                    {installments.map((installment, index) => (
-                      <tr key={installment.id}>
-                        <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text">
-                          {index + 1}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text">
-                          {formatDate(installment.due_date)}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text">
-                          ${formatCurrency(installment.amount)}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap">
-                          {getStatusBadge(installment.status, installment.due_date)}
-                        </td>
-                        <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text-secondary">
-                          {installment.paid_at ? formatDate(installment.paid_at) : '-'}
-                        </td>
+              <div>
+                <h4 className="text-base sm:text-lg font-semibold text-theme-text mb-3 sm:mb-4">Installment Details</h4>
+                
+                {/* Desktop Table */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="min-w-full divide-y divide-theme-border">
+                    <thead className="bg-theme-surface">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                          Installment #
+                        </th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                          Due Date
+                        </th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                          Amount
+                        </th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-theme-text-secondary uppercase tracking-wider">
+                          Paid Date
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="bg-white dark:bg-gray-900 divide-y divide-theme-border">
+                      {installments.map((installment, index) => (
+                        <tr key={installment.id}>
+                          <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text">
+                            {index + 1}
+                          </td>
+                          <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text">
+                            {formatDate(installment.due_date)}
+                          </td>
+                          <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text">
+                            ${formatCurrency(installment.amount)}
+                          </td>
+                          <td className="px-3 py-2 whitespace-nowrap">
+                            {getStatusBadge(installment.status, installment.due_date)}
+                          </td>
+                          <td className="px-3 py-2 whitespace-nowrap text-sm text-theme-text-secondary">
+                            {installment.paid_at ? formatDate(installment.paid_at) : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="sm:hidden space-y-3 sm:space-y-4">
+                  {installments.map((installment, index) => (
+                    <div key={installment.id} className="bg-theme-surface rounded-lg p-3 sm:p-4 border border-theme-border">
+                      <div className="flex items-center justify-between mb-2 sm:mb-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                            <span className="text-sm sm:text-base font-medium text-primary-600 dark:text-primary-400">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="text-sm sm:text-base font-medium text-theme-text">
+                              Installment #{index + 1}
+                            </div>
+                            <div className="text-xs sm:text-sm text-theme-text-secondary">
+                              Due: {formatDate(installment.due_date)}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm sm:text-base font-medium text-theme-text">
+                            ${formatCurrency(installment.amount)}
+                          </div>
+                          {getStatusBadge(installment.status, installment.due_date)}
+                        </div>
+                      </div>
+                      
+                      {installment.paid_at && (
+                        <div className="text-xs sm:text-sm text-theme-text-secondary">
+                          Paid on: {formatDate(installment.paid_at)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Summary */}
-              <div className="bg-theme-surface rounded-lg p-4">
-                <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="bg-theme-surface rounded-lg p-4 sm:p-6">
+                <div className="grid grid-cols-3 gap-3 sm:gap-4 text-sm sm:text-base">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">
                       ${formatCurrency(installments.filter(inst => inst.status === 'paid').reduce((sum, inst) => sum + parseFloat(inst.amount || 0), 0))}
                     </div>
-                    <div className="text-theme-text-secondary">Paid</div>
+                    <div className="text-xs sm:text-sm text-theme-text-secondary">Paid</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                    <div className="text-lg sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                       ${formatCurrency(installments.filter(inst => inst.status !== 'paid' && new Date(inst.due_date) >= new Date()).reduce((sum, inst) => sum + parseFloat(inst.amount || 0), 0))}
                     </div>
-                    <div className="text-theme-text-secondary">Pending</div>
+                    <div className="text-xs sm:text-sm text-theme-text-secondary">Pending</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    <div className="text-lg sm:text-2xl font-bold text-red-600 dark:text-red-400">
                       ${formatCurrency(installments.filter(inst => inst.status === 'overdue' || new Date(inst.due_date) < new Date()).reduce((sum, inst) => sum + parseFloat(inst.amount || 0), 0))}
                     </div>
-                    <div className="text-theme-text-secondary">Overdue</div>
+                    <div className="text-xs sm:text-sm text-theme-text-secondary">Overdue</div>
                   </div>
                 </div>
               </div>

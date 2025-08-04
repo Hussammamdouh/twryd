@@ -1,6 +1,7 @@
 import React, { Suspense, useMemo } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { LayoutProvider } from '../../contexts/LayoutContext.jsx';
+import { useLayout } from '../../hooks/useLayout';
 import Sidebar from '../../UI/supplier/Sidebar';
 import Topbar from '../../UI/supplier/Topbar';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
@@ -22,9 +23,9 @@ const VirtualClientManagement = React.lazy(() => import('./VirtualClientManageme
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
   <div className="min-h-screen bg-theme-bg">
-    <div className="flex-1 min-h-screen ml-64">
+    <div className="flex-1 min-h-screen ml-0 md:ml-64">
       <Topbar title="Loading..." />
-      <main className="pt-20 px-8 pb-8">
+      <main className="pt-16 md:pt-20 px-4 sm:px-8 pb-8">
         <LoadingSkeleton type="dashboard" />
       </main>
     </div>
@@ -35,18 +36,13 @@ const RouteLoading = () => (
 const RouteError = ({ retry }) => (
   <div className="min-h-screen bg-theme-bg flex items-center justify-center">
     <div className="theme-card p-8 max-w-md text-center">
-      <div className="text-red-500 mb-4">
-        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
-      </div>
-      <h2 className="text-xl font-bold text-theme-text mb-2">Failed to load page</h2>
-      <p className="text-theme-text-secondary mb-4">Something went wrong while loading this page.</p>
+      <h2 className="text-2xl font-bold mb-4 text-theme-text">Something went wrong</h2>
+      <p className="text-theme-text-secondary mb-6">Failed to load this page. Please try again.</p>
       <button
         onClick={retry}
-        className="theme-button"
+        className="theme-button px-6 py-2 font-medium"
       >
-        Try Again
+        Retry
       </button>
     </div>
   </div>
@@ -54,19 +50,21 @@ const RouteError = ({ retry }) => (
 
 function SupplierDashboardContent() {
   const location = useLocation();
+  const { sidebarCollapsed } = useLayout();
 
-  // Performance: Memoize title calculation
+  // Performance: Memoize title based on current route
   const title = useMemo(() => {
     const path = location.pathname;
-    if (path.endsWith('/products')) return 'Product Management';
-    if (path.endsWith('/profile')) return 'Profile';
-    if (path.endsWith('/warehouses')) return 'Warehouses';
-    if (path.endsWith('/shipping-people')) return 'Delivery Personnel';
-    if (path.endsWith('/client-discounts')) return 'Client-Based Discounts';
-    if (path.endsWith('/product-discounts')) return 'Product Discounts';
-    if (path.endsWith('/installments')) return 'Installments Management';
-    if (path.includes('/orders/') && path.split('/').length > 3) return 'Order Details';
-    if (path.endsWith('/orders')) return 'Orders Management';
+    if (path.includes('/home')) return 'Dashboard Home';
+    if (path.includes('/profile')) return 'Profile';
+    if (path.includes('/products')) return 'Product Management';
+    if (path.includes('/warehouses')) return 'Warehouses';
+    if (path.includes('/shipping-people')) return 'Delivery Personnel';
+    if (path.includes('/client-discounts')) return 'Client-Based Discounts';
+    if (path.includes('/product-discounts')) return 'Product Discounts';
+    if (path.includes('/orders')) return 'Orders Management';
+    if (path.includes('/installments')) return 'Installments Management';
+    if (path.includes('/virtual-client-management')) return 'Virtual Client Management';
     return 'Profile';
   }, [location.pathname]);
 
@@ -74,9 +72,9 @@ function SupplierDashboardContent() {
     <ErrorBoundary>
       <div className="min-h-screen bg-theme-bg flex">
         <Sidebar />
-        <div className="flex-1 min-h-screen ml-64">
+        <div className={`flex-1 min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'ml-0 md:ml-16' : 'ml-0 md:ml-64'}`}>
           <Topbar title={title} />
-          <main className="pt-20 px-8 pb-8">
+          <main className="pt-16 md:pt-20 px-4 sm:px-8 pb-8">
             <Suspense fallback={<RouteLoading />}>
               <Routes>
                 <Route index element={<Navigate to="home" replace />} />
@@ -145,7 +143,7 @@ function SupplierDashboardContent() {
                   } 
                 />
                 <Route 
-                  path="orders/:orderId" 
+                  path="orders/:id" 
                   element={
                     <ErrorBoundary>
                       <SupplierOrderDetails />

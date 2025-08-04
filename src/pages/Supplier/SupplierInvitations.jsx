@@ -74,7 +74,7 @@ export default function SupplierInvitations() {
         onStatusChange={setStatus}
         onInvite={() => setInviteOpen(true)}
       />
-      <main className={`pt-20 pr-8 transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'}`}>
+      <main className={`pt-16 md:pt-20 px-4 sm:px-8 pb-8 transition-all duration-300 ${sidebarCollapsed ? 'ml-0 md:ml-16' : 'ml-0 md:ml-64'}`}>
         <div className="max-w-5xl mx-auto">
           <InvitationTable invitations={filteredInvitations} loading={loading} onAction={fetchInvitations} onInvite={() => setInviteOpen(true)} />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

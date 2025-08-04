@@ -96,9 +96,9 @@ export default function ClientLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
-      <div className="theme-card w-full max-w-md p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-4 sm:px-6 py-4 sm:py-8" role="main">
+      <div className="theme-card w-full max-w-sm sm:max-w-md p-6 sm:p-8 lg:p-10 flex flex-col items-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           {t('client_auth.login_title')}
         </h2>
         {invitationToken && (
@@ -108,10 +108,10 @@ export default function ClientLogin() {
             </p>
           </div>
         )}
-        <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-7" aria-busy={loading}>
+        <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-6 sm:mb-8" />
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5 sm:gap-7" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="emailOrPhone" className="text-base font-medium text-theme-text">{t('client_auth.email_or_phone')}</label>
+            <label htmlFor="emailOrPhone" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.email_or_phone')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M3 6.75A2.75 2.75 0 0 1 5.75 4h12.5A2.75 2.75 0 0 1 21 6.75v10.5A2.75 2.75 0 0 1 18.25 20H5.75A2.75 2.75 0 0 1 3 17.25V6.75Zm0 0L12 13.25L21 6.75"/></svg>
@@ -121,7 +121,7 @@ export default function ClientLogin() {
                 type="text"
                 autoComplete="username"
                 required
-                className="theme-input w-full pl-10 pr-4 py-3 rounded-md text-base shadow-sm"
+                className="theme-input w-full pl-10 pr-4 py-3 sm:py-3 rounded-md text-base shadow-sm"
                 placeholder={t('client_auth.email_or_phone_placeholder')}
                 value={emailOrPhone}
                 onChange={e => setEmailOrPhone(e.target.value)}
@@ -129,7 +129,7 @@ export default function ClientLogin() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-base font-medium text-theme-text">{t('client_auth.password')}</label>
+            <label htmlFor="password" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.password')}</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-hidden="true">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Z"/></svg>
@@ -139,7 +139,7 @@ export default function ClientLogin() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="theme-input w-full pl-10 pr-12 py-3 rounded-md text-base shadow-sm"
+                className="theme-input w-full pl-10 pr-12 py-3 sm:py-3 rounded-md text-base shadow-sm"
                 placeholder={t('client_auth.password_placeholder')}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -147,7 +147,7 @@ export default function ClientLogin() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-theme-text-muted hover:text-theme-text hover:bg-theme-surface transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-card"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-md text-theme-text-muted hover:text-theme-text hover:bg-theme-surface transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-theme-card"
                 aria-label={showPassword ? t('client_auth.hide_password') : t('client_auth.show_password')}
                 title={showPassword ? t('client_auth.hide_password') : t('client_auth.show_password')}
               >
@@ -161,14 +161,14 @@ export default function ClientLogin() {
               </button>
             </div>
           </div>
-          <div className="flex justify-between text-sm mt-4">
-            <Link to="/forgot-password-client" className="text-primary-600 hover:underline">{t('client_auth.forgot_password')}</Link>
+          <div className="flex justify-between text-sm mt-2 sm:mt-4">
+            <Link to="/forgot-password-client" className="text-primary-600 hover:underline text-sm sm:text-base">{t('client_auth.forgot_password')}</Link>
           </div>
           <button
             type="submit"
             disabled={loading}
             aria-label={t('client_auth.login_button')}
-            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 sm:py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 min-h-[44px]"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

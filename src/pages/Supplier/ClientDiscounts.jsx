@@ -61,31 +61,35 @@ export default function ClientDiscounts() {
   }, [clients, search, status]);
 
   const handleRemoveDiscount = async (client) => {
-    setRowLoading(l => ({ ...l, [client.id]: true }));
+    // Use the correct client ID - prefer client.client.id if it exists, otherwise use client.id
+    const clientData = client.client || client;
+    const clientId = clientData.id || client.id;
+    
+    setRowLoading(l => ({ ...l, [clientId]: true }));
     try {
-      await del(`/api/supplier-management/clients/${client.id}/default-discount`, { token });
-      setRecentlyUpdated(prev => ({ ...prev, [client.id]: true }));
-      setActionResult(prev => ({ ...prev, [client.id]: 'success' }));
+      await del(`/api/supplier-management/clients/${clientId}/default-discount`, { token });
+      setRecentlyUpdated(prev => ({ ...prev, [clientId]: true }));
+      setActionResult(prev => ({ ...prev, [clientId]: 'success' }));
       setTimeout(() => {
-        setRecentlyUpdated(prev => ({ ...prev, [client.id]: false }));
-        setActionResult(prev => ({ ...prev, [client.id]: undefined }));
+        setRecentlyUpdated(prev => ({ ...prev, [clientId]: false }));
+        setActionResult(prev => ({ ...prev, [clientId]: undefined }));
       }, 2000);
       fetchClients(page);
     } catch {
-      setRecentlyUpdated(prev => ({ ...prev, [client.id]: true }));
-      setActionResult(prev => ({ ...prev, [client.id]: 'error' }));
+      setRecentlyUpdated(prev => ({ ...prev, [clientId]: true }));
+      setActionResult(prev => ({ ...prev, [clientId]: 'error' }));
       setTimeout(() => {
-        setRecentlyUpdated(prev => ({ ...prev, [client.id]: false }));
-        setActionResult(prev => ({ ...prev, [client.id]: undefined }));
+        setRecentlyUpdated(prev => ({ ...prev, [clientId]: false }));
+        setActionResult(prev => ({ ...prev, [clientId]: undefined }));
       }, 2000);
     } finally {
-      setRowLoading(l => ({ ...l, [client.id]: false }));
+      setRowLoading(l => ({ ...l, [clientId]: false }));
     }
   };
 
   return (
     <div className="min-h-screen bg-theme-bg">
-      <main className={`pt-20 pr-8 transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'}`}>
+      <main className="pt-16 md:pt-20 px-4 sm:px-8 pb-8 ml-0 md:ml-64">
         <div className="max-w-5xl mx-auto">
           <ClientDiscountsTable 
             clients={filteredClients} 
@@ -97,7 +101,9 @@ export default function ClientDiscounts() {
             actionResult={actionResult}
             rowLoading={rowLoading}
           />
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          {totalPages > 1 && (
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          )}
         </div>
       </main>
       <AddDiscountModal 

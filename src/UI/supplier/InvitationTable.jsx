@@ -98,14 +98,22 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
   };
 
   if (loading) {
-    return <div className="flex justify-center py-12 text-theme-text-secondary"><Spinner size={24} /></div>;
+    return (
+      <div className="flex justify-center py-8 sm:py-12 text-theme-text-secondary">
+        <Spinner size={24} />
+      </div>
+    );
   }
+  
   if (!invitations || invitations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-theme-text-muted gap-4">
-        <div>No invitations found.</div>
+      <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-theme-text-muted gap-4 px-4">
+        <div className="text-center">
+          <div className="text-lg sm:text-xl font-medium mb-2">No invitations found.</div>
+          <p className="text-sm text-theme-text-secondary mb-4">Start by inviting new clients to connect with your business.</p>
+        </div>
         <button
-          className="theme-button px-4 py-2 rounded-lg font-bold shadow"
+          className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold shadow w-full sm:w-auto"
           onClick={onInvite}
         >
           + Invite New Client
@@ -113,69 +121,161 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
       </div>
     );
   }
+
   return (
-    <div className="theme-table overflow-x-auto rounded-lg shadow">
-      <table className="min-w-full text-sm md:table">
-        <thead>
-          <tr className="theme-table-header text-theme-text">
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Email</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Status</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Sent Date</th>
-            <th className="px-4 md:px-6 py-3 text-left font-semibold">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invitations.map((inv) => (
-            <tr key={inv.id || inv.email} className="border-b border-theme-border last:border-0 hover:bg-primary-50 dark:hover:bg-primary-900/10">
-              <td className="px-4 md:px-6 py-4 whitespace-nowrap text-theme-text">
-                {getContactInfo(inv)}
-              </td>
-              <td className="px-4 md:px-6 py-4"><StatusBadge status={inv.status} /></td>
-              <td className="px-4 md:px-6 py-4 text-theme-text">
-                {formatDate(inv.created_at || inv.sent_at || inv.sentDate)}
-              </td>
-              <td className="px-4 md:px-6 py-4 flex flex-wrap gap-2">
-                {inv.status === 'pending' && (
-                  <button
-                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded shadow text-xs font-bold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                    onClick={() => openConfirm('cancel', inv)}
-                    disabled={rowLoading[inv.id]}
-                    tabIndex={0}
-                  >
-                    {rowLoading[inv.id] && <Spinner size={16} color="border-white" />}
-                    Cancel
-                  </button>
-                )}
-                {inv.status === 'accepted' && (
-                  <button
-                    className={`px-3 py-1 rounded shadow text-xs font-bold flex items-center gap-2 focus:outline-none focus:ring-2 ${
-                      inv.relationship_status === 'suspended' 
-                        ? 'bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-400 dark:bg-green-900/30 dark:text-green-300' 
-                        : 'bg-orange-100 text-orange-700 hover:bg-orange-200 focus:ring-orange-400 dark:bg-orange-900/30 dark:text-orange-300'
-                    }`}
-                    onClick={() => openConfirm(inv.relationship_status === 'suspended' ? 'reactivate' : 'suspend', inv)}
-                    disabled={rowLoading[inv.id] || !inv.client_id}
-                    tabIndex={0}
-                  >
-                    {rowLoading[inv.id] && <Spinner size={16} color="border-current" />}
-                    {inv.relationship_status === 'suspended' ? 'Reactivate' : 'Suspend'}
-                  </button>
-                )}
-                {inv.status === 'declined' && (
-                  <button
-                    className="px-3 py-1 bg-primary-100 text-primary-700 rounded shadow text-xs font-bold hover:bg-primary-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-900/30 dark:text-primary-300"
-                    onClick={() => handleAction('resend', inv)}
-                    disabled={rowLoading[inv.id]}
-                    tabIndex={0}
-                  >
-                    Resend
-                  </button>
-                )}
-              </td>
+    <div className="space-y-4">
+      {/* Mobile Invite Button - Only show on mobile when there are invitations */}
+      <div className="md:hidden">
+        <button
+          className="theme-button px-4 py-3 rounded-lg font-bold shadow w-full flex items-center justify-center gap-2"
+          onClick={onInvite}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Invite New Client
+        </button>
+      </div>
+
+      {/* Desktop Table */}
+      <div className="hidden md:block theme-table overflow-x-auto rounded-lg shadow">
+        <table className="min-w-full text-sm">
+          <thead>
+            <tr className="theme-table-header text-theme-text">
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">Email</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">Status</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">Sent Date</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {invitations.map((inv) => (
+              <tr key={inv.id || inv.email} className="border-b border-theme-border last:border-0 hover:bg-primary-50 dark:hover:bg-primary-900/10">
+                <td className="px-4 md:px-6 py-4 whitespace-nowrap text-theme-text">
+                  {getContactInfo(inv)}
+                </td>
+                <td className="px-4 md:px-6 py-4"><StatusBadge status={inv.status} /></td>
+                <td className="px-4 md:px-6 py-4 text-theme-text">
+                  {formatDate(inv.created_at || inv.sent_at || inv.sentDate)}
+                </td>
+                <td className="px-4 md:px-6 py-4 flex flex-wrap gap-2">
+                  {inv.status === 'pending' && (
+                    <button
+                      className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded shadow text-xs font-bold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                      onClick={() => openConfirm('cancel', inv)}
+                      disabled={rowLoading[inv.id]}
+                      tabIndex={0}
+                    >
+                      {rowLoading[inv.id] && <Spinner size={16} color="border-white" />}
+                      Cancel
+                    </button>
+                  )}
+                  {inv.status === 'accepted' && (
+                    <button
+                      className={`px-3 py-1 rounded shadow text-xs font-bold flex items-center gap-2 focus:outline-none focus:ring-2 ${
+                        inv.relationship_status === 'suspended' 
+                          ? 'bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-400 dark:bg-green-900/30 dark:text-green-300' 
+                          : 'bg-orange-100 text-orange-700 hover:bg-orange-200 focus:ring-orange-400 dark:bg-orange-900/30 dark:text-orange-300'
+                      }`}
+                      onClick={() => openConfirm(inv.relationship_status === 'suspended' ? 'reactivate' : 'suspend', inv)}
+                      disabled={rowLoading[inv.id] || !inv.client_id}
+                      tabIndex={0}
+                    >
+                      {rowLoading[inv.id] && <Spinner size={16} color="border-current" />}
+                      {inv.relationship_status === 'suspended' ? 'Reactivate' : 'Suspend'}
+                    </button>
+                  )}
+                  {inv.status === 'declined' && (
+                    <button
+                      className="px-3 py-1 bg-primary-100 text-primary-700 rounded shadow text-xs font-bold hover:bg-primary-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-900/30 dark:text-primary-300"
+                      onClick={() => handleAction('resend', inv)}
+                      disabled={rowLoading[inv.id]}
+                      tabIndex={0}
+                    >
+                      Resend
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-4">
+        {invitations.map((inv) => (
+          <div key={inv.id || inv.email} className="theme-card p-4 sm:p-6">
+            <div className="space-y-3">
+              {/* Email */}
+              <div>
+                <div className="text-xs font-medium text-theme-text-secondary mb-1">Email</div>
+                <div className="text-sm font-medium text-theme-text break-all">
+                  {getContactInfo(inv)}
+                </div>
+              </div>
+
+              {/* Status and Date Row */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <div className="text-xs font-medium text-theme-text-secondary mb-1">Status</div>
+                  <StatusBadge status={inv.status} />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-theme-text-secondary mb-1">Sent Date</div>
+                  <div className="text-sm text-theme-text">
+                    {formatDate(inv.created_at || inv.sent_at || inv.sentDate)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="pt-2 border-t border-theme-border">
+                <div className="text-xs font-medium text-theme-text-secondary mb-2">Actions</div>
+                <div className="flex flex-wrap gap-2">
+                  {inv.status === 'pending' && (
+                    <button
+                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow text-sm font-bold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400 w-full sm:w-auto justify-center"
+                      onClick={() => openConfirm('cancel', inv)}
+                      disabled={rowLoading[inv.id]}
+                      tabIndex={0}
+                    >
+                      {rowLoading[inv.id] && <Spinner size={16} color="border-white" />}
+                      Cancel Invitation
+                    </button>
+                  )}
+                  {inv.status === 'accepted' && (
+                    <button
+                      className={`px-3 py-2 rounded-lg shadow text-sm font-bold flex items-center gap-2 focus:outline-none focus:ring-2 w-full sm:w-auto justify-center ${
+                        inv.relationship_status === 'suspended' 
+                          ? 'bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-400 dark:bg-green-900/30 dark:text-green-300' 
+                          : 'bg-orange-100 text-orange-700 hover:bg-orange-200 focus:ring-orange-400 dark:bg-orange-900/30 dark:text-orange-300'
+                      }`}
+                      onClick={() => openConfirm(inv.relationship_status === 'suspended' ? 'reactivate' : 'suspend', inv)}
+                      disabled={rowLoading[inv.id] || !inv.client_id}
+                      tabIndex={0}
+                    >
+                      {rowLoading[inv.id] && <Spinner size={16} color="border-current" />}
+                      {inv.relationship_status === 'suspended' ? 'Reactivate Client' : 'Suspend Client'}
+                    </button>
+                  )}
+                  {inv.status === 'declined' && (
+                    <button
+                      className="px-3 py-2 bg-primary-100 text-primary-700 rounded-lg shadow text-sm font-bold hover:bg-primary-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-900/30 dark:text-primary-300 w-full sm:w-auto justify-center"
+                      onClick={() => handleAction('resend', inv)}
+                      disabled={rowLoading[inv.id]}
+                      tabIndex={0}
+                    >
+                      Resend Invitation
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <ConfirmModal
         open={confirm.open}
         title={confirm.type.charAt(0).toUpperCase() + confirm.type.slice(1) + ' Confirmation'}

@@ -241,73 +241,68 @@ export default function SupplierRegisteration() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
-      <div className="theme-card w-full max-w-lg p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-4 sm:px-6 py-4 sm:py-8" role="main">
+      <div className="theme-card w-full max-w-sm sm:max-w-lg p-6 sm:p-8 lg:p-10 flex flex-col items-center">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           {t('supplier_auth.register_title')}
         </h2>
-        <div className="w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" encType="multipart/form-data" aria-busy={loading} noValidate>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-6 sm:mb-8" />
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 sm:gap-6" encType="multipart/form-data" aria-busy={loading} noValidate>
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name" className="text-base font-medium text-theme-text">{t('supplier_auth.name')}</label>
+              <label htmlFor="name" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.name')}</label>
               <input id="name" name="name" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.name_placeholder')} value={form.name} onChange={handleChange} aria-invalid={!!formErrors.name} aria-describedby={formErrors.name ? 'name-error' : undefined} />
               {formErrors.name && <div id="name-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.name}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name_ar" className="text-base font-medium text-theme-text">{t('supplier_auth.name_ar')}</label>
+              <label htmlFor="name_ar" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.name_ar')}</label>
               <input id="name_ar" name="name_ar" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.name_ar_placeholder')} value={form.name_ar} onChange={handleChange} aria-invalid={!!formErrors.name_ar} aria-describedby={formErrors.name_ar ? 'name-ar-error' : undefined} dir="rtl" />
               {formErrors.name_ar && <div id="name-ar-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.name_ar}</div>}
             </div>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="email" className="text-base font-medium text-theme-text">{t('supplier_auth.email')}</label>
+              <label htmlFor="email" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.email')}</label>
               <input id="email" name="email" type="email" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.email_placeholder_register')} value={form.email} onChange={handleChange} aria-invalid={!!formErrors.email} aria-describedby={formErrors.email ? 'email-error' : undefined} />
               {formErrors.email && <div id="email-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.email}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="phone" className="text-base font-medium text-theme-text">{t('supplier_auth.phone')}</label>
+              <label htmlFor="phone" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.phone')}</label>
               <input id="phone" name="phone" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.phone_placeholder')} value={form.phone} onChange={handleChange} aria-invalid={!!formErrors.phone} aria-describedby={formErrors.phone ? 'phone-error' : undefined} />
               {formErrors.phone && <div id="phone-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.phone}</div>}
             </div>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-            <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="whatsapp" className="text-base font-medium text-theme-text">{t('supplier_auth.whatsapp')}</label>
-              <input id="whatsapp" name="whatsapp" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.whatsapp_placeholder')} value={form.whatsapp} onChange={handleChange} aria-invalid={!!formErrors.whatsapp} aria-describedby={formErrors.whatsapp ? 'whatsapp-error' : undefined} />
-              {formErrors.whatsapp && <div id="whatsapp-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.whatsapp}</div>}
-            </div>
-            <div className="flex flex-col gap-2 w-full">
-              {/* Empty div to maintain layout */}
-            </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="whatsapp" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.whatsapp')}</label>
+            <input id="whatsapp" name="whatsapp" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.whatsapp_placeholder')} value={form.whatsapp} onChange={handleChange} aria-invalid={!!formErrors.whatsapp} aria-describedby={formErrors.whatsapp ? 'whatsapp-error' : undefined} />
+            {formErrors.whatsapp && <div id="whatsapp-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.whatsapp}</div>}
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="password" className="text-base font-medium text-theme-text">{t('supplier_auth.password')}</label>
+              <label htmlFor="password" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.password')}</label>
               <input id="password" name="password" type="password" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.password_placeholder')} value={form.password} onChange={handleChange} aria-invalid={!!formErrors.password} aria-describedby={formErrors.password ? 'password-error' : undefined} />
               {formErrors.password && <div id="password-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.password}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="password_confirmation" className="text-base font-medium text-theme-text">{t('supplier_auth.confirm_password')}</label>
+              <label htmlFor="password_confirmation" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.confirm_password')}</label>
               <input id="password_confirmation" name="password_confirmation" type="password" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.confirm_password_placeholder')} value={form.password_confirmation} onChange={handleChange} aria-invalid={!!formErrors.password_confirmation} aria-describedby={formErrors.password_confirmation ? 'password_confirmation-error' : undefined} />
               {formErrors.password_confirmation && <div id="password_confirmation-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.password_confirmation}</div>}
             </div>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="tax_card_number" className="text-base font-medium text-theme-text">{t('supplier_auth.tax_card_number')}</label>
+              <label htmlFor="tax_card_number" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.tax_card_number')}</label>
               <input id="tax_card_number" name="tax_card_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.tax_card_number_placeholder')} value={form.tax_card_number} onChange={handleChange} aria-invalid={!!formErrors.tax_card_number} aria-describedby={formErrors.tax_card_number ? 'tax_card_number-error' : undefined} />
               {formErrors.tax_card_number && <div id="tax_card_number-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.tax_card_number}</div>}
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="cr_number" className="text-base font-medium text-theme-text">{t('supplier_auth.cr_number')}</label>
+              <label htmlFor="cr_number" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.cr_number')}</label>
               <input id="cr_number" name="cr_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.cr_number_placeholder')} value={form.cr_number} onChange={handleChange} aria-invalid={!!formErrors.cr_number} aria-describedby={formErrors.cr_number ? 'cr_number-error' : undefined} />
               {formErrors.cr_number && <div id="cr_number-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.cr_number}</div>}
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="category_id" className="text-base font-medium text-theme-text">{t('supplier_auth.category')}</label>
+            <label htmlFor="category_id" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.category')}</label>
             <select
               id="category_id"
               name="category_id"
@@ -335,9 +330,9 @@ export default function SupplierRegisteration() {
             {formErrors.category_id && <div id="category_id-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.category_id}</div>}
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-base font-medium text-theme-text">{t('supplier_auth.key_persons')}</label>
+            <label className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.key_persons')}</label>
             {[0,1].map(i => (
-              <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2">
+              <div key={i} className="flex flex-col gap-2 mb-2">
                 <input name={`key_persons[${i}][name]`} required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('supplier_auth.key_person_name')} value={form.key_persons[i].name} onChange={handleChange} aria-invalid={!!(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name)} aria-describedby={(formErrors.key_persons && formErrors.key_persons[i] && formErrors.key_persons[i].name) ? `key_persons-${i}-name-error` : undefined} />
                 <select
                   name={`key_persons[${i}][role]`}
@@ -355,7 +350,7 @@ export default function SupplierRegisteration() {
               </div>
             ))}
             {formErrors.key_persons && formErrors.key_persons.map((err, i) => (
-              <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2">
+              <div key={i} className="flex flex-col gap-2 mb-2">
                 <div className="w-full text-red-500 text-xs mt-1" id={`key_persons-${i}-name-error`} role="alert">{err.name}</div>
                 <div className="w-full text-red-500 text-xs mt-1" id={`key_persons-${i}-role-error`} role="alert">{err.role}</div>
                 <div className="w-full text-red-500 text-xs mt-1" id={`key_persons-${i}-phone-error`} role="alert">{err.phone}</div>
@@ -402,9 +397,9 @@ export default function SupplierRegisteration() {
             ariaDescribedby={formErrors.cr_file ? 'cr_file-error' : undefined}
           />
           {formErrors.cr_file && <div id="cr_file-error" className="text-red-500 text-xs mt-1" role="alert">{formErrors.cr_file}</div>}
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="latitude" className="text-base font-medium text-theme-text">{t('supplier_auth.latitude')}</label>
+              <label htmlFor="latitude" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.latitude')}</label>
               <div className="flex gap-2">
                 <input 
                   type="text" 
@@ -434,7 +429,7 @@ export default function SupplierRegisteration() {
                       );
                     }
                   }}
-                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  className="px-3 sm:px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium min-w-[44px]"
                   title={t('supplier_auth.get_location')}
                 >
                   📍
@@ -442,7 +437,7 @@ export default function SupplierRegisteration() {
               </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="longitude" className="text-base font-medium text-theme-text">{t('supplier_auth.longitude')}</label>
+              <label htmlFor="longitude" className="text-sm sm:text-base font-medium text-theme-text">{t('supplier_auth.longitude')}</label>
               <input 
                 type="text" 
                 name="longitude" 
@@ -458,7 +453,7 @@ export default function SupplierRegisteration() {
             type="submit"
             disabled={loading}
             aria-label={t('supplier_auth.register_button')}
-            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 min-h-[44px]"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">

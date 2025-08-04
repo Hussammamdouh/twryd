@@ -110,58 +110,135 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
 
   return (
     <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Product' : 'Add New Product'} className="max-w-lg">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-6" noValidate>
+        {/* Product Name */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-theme-text">Product Name</label>
+          <input 
+            name="name" 
+            value={form.name} 
+            onChange={handleChange} 
+            required 
+            className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
+            placeholder="Enter product name"
+          />
+          {formErrors.name && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.name}</div>}
+        </div>
+        
+        {/* Price and Discount Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1 text-theme-text">Name</label>
-            <input name="name" value={form.name} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
-          {formErrors.name && <div className="text-red-500 text-xs mt-1">{formErrors.name}</div>}
-          </div>
-          <div className="flex gap-2">
-            <div className="w-1/2">
-              <label className="block text-sm font-medium mb-1 text-theme-text">Price</label>
-              <input name="price" type="number" min="0" value={form.price} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
-            {formErrors.price && <div className="text-red-500 text-xs mt-1">{formErrors.price}</div>}
-            </div>
-            <div className="w-1/2">
-              <label className="block text-sm font-medium mb-1 text-theme-text">Discount (%)</label>
-              <input name="discount" type="number" min="0" max="100" value={form.discount} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
-            {formErrors.discount && <div className="text-red-500 text-xs mt-1">{formErrors.discount}</div>}
-            </div>
+            <label className="block text-sm font-medium mb-2 text-theme-text">Price</label>
+            <input 
+              name="price" 
+              type="number" 
+              min="0" 
+              step="0.01"
+              value={form.price} 
+              onChange={handleChange} 
+              required 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
+              placeholder="0.00"
+            />
+            {formErrors.price && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.price}</div>}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-theme-text">Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded" />
-          {formErrors.description && <div className="text-red-500 text-xs mt-1">{formErrors.description}</div>}
+            <label className="block text-sm font-medium mb-2 text-theme-text">Discount (%)</label>
+            <input 
+              name="discount" 
+              type="number" 
+              min="0" 
+              max="100" 
+              value={form.discount} 
+              onChange={handleChange} 
+              required 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
+              placeholder="0"
+            />
+            {formErrors.discount && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.discount}</div>}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1 text-theme-text">Product Image URL</label>
-            <input name="product_url" value={form.product_url} onChange={handleChange} className="theme-input w-full px-3 py-2 rounded" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1 text-theme-text">Category</label>
-            <select name="category_id" value={form.category_id} onChange={handleChange} required className="theme-input w-full px-3 py-2 rounded">
-              <option value="">Select category</option>
-              {categories && categories.length > 0 ? (
-                categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))
-              ) : (
-                <option value="" disabled>No categories available</option>
-              )}
-            </select>
-            {formErrors.category_id && <div className="text-red-500 text-xs mt-1">{formErrors.category_id}</div>}
-            {categories && categories.length === 0 && (
-              <div className="text-yellow-500 text-xs mt-1">No categories found. Please contact admin.</div>
+        </div>
+        
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-theme-text">Description</label>
+          <textarea 
+            name="description" 
+            value={form.description} 
+            onChange={handleChange} 
+            required 
+            rows="3"
+            className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base resize-none" 
+            placeholder="Enter product description"
+          />
+          {formErrors.description && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.description}</div>}
+        </div>
+        
+        {/* Product Image URL */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-theme-text">Product Image URL</label>
+          <input 
+            name="product_url" 
+            value={form.product_url} 
+            onChange={handleChange} 
+            className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
+            placeholder="https://example.com/image.jpg"
+          />
+          <p className="text-xs text-theme-text-secondary mt-1">Optional: Provide a URL to an image of your product</p>
+        </div>
+        
+        {/* Category */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-theme-text">Category</label>
+          <select 
+            name="category_id" 
+            value={form.category_id} 
+            onChange={handleChange} 
+            required 
+            className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
+          >
+            <option value="">Select category</option>
+            {categories && categories.length > 0 ? (
+              categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))
+            ) : (
+              <option value="" disabled>No categories available</option>
             )}
-          </div>
-          <div className="flex items-center gap-2">
-          <input id="is_active" name="is_active" type="checkbox" checked={form.is_active} onChange={handleChange} className="focus:ring-2 focus:ring-primary-400" />
-            <label htmlFor="is_active" className="text-sm text-theme-text">Active</label>
-          </div>
-        <button type="submit" disabled={loading} className="theme-button w-full py-2 font-bold rounded transition disabled:opacity-60 mt-2">
-            {loading ? <Spinner size={20} /> : (isEdit ? 'Save Changes' : 'Add Product')}
-          </button>
-        </form>
+          </select>
+          {formErrors.category_id && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.category_id}</div>}
+          {categories && categories.length === 0 && (
+            <div className="text-yellow-500 text-xs sm:text-sm mt-1 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              No categories found. Please contact admin to set up product categories.
+            </div>
+          )}
+        </div>
+        
+        {/* Active Status */}
+        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <input 
+            id="is_active" 
+            name="is_active" 
+            type="checkbox" 
+            checked={form.is_active} 
+            onChange={handleChange} 
+            className="w-4 h-4 focus:ring-2 focus:ring-primary-400 rounded" 
+          />
+          <label htmlFor="is_active" className="text-sm sm:text-base text-theme-text cursor-pointer">
+            Product is active and visible to clients
+          </label>
+        </div>
+        
+        {/* Submit Button */}
+        <button 
+          type="submit" 
+          disabled={loading} 
+          className="theme-button w-full py-3 sm:py-4 font-bold rounded-lg transition disabled:opacity-60 mt-2 flex items-center justify-center gap-2 text-sm sm:text-base"
+        >
+          {loading && <Spinner size={20} />}
+          {loading ? 'Processing...' : (isEdit ? 'Save Changes' : 'Add Product')}
+        </button>
+      </form>
     </Modal>
   );
 }
@@ -210,16 +287,19 @@ export default function Products() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await get('/api/client-management/available-categories');
+      // Try the authenticated endpoint first
+      const res = await get('/api/client-management/available-categories', { token });
       const cats = Array.isArray(res.data) ? res.data : (res.data?.data || []);
       setCategories(cats);
     } catch {
+      console.log('Authenticated categories endpoint failed, trying fallback...');
       // Fallback to public categories endpoint
       try {
         const fallbackRes = await get('/api/v1/categories');
         const fallbackCats = Array.isArray(fallbackRes.data) ? fallbackRes.data : (fallbackRes.data?.data || []);
         setCategories(fallbackCats);
-      } catch {
+      } catch (fallbackErr) {
+        console.error('Both categories endpoints failed:', fallbackErr);
         setCategories([]);
       }
     }
@@ -243,23 +323,31 @@ export default function Products() {
     const prevProducts = products;
     setProducts([newProduct, ...products]);
     try {
-      // Create FormData as expected by the API
-      const formData = new FormData();
-      formData.append('name', form.name);
-      formData.append('price', form.price);
-      formData.append('discount', form.discount || '0');
-      formData.append('description', form.description || '');
-      formData.append('product_url', form.product_url || '');
-      formData.append('category_id', form.category_id);
-      formData.append('supplier_id', user.id); // Add supplier_id from user context
-      formData.append('is_active', form.is_active ? '1' : '0');
+      // Prepare the data in the correct format
+      const productData = {
+        name: form.name,
+        price: parseFloat(form.price),
+        discount: parseInt(form.discount) || 0,
+        description: form.description || '',
+        product_url: form.product_url || '',
+        category_id: parseInt(form.category_id),
+        supplier_id: user.id,
+        is_active: form.is_active ? 1 : 0
+      };
       
-      const res = await post('/api/supplier-management/products', { token, data: formData });
+      const res = await post('/api/supplier-management/products', { 
+        token, 
+        data: productData 
+      });
+      
+      // Update the products list with the real data from server
       setProducts(products => [res.data, ...products.filter(p => p.id !== tempId)]);
       toast.show('Product added!', 'success');
     } catch (err) {
+      // Revert optimistic update on error
       setProducts(prevProducts);
-      toast.show(err.message || 'Failed to add product', 'error');
+      console.error('Product creation error:', err);
+      throw err; // Re-throw to be handled by the form
     }
   };
 
@@ -269,22 +357,28 @@ export default function Products() {
     const prevProducts = products;
     setProducts(products.map(p => p.id === editData.id ? { ...p, ...form } : p));
     try {
-      // Create FormData for update
-      const formData = new FormData();
-      formData.append('name', form.name);
-      formData.append('price', form.price);
-      formData.append('discount', form.discount || '0');
-      formData.append('description', form.description || '');
-      formData.append('product_url', form.product_url || '');
-      formData.append('category_id', form.category_id);
-      formData.append('supplier_id', user.id);
-      formData.append('is_active', form.is_active ? '1' : '0');
+      // Prepare the data in the correct format
+      const productData = {
+        name: form.name,
+        price: parseFloat(form.price),
+        discount: parseInt(form.discount) || 0,
+        description: form.description || '',
+        product_url: form.product_url || '',
+        category_id: parseInt(form.category_id),
+        supplier_id: user.id,
+        is_active: form.is_active ? 1 : 0
+      };
       
-      await put(`/api/supplier-management/products/${editData.id}`, { token, data: formData });
+      await put(`/api/supplier-management/products/${editData.id}`, { 
+        token, 
+        data: productData 
+      });
       toast.show('Product updated!', 'success');
     } catch (err) {
+      // Revert optimistic update on error
       setProducts(prevProducts);
-      toast.show(err.message || 'Failed to update product', 'error');
+      console.error('Product update error:', err);
+      throw err; // Re-throw to be handled by the form
     }
   };
 
@@ -359,22 +453,29 @@ export default function Products() {
 
   
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4 text-theme-text">My Products</h1>
-      <div className="flex flex-col md:flex-row md:items-end gap-4 mb-6">
-        <div className="flex gap-2 flex-1">
+    <div className="p-4 sm:p-6 lg:p-8">
+      <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-theme-text">My Products</h1>
+      
+      {/* Search and Filters */}
+      <div className="space-y-4 mb-6">
+        {/* Search Bar */}
+        <div className="w-full">
           <input
             type="text"
             placeholder="Search by name or SKU..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="theme-input px-3 py-2 rounded w-full"
+            className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg w-full text-sm sm:text-base"
             aria-label="Search products"
           />
+        </div>
+        
+        {/* Filters Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <select
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="theme-input px-3 py-2 rounded"
+            className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
             aria-label="Filter by category"
           >
             <option value="">All Categories</option>
@@ -385,7 +486,7 @@ export default function Products() {
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className="theme-input px-3 py-2 rounded"
+            className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
             aria-label="Filter by status"
           >
             <option value="">All Statuses</option>
@@ -393,17 +494,33 @@ export default function Products() {
             <option value="inactive">Inactive</option>
           </select>
         </div>
-        <button
-          onClick={() => { setEditData(null); setModalOpen(true); }}
-          className="theme-button px-5 py-2 rounded font-bold"
-        >
-          + Add Product
-        </button>
+        
+        {/* Add Product Button */}
+        <div className="w-full">
+          <button
+            onClick={() => { setEditData(null); setModalOpen(true); }}
+            className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold w-full sm:w-auto flex items-center justify-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Product
+          </button>
+        </div>
       </div>
+      
+      {/* Content */}
       {loading ? (
-        <div className="flex justify-center py-12"><Spinner size={32} /></div>
+        <div className="flex justify-center py-8 sm:py-12">
+          <Spinner size={32} />
+        </div>
       ) : error ? (
-        <div className="flex justify-center py-12 text-red-500">{error}</div>
+        <div className="flex justify-center py-8 sm:py-12 text-red-500 text-center px-4">
+          <div>
+            <div className="text-lg font-medium mb-2">Error Loading Products</div>
+            <div className="text-sm text-theme-text-secondary">{error}</div>
+          </div>
+        </div>
       ) : (
         <>
           <ProductTable
@@ -418,9 +535,13 @@ export default function Products() {
             actionResult={actionResult}
             deleteLoading={deleteLoading}
           />
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <div className="mt-6">
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          </div>
         </>
       )}
+      
+      {/* Modals */}
       <ProductFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

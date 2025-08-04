@@ -366,6 +366,310 @@
 							"response": []
 						},
 						{
+							"name": "Add Supplier",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "test",
+											"type": "text"
+										},
+										{
+											"key": "name_ar",
+											"value": "تجربه",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "email@example.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "+201555555555",
+											"type": "text"
+										},
+										{
+											"key": "whatsapp",
+											"value": "+201555555555",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password123A!",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "password123A!",
+											"type": "text"
+										},
+										{
+											"key": "tax_card_number",
+											"value": "123456789",
+											"type": "text"
+										},
+										{
+											"key": "cr_number",
+											"value": "CR123456789",
+											"type": "text"
+										},
+										{
+											"key": "category_ids[0]",
+											"value": "cd0f95ea-c46c-4516-a69e-04e5fce921ca",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[0][name]",
+											"value": "John Doe",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][role]",
+											"value": "Management",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][phone]",
+											"value": "+201234567891",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[0][email]",
+											"value": "john@techsolutions.com",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][name]",
+											"value": "Accounting",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][role]",
+											"value": "Accounting",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][phone]",
+											"value": "+201234567892",
+											"type": "text"
+										},
+										{
+											"key": "key_persons[1][email]",
+											"value": "jane@techsolutions.com",
+											"type": "text"
+										},
+										{
+											"key": "logo",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/WhatsApp Image 2025-06-28 at 16.15.49_96042241.jpg"
+										},
+										{
+											"key": "tax_card_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07.pdf"
+										},
+										{
+											"key": "cr_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/damyttamr1_Asmaa_Alaa_All_Time_Statistics (1).pdf"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Supplier",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "test update",
+											"type": "text"
+										},
+										{
+											"key": "name_ar",
+											"value": "تجربه",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": "email@example.com",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "phone",
+											"value": "+201555555555",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "whatsapp",
+											"value": "+201555555555",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "password",
+											"value": "password123A!",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "password_confirmation",
+											"value": "password123A!",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "tax_card_number",
+											"value": "123456789",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "cr_number",
+											"value": "CR123456789",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "category_ids[0]",
+											"value": "cd0f95ea-c46c-4516-a69e-04e5fce921ca",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[0][name]",
+											"value": "John Doe",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[0][role]",
+											"value": "Management",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[0][phone]",
+											"value": "+201234567891",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[0][email]",
+											"value": "john@techsolutions.com",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[1][name]",
+											"value": "Accounting",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[1][role]",
+											"value": "Accounting",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[1][phone]",
+											"value": "+201234567892",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "key_persons[1][email]",
+											"value": "jane@techsolutions.com",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "logo",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/WhatsApp Image 2025-06-28 at 16.15.49_96042241.jpg",
+											"disabled": true
+										},
+										{
+											"key": "tax_card_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/MR_Statistics_2025-07.pdf",
+											"disabled": true
+										},
+										{
+											"key": "cr_file",
+											"type": "file",
+											"src": "/C:/Users/123/Downloads/damyttamr1_Asmaa_Alaa_All_Time_Statistics (1).pdf",
+											"disabled": true
+										},
+										{
+											"key": "_method",
+											"value": "put",
+											"description": "لازم تبقى موجوده",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/suppliers/{{supplier_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"suppliers",
+										"{{supplier_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Approve Supplier",
 							"request": {
 								"method": "POST",
@@ -3278,7 +3582,8 @@
 										{
 											"key": "category_ids[0]",
 											"value": "cd0f95ea-c46c-4516-a69e-04e5fce921ca",
-											"type": "text"
+											"type": "text",
+											"disabled": true
 										},
 										{
 											"key": "key_persons[0][name]",
@@ -3385,7 +3690,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"contact\": \"hamzafottoh74@gmail.com\",  // or \"phone\"\n    \"type\": \"email\",  // or \"phone\"\n    \"code\": \"570040\"\n}",
+									"raw": "{\n    \"contact\": \"hamzafottoh74@gmail.com\",  // or \"phone\"\n    \"type\": \"email\",  // or \"phone\"\n    \"code\": \"300820\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"

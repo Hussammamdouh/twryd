@@ -76,7 +76,13 @@ export default function App() {
                     </LayoutProvider>
                   </RequireSupplier>
                 } />
-                <Route path="/client/dashboard/*" element={<RequireClient><ClientDashboard /></RequireClient>} />
+                <Route path="/client/dashboard/*" element={
+                  <RequireClient>
+                    <LayoutProvider>
+                      <ClientDashboard />
+                    </LayoutProvider>
+                  </RequireClient>
+                } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

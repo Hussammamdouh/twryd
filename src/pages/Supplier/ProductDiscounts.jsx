@@ -123,7 +123,7 @@ export default function ProductDiscounts() {
 
   return (
     <div className="min-h-screen bg-theme-bg">
-      <main className={`pt-20 pr-8 transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'}`}>
+      <main className="pt-16 md:pt-20 px-4 sm:px-8 pb-8 ml-0 md:ml-64">
         <div className="max-w-5xl mx-auto">
           <ProductDiscountsTable 
             productDiscounts={filteredProductDiscounts} 
@@ -131,7 +131,9 @@ export default function ProductDiscounts() {
             onAction={fetchProductDiscounts}
             onAdd={() => setAddDiscountOpen(true)}
           />
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          {totalPages > 1 && (
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          )}
         </div>
       </main>
       <AddProductDiscountModal 

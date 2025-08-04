@@ -95,41 +95,41 @@ export default function ClientsRegisteration() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-2 py-8" role="main">
-      <div className="theme-card w-full max-w-lg p-8 sm:p-10 flex flex-col items-center">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
+    <div className="min-h-screen flex items-center justify-center bg-theme-bg px-4 sm:px-6 py-4 sm:py-8" role="main">
+      <div className="theme-card w-full max-w-sm sm:max-w-lg p-6 sm:p-8 lg:p-10 flex flex-col items-center">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-center mb-2 tracking-tight text-theme-text">
           {t('client_auth.register_title')}
         </h2>
-        <div className="w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-8" />
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6" encType="multipart/form-data" aria-busy={loading}>
+        <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mb-6 sm:mb-8" />
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 sm:gap-6" encType="multipart/form-data" aria-busy={loading}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-base font-medium text-theme-text">{t('client_auth.client_name')}</label>
+            <label htmlFor="name" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.client_name')}</label>
             <input type="text" name="name" id="name" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.client_name_placeholder')} value={form.name} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium text-theme-text">{t('client_auth.email')}</label>
+            <label htmlFor="email" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.email')}</label>
             <input type="email" name="email" id="email" className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.email_placeholder')} value={form.email} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="phone" className="text-base font-medium text-theme-text">{t('client_auth.phone')}</label>
+            <label htmlFor="phone" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.phone')}</label>
             <input type="tel" name="phone" id="phone" className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.phone_placeholder')} value={form.phone} onChange={handleChange} />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="whatsapp" className="text-base font-medium text-theme-text">{t('client_auth.whatsapp')}</label>
+            <label htmlFor="whatsapp" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.whatsapp')}</label>
             <input type="tel" name="whatsapp" id="whatsapp" className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.whatsapp_placeholder')} value={form.whatsapp} onChange={handleChange} />
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="password" className="text-base font-medium text-theme-text">{t('client_auth.password')}</label>
+              <label htmlFor="password" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.password')}</label>
               <input type="password" name="password" id="password" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.password_placeholder')} value={form.password} onChange={handleChange} />
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="passwordConfirm" className="text-base font-medium text-theme-text">{t('client_auth.confirm_password')}</label>
+              <label htmlFor="passwordConfirm" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.confirm_password')}</label>
               <input type="password" name="passwordConfirm" id="passwordConfirm" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.confirm_password_placeholder')} value={form.passwordConfirm} onChange={handleChange} />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="tax_card_number" className="text-base font-medium text-theme-text">{t('client_auth.tax_card_number')}</label>
+            <label htmlFor="tax_card_number" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.tax_card_number')}</label>
             <input type="text" name="tax_card_number" id="tax_card_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.tax_card_number_placeholder')} value={form.tax_card_number} onChange={handleChange} />
           </div>
           <FileUpload
@@ -142,7 +142,7 @@ export default function ClientsRegisteration() {
             maxSize={2 * 1024 * 1024} // 2MB
           />
           <div className="flex flex-col gap-2">
-            <label htmlFor="cr_number" className="text-base font-medium text-theme-text">{t('client_auth.cr_number')}</label>
+            <label htmlFor="cr_number" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.cr_number')}</label>
             <input type="text" name="cr_number" id="cr_number" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.cr_number_placeholder')} value={form.cr_number} onChange={handleChange} />
           </div>
           <FileUpload
@@ -154,9 +154,9 @@ export default function ClientsRegisteration() {
             label={t('client_auth.cr_file')}
             maxSize={2 * 1024 * 1024} // 2MB
           />
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-4">
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="latitude" className="text-base font-medium text-theme-text">{t('client_auth.latitude')}</label>
+              <label htmlFor="latitude" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.latitude')}</label>
               <div className="flex gap-2">
                 <input 
                   type="text" 
@@ -186,7 +186,7 @@ export default function ClientsRegisteration() {
                       );
                     }
                   }}
-                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  className="px-3 sm:px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium min-w-[44px]"
                   title={t('client_auth.get_location')}
                 >
                   📍
@@ -194,7 +194,7 @@ export default function ClientsRegisteration() {
               </div>
             </div>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="longitude" className="text-base font-medium text-theme-text">{t('client_auth.longitude')}</label>
+              <label htmlFor="longitude" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.longitude')}</label>
               <input 
                 type="text" 
                 name="longitude" 
@@ -207,7 +207,7 @@ export default function ClientsRegisteration() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="areaId" className="text-base font-medium text-theme-text">{t('client_auth.area_id')}</label>
+            <label htmlFor="areaId" className="text-sm sm:text-base font-medium text-theme-text">{t('client_auth.area_id')}</label>
             <input type="text" name="areaId" id="areaId" required className="theme-input w-full px-4 py-3 rounded-md text-base" placeholder={t('client_auth.area_id_placeholder')} value={form.areaId} onChange={handleChange} />
           </div>
           {error && <div className="text-red-600 text-sm text-center">{error}</div>}
@@ -216,7 +216,7 @@ export default function ClientsRegisteration() {
             type="submit"
             disabled={loading}
             aria-label={t('client_auth.register_button')}
-            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2"
+            className="theme-button w-full py-3 font-bold rounded-lg shadow-lg hover:scale-[1.02] hover:shadow-xl active:scale-95 transition-all duration-150 disabled:opacity-60 text-base mt-2 flex items-center justify-center gap-2 min-h-[44px]"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

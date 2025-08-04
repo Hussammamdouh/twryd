@@ -79,21 +79,55 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
 
   return (
     <Modal open={open} onClose={onClose} title="Invite New Client">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
-          placeholder="Enter client email or phone"
-          value={contact}
-          onChange={e => setContact(e.target.value)}
-          disabled={loading}
-        />
-        {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
-        <div className="flex justify-end gap-2">
-          <button type="button" className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg" onClick={onClose} disabled={loading}>Cancel</button>
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-60" disabled={loading}>{loading ? 'Sending...' : 'Generate Invitation Link'}</button>
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+        <div>
+          <label htmlFor="contact-input" className="block text-sm font-medium text-theme-text mb-2">
+            Client Contact Information
+          </label>
+          <input
+            id="contact-input"
+            type="text"
+            className="w-full border rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 text-sm sm:text-base"
+            placeholder="Enter client email or phone number"
+            value={contact}
+            onChange={e => setContact(e.target.value)}
+            disabled={loading}
+          />
+          <p className="text-xs text-theme-text-secondary mt-1">
+            Enter a valid email address or phone number to invite a new client.
+          </p>
         </div>
-        {success && <div className="text-green-600 dark:text-green-400 text-sm">{success}</div>}
+        
+        {error && (
+          <div className="text-red-600 dark:text-red-400 text-sm p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div className="text-green-600 dark:text-green-400 text-sm p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            {success}
+          </div>
+        )}
+        
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
+          <button 
+            type="button" 
+            className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 w-full sm:w-auto" 
+            onClick={onClose} 
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto flex items-center justify-center gap-2" 
+            disabled={loading}
+          >
+            {loading && <Spinner size={16} color="border-white" />}
+            {loading ? 'Generating...' : 'Generate Invitation Link'}
+          </button>
+        </div>
       </form>
     </Modal>
   );

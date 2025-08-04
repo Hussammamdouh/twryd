@@ -146,29 +146,31 @@ export default function ClientCart() {
   }, [cart, grouped, supplierFilter]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
-          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-            </svg>
-          </div>
-          <div>
-            <span className="text-gray-900 dark:text-white">Shopping Cart</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Review your items</span>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg sm:rounded-xl">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+              </svg>
+            </div>
+            <div>
+              <span className="text-gray-900 dark:text-white">Shopping Cart</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal text-base sm:text-lg lg:text-xl ml-0 sm:ml-2">Review your items</span>
+            </div>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">Update quantities, remove items, or proceed to checkout.</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm sm:text-base">Update quantities, remove items, or proceed to checkout.</p>
       </div>
 
       {/* Supplier Filter */}
       {cart && cart.items && cart.items.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center">
+            <div className="flex-1 w-full">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                 Filter by Supplier
               </label>
               <input
@@ -176,13 +178,13 @@ export default function ClientCart() {
                 placeholder="Search suppliers..."
                 value={supplierFilter}
                 onChange={(e) => setSupplierFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
               />
             </div>
             {supplierFilter && (
               <button
                 onClick={() => setSupplierFilter('')}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors text-sm sm:text-base"
               >
                 Clear Filter
               </button>
@@ -191,79 +193,83 @@ export default function ClientCart() {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="flex-1 space-y-8">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
+        <div className="flex-1 space-y-4 sm:space-y-6 lg:space-y-8">
           {loading ? (
-            <div className="flex justify-center py-24"><Spinner size={32} /></div>
+            <div className="flex justify-center py-12 sm:py-24"><Spinner size={32} /></div>
           ) : grouped.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24">
-              <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-24">
+              <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 dark:text-gray-600 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
               </svg>
-              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">Your cart is empty</h2>
-              <p className="text-gray-500 dark:text-gray-400">Add products to your cart to see them here.</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200 mb-1 sm:mb-2">Your cart is empty</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">Add products to your cart to see them here.</p>
             </div>
           ) : (
             grouped.map(group => (
-              <div key={group.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-4">
-                <div className="font-semibold mb-4 text-gray-900 dark:text-white">Supplier: {group.name}</div>
+              <div key={group.id} className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-3 sm:mb-4">
+                <div className="font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white text-base sm:text-lg">Supplier: {group.name}</div>
                 <div className="divide-y divide-gray-200 dark:divide-gray-700">
                   {group.items.map(item => (
-                    <div key={item.id} className="flex items-center gap-4 py-4">
-                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                        {item.image_url ? <img src={item.image_url} alt={item.name} className="max-h-14 object-contain" /> : <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded" />}
+                    <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 py-3 sm:py-4">
+                      <div className="flex items-center gap-3 sm:gap-4 flex-1">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center flex-shrink-0">
+                          {item.image_url ? <img src={item.image_url} alt={item.name} className="max-h-10 sm:max-h-14 object-contain" /> : <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 dark:bg-gray-600 rounded" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">{item.product?.name || 'Unknown Product'}</div>
+                          <div className="text-gray-500 text-xs sm:text-sm">${item.unit_price}</div>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <div className="font-semibold text-gray-900 dark:text-white">{item.product?.name || 'Unknown Product'}</div>
-                        <div className="text-gray-500 text-sm">${item.unit_price}</div>
+                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            min={1}
+                            value={item.quantity}
+                            onChange={e => handleUpdateQty(item, Number(e.target.value))}
+                            className="w-14 sm:w-16 px-2 py-1 border rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 text-sm"
+                            disabled={updatingQty[item.id]}
+                          />
+                          <span className="font-bold text-primary-600 text-base sm:text-lg">${item.total_price}</span>
+                        </div>
+                        <button
+                          className="text-red-500 hover:underline text-xs sm:text-sm font-semibold disabled:opacity-60 px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+                          onClick={() => handleRemove(item)}
+                          disabled={removing[item.id]}
+                        >
+                          {removing[item.id] ? 'Removing...' : 'Remove'}
+                        </button>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min={1}
-                          value={item.quantity}
-                          onChange={e => handleUpdateQty(item, Number(e.target.value))}
-                          className="w-16 px-2 py-1 border rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                          disabled={updatingQty[item.id]}
-                        />
-                        <span className="font-bold text-primary-600 text-lg">${item.total_price}</span>
-                      </div>
-                      <button
-                        className="text-red-500 hover:underline ml-4 text-sm font-semibold disabled:opacity-60"
-                        onClick={() => handleRemove(item)}
-                        disabled={removing[item.id]}
-                      >
-                        {removing[item.id] ? 'Removing...' : 'Remove'}
-                      </button>
                     </div>
                   ))}
                 </div>
-                <div className="text-right font-bold text-xl mt-4">Subtotal: <span className="text-blue-600">${group.items.reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0).toFixed(2)}</span></div>
+                <div className="text-right font-bold text-lg sm:text-xl mt-3 sm:mt-4">Subtotal: <span className="text-blue-600">${group.items.reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0).toFixed(2)}</span></div>
               </div>
             ))
           )}
         </div>
         {/* Order Summary */}
         <div className="w-full lg:w-80 flex-shrink-0">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-4">
-            <div className="font-semibold mb-2 text-gray-900 dark:text-white">Order Summary</div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-3 sm:mb-4">
+            <div className="font-semibold mb-2 text-gray-900 dark:text-white text-base sm:text-lg">Order Summary</div>
             <div className="flex justify-between text-sm mb-2">
               <span>Total Items:</span>
               <span>{orderSummary.count} {orderSummary.count === 1 ? 'item' : 'items'}</span>
             </div>
-            <div className="flex justify-between text-lg font-bold mb-4">
+            <div className="flex justify-between text-base sm:text-lg font-bold mb-3 sm:mb-4">
               <span>Total Amount:</span>
               <span className="text-blue-600">${orderSummary.total.toFixed(2)}</span>
             </div>
             <button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mb-2 disabled:opacity-60"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 rounded-lg mb-2 disabled:opacity-60 text-sm sm:text-base"
               disabled={orderSummary.count === 0}
               onClick={() => navigate('/client/dashboard/checkout')}
             >
               Proceed to Checkout
             </button>
             <button
-              className="w-full bg-gray-200 text-gray-700 rounded-lg py-2 font-semibold mt-2"
+              className="w-full bg-gray-200 text-gray-700 rounded-lg py-2 sm:py-3 font-semibold mt-2 text-sm sm:text-base"
               onClick={() => window.location.href = '/client/dashboard/my-marketplace'}
             >
               Continue Shopping

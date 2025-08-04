@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { get, post, del } from '../../utils/api';
+import { get, post, del, put } from '../../utils/api';
 import { useToast } from '../Common/ToastContext';
 import ConfirmModal from '../supplier/ConfirmModal';
+import SupplierFormModal from './SupplierFormModal';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 const SuppliersTable = function SuppliersTable({ token }) {
@@ -16,6 +17,9 @@ const SuppliersTable = function SuppliersTable({ token }) {
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [confirmModal, setConfirmModal] = useState({ open: false, action: '', supplier: null });
   const [actionLoading, setActionLoading] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editSupplier, setEditSupplier] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
   const toast = useToast();
   const { t } = useLanguage();
 
@@ -116,6 +120,96 @@ const SuppliersTable = function SuppliersTable({ token }) {
     setConfirmModal({ open: false, action: '', supplier: null });
   };
 
+  const handleAdd = () => {
+    setEditSupplier(null);
+    setIsEdit(false);
+    setModalOpen(true);
+  };
+
+  const handleEdit = (supplier) => {
+    setEditSupplier(supplier);
+    setIsEdit(true);
+    setModalOpen(true);
+  };
+
+  const handleSubmit = async (form) => {
+    if (isEdit) {
+      try {
+        const res = await put(`/api/v1/suppliers/${editSupplier.id}`, {
+          token,
+          data: {
+            name: form.name,
+            name_ar: form.name_ar,
+            email: form.email,
+            phone: form.phone,
+            whatsapp: form.whatsapp,
+            password: form.password,
+            password_confirmation: form.password_confirmation,
+            tax_card_number: form.tax_card_number,
+            cr_number: form.cr_number,
+            category_id: form.category_id,
+            latitude: form.latitude,
+            longitude: form.longitude,
+            key_persons: form.key_persons,
+            is_active: form.is_active,
+          }
+        });
+        // Update supplier in list
+        setSuppliers(suppliers => suppliers.map(s => s.id === editSupplier.id ? res.data : s));
+        toast.show(t('suppliers.updated'), 'success');
+      } catch (err) {
+        toast.show(err.message, 'error');
+      }
+    } else {
+      // Optimistic UI: add temp supplier
+      const tempId = Date.now();
+      const tempSupplier = {
+        id: tempId,
+        name: form.name,
+        name_ar: form.name_ar,
+        email: form.email,
+        phone: form.phone,
+        whatsapp: form.whatsapp,
+        tax_card_number: form.tax_card_number,
+        cr_number: form.cr_number,
+        category_id: form.category_id,
+        latitude: form.latitude,
+        longitude: form.longitude,
+        key_persons: form.key_persons,
+        is_active: form.is_active,
+      };
+      setSuppliers(suppliers => [tempSupplier, ...suppliers]);
+      try {
+        const res = await post('/api/v1/suppliers', {
+          token,
+          data: {
+            name: form.name,
+            name_ar: form.name_ar,
+            email: form.email,
+            phone: form.phone,
+            whatsapp: form.whatsapp,
+            password: form.password,
+            password_confirmation: form.password_confirmation,
+            tax_card_number: form.tax_card_number,
+            cr_number: form.cr_number,
+            category_id: form.category_id,
+            latitude: form.latitude,
+            longitude: form.longitude,
+            key_persons: form.key_persons,
+            is_active: form.is_active,
+          }
+        });
+        // Replace temp supplier with real one from server
+        setSuppliers(suppliers => [res.data, ...suppliers.filter(s => s.id !== tempId)]);
+        toast.show(t('suppliers.created'), 'success');
+      } catch (err) {
+        // Revert by removing the temp supplier
+        setSuppliers(suppliers => suppliers.filter(s => s.id !== tempId));
+        toast.show(err.message, 'error');
+      }
+    }
+  };
+
   const getConfirmMessage = (action, supplier) => {
     switch (action) {
       case 'approve':
@@ -164,11 +258,11 @@ const SuppliersTable = function SuppliersTable({ token }) {
               </span>
               <input
                 type="text"
-                placeholder={t('suppliers.search_placeholder')}
+                placeholder="Search suppliers..."
                 className="theme-input pl-10 pr-4 py-2 w-full rounded-lg"
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
-                aria-label={t('suppliers.search_placeholder')}
+                aria-label="Search suppliers"
               />
             </div>
           </div>
@@ -178,11 +272,11 @@ const SuppliersTable = function SuppliersTable({ token }) {
             onChange={(e) => handleStatusFilter(e.target.value)}
             aria-label="Filter by status"
           >
-            <option value="">{t('suppliers.all_statuses')}</option>
-            <option value="active">{t('common.active')}</option>
-            <option value="inactive">{t('common.inactive')}</option>
-            <option value="pending">{t('suppliers.pending')}</option>
-            <option value="rejected">{t('suppliers.rejected')}</option>
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
           </select>
           <select
             className="theme-input px-4 py-2 rounded-lg"
@@ -190,10 +284,17 @@ const SuppliersTable = function SuppliersTable({ token }) {
             onChange={(e) => setPerPage(Number(e.target.value))}
             aria-label="Items per page"
           >
-            <option value={10}>10 {t('suppliers.per_page')}</option>
-            <option value={25}>25 {t('suppliers.per_page')}</option>
-            <option value={50}>50 {t('suppliers.per_page')}</option>
+            <option value={10}>10 per page</option>
+            <option value={25}>25 per page</option>
+            <option value={50}>50 per page</option>
           </select>
+          <button
+            onClick={handleAdd}
+            className="theme-button px-4 py-2 font-bold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
+            title="Add Supplier"
+          >
+            <span className="inline-block align-middle mr-2">+</span> Add Supplier
+          </button>
         </div>
       </div>
 
@@ -219,7 +320,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                       <svg className="w-8 h-8 text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
-                      <span className="text-gray-500 dark:text-gray-400">{t('suppliers.loading')}</span>
+                      <span className="text-gray-500 dark:text-gray-400">Loading suppliers...</span>
                     </div>
                   </td>
                 </tr>
@@ -241,8 +342,8 @@ const SuppliersTable = function SuppliersTable({ token }) {
                       <svg className="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10-5v4a1 1 0 001 1h3m-7 4v4m0 0H7a2 2 0 01-2-2v-5a2 2 0 012-2h10a2 2 0 012 2v5a2 2 0 01-2 2h-5z" />
                       </svg>
-                      <div className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('suppliers.no_suppliers')}</div>
-                      <p className="text-gray-400 dark:text-gray-500">{t('suppliers.no_matches')}</p>
+                      <div className="text-lg font-semibold text-gray-500 dark:text-gray-400">No suppliers found</div>
+                      <p className="text-gray-400 dark:text-gray-500">No suppliers match your search criteria</p>
                     </div>
                   </td>
                 </tr>
@@ -279,20 +380,33 @@ const SuppliersTable = function SuppliersTable({ token }) {
                         supplier.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
                         'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
-                        {supplier.status === 'pending' ? t('suppliers.pending') :
-                         supplier.status === 'rejected' ? t('suppliers.rejected') :
-                         supplier.is_active ? t('common.active') : t('common.inactive')}
+                        {supplier.status === 'pending' ? 'Pending' :
+                         supplier.status === 'rejected' ? 'Rejected' :
+                         supplier.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleEdit(supplier)} 
+                          disabled={actionLoading[supplier.id]}
+                          className="p-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 text-blue-700 dark:text-blue-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-60" 
+                          title={t('common.edit')}
+                          aria-label="Edit supplier"
+                        >
+                          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                        
                         {supplier.status === 'pending' && (
                           <>
                             <button 
                               onClick={() => openConfirmModal('approve', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/40 text-green-700 dark:text-green-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:opacity-60" 
-                              title={t('suppliers.approve')}
+                              title="Approve supplier"
                               aria-label="Approve supplier"
                             >
                               {actionLoading[supplier.id] ? (
@@ -309,7 +423,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => openConfirmModal('reject', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-60" 
-                              title={t('suppliers.reject')}
+                              title="Reject supplier"
                               aria-label="Reject supplier"
                             >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -325,7 +439,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => openConfirmModal('toggle-status', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-800/40 text-primary-700 dark:text-primary-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-400 disabled:opacity-60" 
-                              title={t('suppliers.toggle_status')}
+                              title="Toggle supplier status"
                               aria-label="Toggle supplier status"
                             >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -336,7 +450,7 @@ const SuppliersTable = function SuppliersTable({ token }) {
                               onClick={() => handleAction('verify-email', supplier)} 
                               disabled={actionLoading[supplier.id]}
                               className="p-2 bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-800/40 text-purple-700 dark:text-purple-300 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:opacity-60" 
-                              title={t('suppliers.verify_email')}
+                              title="Verify supplier email"
                               aria-label="Verify supplier email"
                             >
                               <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -410,6 +524,15 @@ const SuppliersTable = function SuppliersTable({ token }) {
         onConfirm={() => handleAction(confirmModal.action, confirmModal.supplier)}
         onCancel={closeConfirmModal}
         loading={actionLoading[confirmModal.supplier?.id]}
+      />
+
+      {/* Supplier Form Modal */}
+      <SupplierFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleSubmit}
+        initialData={editSupplier}
+        isEdit={isEdit}
       />
     </div>
   );

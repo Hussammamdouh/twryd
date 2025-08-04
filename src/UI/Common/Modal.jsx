@@ -102,7 +102,7 @@ const Modal = memo(({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm animate-fadeIn p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelId}
@@ -113,12 +113,12 @@ const Modal = memo(({
       <div
         ref={modalRef}
         tabIndex={-1}
-        className={`theme-modal rounded-2xl shadow-2xl p-6 w-full ${modalSize} relative outline-none animate-scaleIn ${className}`}
+        className={`theme-modal rounded-2xl shadow-2xl w-full ${modalSize} relative outline-none animate-scaleIn ${className} max-h-[90vh] flex flex-col`}
         role="document"
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
             {title && (
               <h2 id={labelId} className="text-xl font-bold text-theme-text">
                 {title}
@@ -139,7 +139,10 @@ const Modal = memo(({
         )}
 
         {/* Content */}
-        <div id={labelId ? `${labelId}-desc` : undefined}>
+        <div 
+          id={labelId ? `${labelId}-desc` : undefined}
+          className="flex-1 overflow-y-auto px-6 pb-6"
+        >
           {children}
         </div>
       </div>

@@ -30,7 +30,11 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
     setError('');
     
     try {
-      await put(`/api/supplier-management/clients/${client.id}/default-discount`, {
+      // Use the correct client ID - prefer client.client.id if it exists, otherwise use client.id
+      const clientData = client.client || client;
+      const clientId = clientData.id || client.id;
+      
+      await put(`/api/supplier-management/clients/${clientId}/default-discount`, {
         data: { default_discount: parseInt(discount) },
         token,
       });
@@ -59,56 +63,58 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
 
   return (
     <Modal open={open} onClose={handleClose} title="Edit Client Discount">
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+      <form className="flex flex-col gap-4 sm:gap-6" onSubmit={handleSubmit} noValidate>
         <div>
-          <label className="block text-theme-text mb-1 font-medium">Client</label>
-          <div className="px-4 py-2 bg-theme-surface border border-theme-border rounded text-theme-text">
+          <label className="block text-theme-text mb-2 font-medium text-sm">Client</label>
+          <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface border border-theme-border rounded-lg text-theme-text text-sm sm:text-base">
             {clientData.name || clientData.company_name || 'N/A'} ({clientData.email || clientData.client_email || clientData.contact || 'No email'})
           </div>
         </div>
         
         <div>
-          <label className="block text-theme-text mb-1 font-medium">Discount Percentage</label>
-          <div className="relative">
-            <input
-              type="number"
-              min="0"
-              max="100"
-              className={`theme-input w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-400 ${error ? 'border-red-400' : ''}`}
-              placeholder="Enter discount percentage (0-100)"
-              value={discount}
-              onChange={(e) => setDiscount(e.target.value)}
-              disabled={loading}
-              required
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <span className="text-theme-text-secondary text-sm">%</span>
-            </div>
-          </div>
+          <label className="block text-theme-text mb-2 font-medium text-sm">Discount Percentage</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error ? 'border-red-400' : ''}`}
+            placeholder="Enter discount percentage (0-100)"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
+            disabled={loading}
+            required
+          />
+          <p className="text-xs text-theme-text-muted mt-1">Enter a value between 0 and 100</p>
         </div>
         
         {error && (
-          <div className="text-red-500 text-sm" role="alert">
-            {error}
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         )}
         
-        <div className="flex justify-end gap-2 mt-4">
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <button
             type="button"
-            className="theme-button-secondary px-4 py-2 rounded font-semibold focus:outline-none"
             onClick={handleClose}
-            disabled={loading}
+            className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="theme-button px-4 py-2 rounded font-semibold shadow flex items-center gap-2 focus:outline-none"
             disabled={loading}
+            className="theme-button flex-1 py-2 sm:py-3 px-4 rounded-lg disabled:opacity-60 transition text-sm sm:text-base flex items-center justify-center gap-2"
           >
-            {loading && <Spinner size={16} color="border-white" />}
-            Update Discount
+            {loading ? (
+              <>
+                <Spinner size={16} />
+                <span>Updating...</span>
+              </>
+            ) : (
+              'Update Discount'
+            )}
           </button>
         </div>
       </form>

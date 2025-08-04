@@ -10,14 +10,16 @@ import Spinner from '../../UI/supplier/Spinner';
 function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
   const [form, setForm] = useState({
     name: '',
+    name_ar: '',
     address: '',
+    address_ar: '',
     phone: '',
   });
   const [errors, setErrors] = useState({});
 
   React.useEffect(() => {
     if (open) {
-      setForm(initialData || { name: '', address: '', phone: '' });
+      setForm(initialData || { name: '', name_ar: '', address: '', address_ar: '', phone: '' });
       setErrors({});
     }
   }, [open, initialData]);
@@ -40,7 +42,9 @@ function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
   const validateForm = () => {
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = 'Name is required';
+    if (!form.name_ar.trim()) newErrors.name_ar = 'Arabic name is required';
     if (!form.address.trim()) newErrors.address = 'Address is required';
+    if (!form.address_ar.trim()) newErrors.address_ar = 'Arabic address is required';
     if (!form.phone.trim()) newErrors.phone = 'Phone is required';
     if (form.phone && !/^[0-9+\-\s()]+$/.test(form.phone)) {
       newErrors.phone = 'Invalid phone number format';
@@ -59,10 +63,10 @@ function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
 
   return (
     <Modal open={open} onClose={onClose} title={initialData ? 'Edit Warehouse' : 'Add Warehouse'}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-theme-text mb-1">
-            Warehouse Name *
+          <label htmlFor="name" className="block text-sm font-medium text-theme-text mb-2">
+            Warehouse Name (English) *
           </label>
           <input
             id="name"
@@ -71,17 +75,37 @@ function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
             value={form.name}
             onChange={handleChange}
             required
-            placeholder="Enter warehouse name"
-            className={`theme-input w-full px-3 py-2 rounded ${
+            placeholder="Enter warehouse name in English"
+            className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
               errors.name ? 'border-red-300' : ''
             }`}
           />
-          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          {errors.name && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.name}</p>}
         </div>
 
         <div>
-          <label htmlFor="address" className="block text-sm font-medium text-theme-text mb-1">
-            Address *
+          <label htmlFor="name_ar" className="block text-sm font-medium text-theme-text mb-2">
+            Warehouse Name (Arabic) *
+          </label>
+          <input
+            id="name_ar"
+            name="name_ar"
+            type="text"
+            value={form.name_ar}
+            onChange={handleChange}
+            required
+            placeholder="أدخل اسم المستودع بالعربية"
+            className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
+              errors.name_ar ? 'border-red-300' : ''
+            }`}
+            dir="rtl"
+          />
+          {errors.name_ar && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.name_ar}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="address" className="block text-sm font-medium text-theme-text mb-2">
+            Address (English) *
           </label>
           <input
             id="address"
@@ -90,16 +114,36 @@ function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
             value={form.address}
             onChange={handleChange}
             required
-            placeholder="Enter warehouse address"
-            className={`theme-input w-full px-3 py-2 rounded ${
+            placeholder="Enter warehouse address in English"
+            className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
               errors.address ? 'border-red-300' : ''
             }`}
           />
-          {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+          {errors.address && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.address}</p>}
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-theme-text mb-1">
+          <label htmlFor="address_ar" className="block text-sm font-medium text-theme-text mb-2">
+            Address (Arabic) *
+          </label>
+          <input
+            id="address_ar"
+            name="address_ar"
+            type="text"
+            value={form.address_ar}
+            onChange={handleChange}
+            required
+            placeholder="أدخل عنوان المستودع بالعربية"
+            className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
+              errors.address_ar ? 'border-red-300' : ''
+            }`}
+            dir="rtl"
+          />
+          {errors.address_ar && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.address_ar}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-theme-text mb-2">
             Phone Number *
           </label>
           <input
@@ -110,31 +154,31 @@ function WarehouseFormModal({ open, onClose, onSubmit, initialData, loading }) {
             onChange={handleChange}
             required
             placeholder="Enter phone number"
-            className={`theme-input w-full px-3 py-2 rounded ${
+            className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base ${
               errors.phone ? 'border-red-300' : ''
             }`}
           />
-          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+          {errors.phone && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.phone}</p>}
         </div>
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <button
             type="button"
             onClick={onClose}
-            className="theme-button-secondary flex-1 py-2 px-4 rounded transition"
+            className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="theme-button flex-1 py-2 px-4 rounded disabled:opacity-60 transition"
+            className="theme-button flex-1 py-2 sm:py-3 px-4 rounded-lg disabled:opacity-60 transition text-sm sm:text-base flex items-center justify-center gap-2"
           >
             {loading ? (
-              <div className="flex items-center justify-center">
+              <>
                 <Spinner size={16} />
-                <span className="ml-2">Saving...</span>
-              </div>
+                <span>Saving...</span>
+              </>
             ) : (
               initialData ? 'Update Warehouse' : 'Add Warehouse'
             )}
@@ -245,8 +289,8 @@ export default function Warehouses() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-5xl mx-auto py-8 px-2">
-        <div className="flex items-center justify-center h-64">
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex items-center justify-center py-8 sm:py-12">
           <Spinner size={32} />
         </div>
       </div>
@@ -254,30 +298,33 @@ export default function Warehouses() {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-8 px-2">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary-700">Warehouses</h1>
-          <p className="text-theme-text-secondary mt-1">Manage your warehouse locations</p>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-700">Warehouses</h1>
+          <p className="text-theme-text-secondary mt-1 text-sm sm:text-base">Manage your warehouse locations</p>
         </div>
         <button
           onClick={handleAdd}
-          className="theme-button px-5 py-2 rounded font-bold transition flex items-center gap-2"
+          className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold transition flex items-center justify-center gap-2 w-full sm:w-auto text-sm sm:text-base"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           Add Warehouse
         </button>
       </div>
 
+      {/* Error Message */}
       {error && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/30 dark:border-red-700">
-          <p className="text-red-600 dark:text-red-300">{error}</p>
+          <p className="text-red-600 dark:text-red-300 text-sm sm:text-base">{error}</p>
         </div>
       )}
 
-      <div className="theme-card p-3 sm:p-6 overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden md:block theme-card p-3 sm:p-6 overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
             <tr className="theme-table-header text-primary-700">
@@ -351,6 +398,93 @@ export default function Warehouses() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-4">
+        {warehouses.map(warehouse => (
+          <div key={warehouse.id} className="theme-card p-4 sm:p-6">
+            <div className="space-y-3">
+              {/* Warehouse Name and Status */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1">
+                  <div className="text-xs font-medium text-theme-text-secondary mb-1">Warehouse Name</div>
+                  <div className="text-sm font-medium text-theme-text">{warehouse.name}</div>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                  warehouse.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'
+                }`}>
+                  {warehouse.is_active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+
+              {/* Address */}
+              <div>
+                <div className="text-xs font-medium text-theme-text-secondary mb-1">Address</div>
+                <div className="text-sm text-theme-text">{warehouse.address}</div>
+              </div>
+
+              {/* Phone */}
+              <div>
+                <div className="text-xs font-medium text-theme-text-secondary mb-1">Phone</div>
+                <div className="text-sm text-theme-text">{warehouse.phone}</div>
+              </div>
+
+              {/* Actions */}
+              <div className="pt-3 border-t border-theme-border">
+                <div className="text-xs font-medium text-theme-text-secondary mb-2">Actions</div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleToggleStatus(warehouse)}
+                    className={`px-3 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 ${
+                      warehouse.is_active
+                        ? 'bg-orange-100 text-orange-700 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300'
+                        : 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={warehouse.is_active ? "M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" : "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"} />
+                    </svg>
+                    {warehouse.is_active ? 'Deactivate' : 'Activate'}
+                  </button>
+                  <button
+                    onClick={() => handleEdit(warehouse)}
+                    className="px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-lg text-sm font-bold hover:bg-blue-200 dark:hover:bg-blue-800 transition flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClick(warehouse)}
+                    className="px-3 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg text-sm font-bold hover:bg-red-200 dark:hover:bg-red-800 transition flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {/* Empty State for Mobile */}
+        {warehouses.length === 0 && !loading && (
+          <div className="theme-card p-8 text-center text-theme-text-muted">
+            <div className="flex flex-col items-center gap-3">
+              <svg className="w-12 h-12 text-theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <div>
+                <p className="text-lg font-medium">No warehouses found</p>
+                <p className="text-sm">Get started by adding your first warehouse</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Form Modal */}

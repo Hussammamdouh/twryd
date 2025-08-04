@@ -138,93 +138,97 @@ export default function ClientMarketplace() {
 
   // UI
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
-          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V6a2 2 0 012-2h14a2 2 0 012 2v1M5 7h14l1 5H4l1-5zm2 8a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
-            </svg>
-          </div>
-          <div>
-            <span className="text-gray-900 dark:text-white">Marketplace</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Browse Products</span>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg sm:rounded-xl">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V6a2 2 0 012-2h14a2 2 0 012 2v1M5 7h14l1 5H4l1-5zm2 8a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
+              </svg>
+            </div>
+            <div>
+              <span className="text-gray-900 dark:text-white">Marketplace</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal text-base sm:text-lg lg:text-xl ml-0 sm:ml-2">Browse Products</span>
+            </div>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">Explore products from your connected suppliers and add them to your cart.</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm sm:text-base">Explore products from your connected suppliers and add them to your cart.</p>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6 flex flex-wrap gap-4 items-center">
-        <select
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
-          value={filterSupplier}
-          onChange={e => handleSupplierFilterChange(e.target.value)}
-        >
-          <option value="">All Suppliers</option>
-          {suppliers.map(s => (
-            <option key={s.id || s.supplier_id} value={s.id || s.supplier_id}>{s.name || s.supplier?.name}</option>
-          ))}
-        </select>
-        <select
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
-          value={filterCategory}
-          onChange={e => setFilterCategory(e.target.value)}
-        >
-          <option value="">All Categories</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
-        </select>
-        <input
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 flex-1 min-w-[200px]"
-          placeholder="Search products..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        <select
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200"
-          value={sort}
-          onChange={e => setSort(e.target.value)}
-        >
-          <option value="newest">Newest</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="discount-desc">Biggest Discount</option>
-        </select>
+      <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <select
+            className="px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
+            value={filterSupplier}
+            onChange={e => handleSupplierFilterChange(e.target.value)}
+          >
+            <option value="">All Suppliers</option>
+            {suppliers.map(s => (
+              <option key={s.id || s.supplier_id} value={s.id || s.supplier_id}>{s.name || s.supplier?.name}</option>
+            ))}
+          </select>
+          <select
+            className="px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
+            value={filterCategory}
+            onChange={e => setFilterCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <input
+            className="px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
+            placeholder="Search products..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <select
+            className="px-3 sm:px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 text-sm sm:text-base"
+            value={sort}
+            onChange={e => setSort(e.target.value)}
+          >
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="discount-desc">Biggest Discount</option>
+          </select>
+        </div>
       </div>
 
       {/* Product Grid */}
       {loading ? (
-        <div className="flex justify-center py-24"><Spinner size={32} /></div>
+        <div className="flex justify-center py-12 sm:py-24"><Spinner size={32} /></div>
       ) : sortedProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24">
-          <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex flex-col items-center justify-center py-12 sm:py-24">
+          <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 dark:text-gray-600 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7V6a2 2 0 012-2h14a2 2 0 012 2v1M5 7h14l1 5H4l1-5zm2 8a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" />
           </svg>
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">No products found</h2>
-          <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters or search terms.</p>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200 mb-1 sm:mb-2">No products found</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">Try adjusting your filters or search terms.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {sortedProducts.map(product => (
-            <div key={product.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleProductClick(product)}>
+            <div key={product.id} className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-4 flex flex-col relative cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleProductClick(product)}>
               {product.discount > 0 && (
-                <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{product.discount}% Off</span>
+                <span className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{product.discount}% Off</span>
               )}
-              <div className="h-36 flex items-center justify-center mb-4 bg-gray-100 dark:bg-gray-700 rounded">
+              <div className="h-28 sm:h-36 flex items-center justify-center mb-3 sm:mb-4 bg-gray-100 dark:bg-gray-700 rounded">
                 {product.image_url ? (
-                  <img src={product.image_url} alt={product.name} className="max-h-32 object-contain" />
+                  <img src={product.image_url} alt={product.name} className="max-h-24 sm:max-h-32 object-contain" />
                 ) : (
-                  <div className="w-24 h-24 bg-gray-200 dark:bg-gray-600 rounded" />
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-200 dark:bg-gray-600 rounded" />
                 )}
               </div>
-              <div className="font-semibold text-lg mb-1 text-gray-900 dark:text-white">{product.name}</div>
+              <div className="font-semibold text-base sm:text-lg mb-1 text-gray-900 dark:text-white line-clamp-2">{product.name}</div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-primary-600 font-bold text-xl">${(product.price - (product.price * (product.discount || 0) / 100)).toFixed(2)}</span>
+                <span className="text-primary-600 font-bold text-lg sm:text-xl">${(product.price - (product.price * (product.discount || 0) / 100)).toFixed(2)}</span>
                 {product.discount > 0 && (
-                  <span className="line-through text-gray-400 text-sm">${product.price}</span>
+                  <span className="line-through text-gray-400 text-xs sm:text-sm">${product.price}</span>
                 )}
               </div>
               <div className="text-xs text-gray-500 mb-2">
@@ -238,11 +242,11 @@ export default function ClientMarketplace() {
                   min="1"
                   value={quantities[product.id] || 1}
                   onChange={(e) => handleQuantityChange(product.id, e.target.value)}
-                  className="w-16 px-2 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-sm focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                  className="w-14 sm:w-16 px-2 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-xs sm:text-sm focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
                   onClick={(e) => e.stopPropagation()}
                 />
                 <button
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded disabled:opacity-60 text-sm"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded disabled:opacity-60 text-xs sm:text-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleAddToCart(product);

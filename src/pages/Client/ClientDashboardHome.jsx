@@ -96,37 +96,39 @@ export default function ClientDashboardHome() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
-          <div className="flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-            <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-          </div>
-          <div>
-            <span className="text-gray-900 dark:text-white">Dashboard</span>
-            <span className="text-gray-500 dark:text-gray-400 font-normal text-lg sm:text-xl ml-2">Overview</span>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg sm:rounded-xl">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </div>
+            <div>
+              <span className="text-gray-900 dark:text-white">Dashboard</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal text-base sm:text-lg lg:text-xl ml-0 sm:ml-2">Overview</span>
+            </div>
           </div>
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">Welcome back! Here's what's happening with your account today.</p>
+        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm sm:text-base">Welcome back! Here's what's happening with your account today.</p>
       </div>
 
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl shadow-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-2">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-1 sm:mb-2">
               Welcome back, {user?.name || 'Client'}! 👋
             </h2>
-            <p className="text-primary-100">
+            <p className="text-primary-100 text-sm sm:text-base">
               Ready to explore products from your trusted suppliers?
             </p>
           </div>
           <div className="hidden md:block">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
@@ -135,56 +137,60 @@ export default function ClientDashboardHome() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-all duration-200">
-            <div className="flex items-center justify-between mb-4">
+          <div key={index} className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{stat.title}</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
               </div>
-              <div className={`p-3 rounded-lg ${
+              <div className={`p-2 sm:p-3 rounded-lg ${
                 stat.changeType === 'positive' 
                   ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' 
                   : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-300'
               }`}>
-                {stat.icon}
+                <div className="w-4 h-4 sm:w-6 sm:h-6">
+                  {stat.icon}
+                </div>
               </div>
             </div>
             <div className="flex items-center">
-              <span className={`text-sm font-medium ${
+              <span className={`text-xs sm:text-sm font-medium ${
                 stat.changeType === 'positive' 
                   ? 'text-green-600 dark:text-green-300' 
                   : 'text-red-600 dark:text-red-300'
               }`}>
                 {stat.change}
               </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">from last month</span>
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 ml-1">from last month</span>
             </div>
           </div>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Get started quickly</span>
+      <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
+          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Get started quickly</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {quickActions.map((action, index) => (
             <Link
               key={index}
               to={action.href}
-              className="group block p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary-300 hover:shadow-lg transition-all duration-200 bg-gray-50 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-800"
+              className="group block p-4 sm:p-6 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl hover:border-primary-300 hover:shadow-lg transition-all duration-200 bg-gray-50 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-800"
             >
-              <div className="flex items-center justify-center w-12 h-12 bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 rounded-lg mb-4 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/40 transition-colors">
-                {action.icon}
+              <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 rounded-lg mb-3 sm:mb-4 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/40 transition-colors">
+                <div className="w-6 h-6 sm:w-8 sm:h-8">
+                  {action.icon}
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
                 {action.title}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 {action.description}
               </p>
             </Link>
@@ -193,50 +199,50 @@ export default function ClientDashboardHome() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
           <Link 
             to="/client/dashboard/orders" 
-            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+            className="text-xs sm:text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
           >
             View all →
           </Link>
         </div>
-        <div className="space-y-4">
-          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl border border-green-200 dark:border-green-800">
-            <div className="w-10 h-10 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg sm:rounded-xl border border-green-200 dark:border-green-800">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">New supplier invitation accepted</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">ABC Trading • 2 hours ago</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">New supplier invitation accepted</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">ABC Trading • 2 hours ago</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl border border-blue-200 dark:border-blue-800">
-            <div className="w-10 h-10 bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg sm:rounded-xl border border-blue-200 dark:border-blue-800">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">Order #12345 placed successfully</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">XYZ Stores • 1 day ago</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">Order #12345 placed successfully</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">XYZ Stores • 1 day ago</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
-            <div className="w-10 h-10 bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-lg sm:rounded-xl border border-yellow-200 dark:border-yellow-800">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">New invitation received</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">QuickMart • 2 days ago</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">New invitation received</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">QuickMart • 2 days ago</p>
             </div>
           </div>
         </div>

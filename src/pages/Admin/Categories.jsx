@@ -398,13 +398,13 @@ export default function Categories() {
       </div>
 
       {/* Action Bar */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 mb-6">
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             {categories.length} {categories.length === 1 ? t('nav.categories').slice(0, -1) : t('nav.categories')} {t('common.total')}
           </div>
           <button
-            className="px-4 py-2 rounded-lg font-semibold shadow-lg transition-all duration-200 bg-primary-600 hover:bg-primary-700 focus:bg-primary-800 text-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 flex items-center gap-2"
+            className="px-3 sm:px-4 py-2 rounded-lg font-semibold shadow-lg transition-all duration-200 bg-primary-600 hover:bg-primary-700 focus:bg-primary-800 text-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 flex items-center gap-2 text-sm sm:text-base min-h-[44px]"
             onClick={() => { setEditData(null); setModalOpen(true); }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -416,48 +416,48 @@ export default function Categories() {
       </div>
 
       {/* Categories Grid */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 sm:p-6">
         {isLoading ? (
-          <div className="flex flex-col items-center py-16">
-            <svg className="animate-spin h-8 w-8 text-primary-500 mb-4" viewBox="0 0 24 24">
+          <div className="flex flex-col items-center py-12 sm:py-16">
+            <svg className="animate-spin h-6 w-6 sm:h-8 sm:w-8 text-primary-500 mb-3 sm:mb-4" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
-            <span className="text-gray-500 dark:text-gray-400 font-medium">{t('categories.loading')}</span>
+            <span className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium">{t('categories.loading')}</span>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center py-16">
-            <svg className="h-8 w-8 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex flex-col items-center py-12 sm:py-16">
+            <svg className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 mb-3 sm:mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
-            <span className="text-red-500 font-medium">{error.message || error}</span>
+            <span className="text-sm sm:text-base text-red-500 font-medium">{error.message || error}</span>
           </div>
         ) : filteredCategories.length === 0 ? (
-          <div className="flex flex-col items-center py-16">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-gray-400 mb-4">
+          <div className="flex flex-col items-center py-12 sm:py-16">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mb-3 sm:mb-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0A9 9 0 11.75 12a9 9 0 0117.25 0z" />
             </svg>
-            <span className="text-gray-500 dark:text-gray-400 font-medium mb-2">{t('categories.no_categories')}</span>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">{t('categories.get_started')}</p>
+            <span className="text-base sm:text-lg text-gray-500 dark:text-gray-400 font-medium mb-2">{t('categories.no_categories')}</span>
+            <p className="text-sm sm:text-base text-gray-400 dark:text-gray-500">{t('categories.get_started')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {filteredCategories.map((cat) => (
-              <div key={cat.id} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200">
-                <div className="flex items-start gap-4">
+              <div key={cat.id} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200">
+                <div className="flex items-start gap-3 sm:gap-4">
                   <div className="flex-shrink-0">
                     {cat.icon ? (
                       <img
                         src={getIconUrl(cat.icon)}
                         alt={cat.name}
-                        className="w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700"
+                        className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700"
                         onError={(e) => {
                           try {
                             e.target.onerror = null;
                             e.target.style.display = 'none';
                             const parent = e.target.parentNode;
                             if (parent) {
-                              parent.innerHTML = '<div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400">N/A</div>';
+                              parent.innerHTML = '<div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">N/A</div>';
                             }
                           } catch (error) {
                             console.warn('Error handling image load failure:', error);
@@ -465,20 +465,20 @@ export default function Categories() {
                         }}
                       />
                     ) : (
-                      <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white truncate mb-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-white truncate mb-2 text-sm sm:text-base">
                       {currentLanguage === 'ar' && cat.name_ar ? cat.name_ar : cat.name}
                     </h3>
                     <div className="flex items-center gap-2 mb-3">
                       <button
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 min-h-[28px] ${
                           cat.is_active 
                             ? 'bg-green-100 text-green-700 focus:ring-green-400 dark:bg-green-900/30 dark:text-green-300' 
                             : 'bg-gray-100 text-gray-600 focus:ring-gray-400 dark:bg-gray-700 dark:text-gray-300'
@@ -492,9 +492,9 @@ export default function Categories() {
                         {cat.is_active ? t('common.active') : t('common.inactive')}
                       </button>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 sm:gap-2">
                       <button
-                        className="flex-1 px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="flex-1 px-2 sm:px-3 py-1.5 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[32px]"
                         onClick={() => { setEditData(cat); setModalOpen(true); }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 inline mr-1">
@@ -503,7 +503,7 @@ export default function Categories() {
                         {t('common.edit')}
                       </button>
                       <button
-                        className="flex-1 px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="flex-1 px-2 sm:px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 text-red-700 dark:text-red-300 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 min-h-[32px]"
                         onClick={() => { setDeleteTarget(cat); setDeleteModalOpen(true); }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 inline mr-1">
