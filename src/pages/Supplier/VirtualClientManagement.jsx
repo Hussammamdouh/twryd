@@ -69,10 +69,7 @@ export default function VirtualClientManagement() {
   const fetchVirtualClients = async () => {
     try {
       setLoading(true);
-      const res = await post('/api/supplier/clients', { 
-        data: { action: 'list' }, 
-        token 
-      });
+      const res = await get('/api/supplier/clients', { token });
       console.log('Virtual Clients API Response:', res);
       
       const clientsData = res.data?.clients || res.data || [];

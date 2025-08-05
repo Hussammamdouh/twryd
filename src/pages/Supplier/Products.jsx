@@ -125,6 +125,8 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
           {formErrors.name && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.name}</div>}
         </div>
         
+
+        
         {/* Price and Discount Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
@@ -173,6 +175,8 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
           />
           {formErrors.description && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.description}</div>}
         </div>
+        
+
         
         {/* Product Image URL */}
         <div>
@@ -287,21 +291,13 @@ export default function Products() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      // Try the authenticated endpoint first
-      const res = await get('/api/client-management/available-categories', { token });
+      // Use the public categories endpoint directly
+      const res = await get('/api/v1/categories');
       const cats = Array.isArray(res.data) ? res.data : (res.data?.data || []);
       setCategories(cats);
-    } catch {
-      console.log('Authenticated categories endpoint failed, trying fallback...');
-      // Fallback to public categories endpoint
-      try {
-        const fallbackRes = await get('/api/v1/categories');
-        const fallbackCats = Array.isArray(fallbackRes.data) ? fallbackRes.data : (fallbackRes.data?.data || []);
-        setCategories(fallbackCats);
-      } catch (fallbackErr) {
-        console.error('Both categories endpoints failed:', fallbackErr);
-        setCategories([]);
-      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+      setCategories([]);
     }
   };
 
@@ -323,16 +319,16 @@ export default function Products() {
     const prevProducts = products;
     setProducts([newProduct, ...products]);
     try {
-      // Prepare the data in the correct format
+      // Prepare the data as JSON (working version)
       const productData = {
         name: form.name,
-        price: parseFloat(form.price),
-        discount: parseInt(form.discount) || 0,
+        price: form.price,
+        discount: form.discount || '0',
         description: form.description || '',
-        product_url: form.product_url || '',
-        category_id: parseInt(form.category_id),
+        product_url: form.product_url || null,
+        category_id: form.category_id,
         supplier_id: user.id,
-        is_active: form.is_active ? 1 : 0
+        is_active: form.is_active ? '1' : '0'
       };
       
       const res = await post('/api/supplier-management/products', { 
@@ -357,21 +353,21 @@ export default function Products() {
     const prevProducts = products;
     setProducts(products.map(p => p.id === editData.id ? { ...p, ...form } : p));
     try {
-      // Prepare the data in the correct format
-      const productData = {
+      // Try using the exact same pattern as status toggle
+      const updateData = {
         name: form.name,
-        price: parseFloat(form.price),
-        discount: parseInt(form.discount) || 0,
+        price: form.price,
+        discount: form.discount || '0',
         description: form.description || '',
-        product_url: form.product_url || '',
-        category_id: parseInt(form.category_id),
-        supplier_id: user.id,
-        is_active: form.is_active ? 1 : 0
+        product_url: form.product_url || null,
+        category_id: form.category_id,
+        is_active: form.is_active ? '1' : '0'
       };
       
+      console.log('Sending minimal update data:', updateData);
       await put(`/api/supplier-management/products/${editData.id}`, { 
         token, 
-        data: productData 
+        data: updateData 
       });
       toast.show('Product updated!', 'success');
     } catch (err) {

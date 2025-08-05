@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { post, get } from '../../../utils/api';
 import { useToast } from '../../../UI/Common/ToastContext';
 import { useLanguage } from '../../../contexts/LanguageContext';
@@ -49,6 +50,7 @@ export default function SupplierRegisteration() {
   const [categoriesError, setCategoriesError] = useState('');
   const toast = useToast();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchCategories() {
@@ -229,10 +231,14 @@ export default function SupplierRegisteration() {
       if (form.logo) formData.append('logo', form.logo);
       if (form.tax_card_file) formData.append('tax_card_file', form.tax_card_file);
       if (form.cr_file) formData.append('cr_file', form.cr_file);
-      await post('/api/supplier/register', { data: formData });
+      const response = await post('/api/supplier/register', { data: formData });
       toast.show(t('supplier_auth.register_successful'), 'success');
-      // Optionally redirect
-      // setTimeout(() => window.location.href = '/login-supplier', 1500);
+      // Navigate to verify page with the email as identifier
+      setTimeout(() => {
+        navigate('/verify-supplier', { 
+          state: { identifier: form.email } 
+        });
+      }, 1500);
     } catch (err) {
       toast.show(err.message || t('supplier_auth.register_failed'), 'error');
     } finally {

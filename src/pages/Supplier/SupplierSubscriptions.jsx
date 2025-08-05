@@ -14,7 +14,7 @@ export default function SupplierSubscriptions() {
   const { t } = useLanguage();
   
   const [activeTab, setActiveTab] = useState('current');
-  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
+  const [subscriptionData, setSubscriptionData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch subscription status on component mount
@@ -25,7 +25,8 @@ export default function SupplierSubscriptions() {
   const fetchSubscriptionStatus = async () => {
     try {
       const response = await get('/api/supplier/subscriptions/status', { token });
-      setSubscriptionStatus(response.data);
+      console.log('Subscription status response:', response);
+      setSubscriptionData(response.data);
     } catch (err) {
       console.error('Failed to fetch subscription status:', err);
       toast.show(t('messages.failed_to_load'), 'error');
@@ -72,6 +73,11 @@ export default function SupplierSubscriptions() {
     );
   }
 
+  // Extract subscription info from the API response structure
+  const subscription = subscriptionData?.subscription;
+  const hasActiveSubscription = subscriptionData?.has_active_subscription;
+  const status = subscription?.status || 'undefined';
+
   return (
     <div className="w-full space-y-6">
       {/* Header */}
@@ -90,21 +96,21 @@ export default function SupplierSubscriptions() {
       </div>
 
       {/* Subscription Status Card */}
-      {subscriptionStatus && (
+      {subscriptionData && (
         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={`p-3 rounded-lg ${
-                subscriptionStatus.status === 'active' 
+                status === 'active' 
                   ? 'bg-green-100 dark:bg-green-900/30' 
-                  : subscriptionStatus.status === 'expired'
+                  : status === 'expired'
                   ? 'bg-red-100 dark:bg-red-900/30'
                   : 'bg-yellow-100 dark:bg-yellow-900/30'
               }`}>
                 <svg className={`w-6 h-6 ${
-                  subscriptionStatus.status === 'active' 
+                  status === 'active' 
                     ? 'text-green-600 dark:text-green-400' 
-                    : subscriptionStatus.status === 'expired'
+                    : status === 'expired'
                     ? 'text-red-600 dark:text-red-400'
                     : 'text-yellow-600 dark:text-yellow-400'
                 }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,20 +122,20 @@ export default function SupplierSubscriptions() {
                   {t('supplier_subscriptions.current_status')}
                 </h3>
                 <p className={`text-sm font-medium ${
-                  subscriptionStatus.status === 'active' 
+                  status === 'active' 
                     ? 'text-green-600 dark:text-green-400' 
-                    : subscriptionStatus.status === 'expired'
+                    : status === 'expired'
                     ? 'text-red-600 dark:text-red-400'
                     : 'text-yellow-600 dark:text-yellow-400'
                 }`}>
-                  {t(`supplier_subscriptions.status_${subscriptionStatus.status}`)}
+                  {t(`supplier_subscriptions.status_${status}`)}
                 </p>
               </div>
             </div>
-            {subscriptionStatus.plan && (
+            {subscription?.plan && (
               <div className="text-right">
                 <p className="text-sm text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.current_plan')}</p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-white">{subscriptionStatus.plan.name}</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">{subscription.plan.name}</p>
               </div>
             )}
           </div>
@@ -161,7 +167,7 @@ export default function SupplierSubscriptions() {
         <div className="p-6">
           {activeTab === 'current' && (
             <SupplierCurrentSubscription 
-              subscriptionStatus={subscriptionStatus}
+              subscriptionData={subscriptionData}
               onRefresh={fetchSubscriptionStatus}
             />
           )}

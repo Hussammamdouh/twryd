@@ -6,34 +6,21 @@ import { get } from '../../utils/api';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import Spinner from '../../UI/supplier/Spinner';
 
-export default function SupplierCurrentSubscription({ subscriptionStatus, onRefresh }) {
+export default function SupplierCurrentSubscription({ subscriptionData, onRefresh }) {
   const { token } = useAuth();
   const toast = useToast();
   const { t } = useLanguage();
   
-  const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (subscriptionStatus?.subscription_id) {
-      fetchSubscriptionDetails();
-    }
-  }, [subscriptionStatus]);
-
-  const fetchSubscriptionDetails = async () => {
-    if (!subscriptionStatus?.subscription_id) return;
-    
-    setLoading(true);
-    try {
-      const response = await get(`/api/supplier/subscriptions/${subscriptionStatus.subscription_id}`, { token });
-      setSubscription(response.data);
-    } catch (err) {
-      console.error('Failed to fetch subscription details:', err);
-      toast.show(t('messages.failed_to_load'), 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Extract data from the new API response structure
+  const subscription = subscriptionData?.subscription;
+  const hasActiveSubscription = subscriptionData?.has_active_subscription;
+  const status = subscription?.status || 'undefined';
+  const plan = subscription?.plan;
+  const remainingSlots = subscriptionData?.remaining_slots || 0;
+  const remainingDays = subscriptionData?.remaining_days || 0;
+  const currentClientCount = subscriptionData?.current_client_count || 0;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -86,7 +73,7 @@ export default function SupplierCurrentSubscription({ subscriptionStatus, onRefr
     });
   };
 
-  if (!subscriptionStatus) {
+  if (!hasActiveSubscription || !subscription) {
     return (
       <div className="text-center py-12">
         <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
@@ -149,15 +136,15 @@ export default function SupplierCurrentSubscription({ subscriptionStatus, onRefr
         {/* Status Card */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-lg ${getStatusColor(subscriptionStatus.status)}`}>
-              {getStatusIcon(subscriptionStatus.status)}
+            <div className={`p-3 rounded-lg ${getStatusColor(status)}`}>
+              {getStatusIcon(status)}
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('supplier_subscriptions.status')}
               </h3>
-              <p className={`text-sm font-medium ${getStatusColor(subscriptionStatus.status).split(' ')[0]}`}>
-                {t(`supplier_subscriptions.status_${subscriptionStatus.status}`)}
+              <p className={`text-sm font-medium ${getStatusColor(status).split(' ')[0]}`}>
+                {t(`supplier_subscriptions.status_${status}`)}
               </p>
             </div>
           </div>
@@ -176,7 +163,7 @@ export default function SupplierCurrentSubscription({ subscriptionStatus, onRefr
                 {t('supplier_subscriptions.plan')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {subscriptionStatus.plan?.name || t('supplier_subscriptions.no_plan')}
+                {plan?.name || t('supplier_subscriptions.no_plan')}
               </p>
             </div>
           </div>
@@ -195,7 +182,7 @@ export default function SupplierCurrentSubscription({ subscriptionStatus, onRefr
                 {t('supplier_subscriptions.monthly_price')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                ${subscriptionStatus.plan?.price_per_month || 0} {t('supplier_subscriptions.per_month')}
+                ${plan?.price_per_month || 0} {t('supplier_subscriptions.per_month')}
               </p>
             </div>
           </div>
@@ -203,86 +190,74 @@ export default function SupplierCurrentSubscription({ subscriptionStatus, onRefr
       </div>
 
       {/* Detailed Subscription Information */}
-      {subscription && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('supplier_subscriptions.detailed_information')}
-            </h3>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Subscription Details */}
-              <div className="space-y-4">
-                <h4 className="text-md font-semibold text-gray-900 dark:text-white">
-                  {t('supplier_subscriptions.subscription_details')}
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.subscription_id')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{subscription.id}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.start_date')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{formatDate(subscription.start_date)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.end_date')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{formatDate(subscription.end_date)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.duration')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {subscription.months} {t('supplier_subscriptions.months')}
-                    </span>
-                  </div>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            {t('supplier_subscriptions.detailed_information')}
+          </h3>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Subscription Details */}
+            <div className="space-y-4">
+              <h4 className="text-md font-semibold text-gray-900 dark:text-white">
+                {t('supplier_subscriptions.subscription_details')}
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.subscription_id')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{subscription.id}</span>
                 </div>
-              </div>
-
-              {/* Plan Details */}
-              <div className="space-y-4">
-                <h4 className="text-md font-semibold text-gray-900 dark:text-white">
-                  {t('supplier_subscriptions.plan_details')}
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.plan_name')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{subscription.plan?.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.max_clients')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{subscription.plan?.max_clients}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.price_per_month')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      ${subscription.price_per_month} {t('supplier_subscriptions.per_month')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.total_cost')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      ${(subscription.price_per_month * subscription.months).toFixed(2)}
-                    </span>
-                  </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.start_date')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{formatDate(subscription.start_date)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.end_date')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{formatDate(subscription.end_date)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.remaining_days')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {remainingDays > 0 ? remainingDays : 0} {t('supplier_subscriptions.days')}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Plan Description */}
-            {subscription.plan?.description && (
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-2">
-                  {t('supplier_subscriptions.plan_description')}
-                </h4>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {subscription.plan.description}
-                </p>
+            {/* Plan Details */}
+            <div className="space-y-4">
+              <h4 className="text-md font-semibold text-gray-900 dark:text-white">
+                {t('supplier_subscriptions.plan_details')}
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.plan_name')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{plan?.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.max_clients')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{plan?.max_clients}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.current_clients')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{currentClientCount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.remaining_slots')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{remainingSlots}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.price_per_month')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    ${plan?.price_per_month || 0} {t('supplier_subscriptions.per_month')}
+                  </span>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
