@@ -18,11 +18,17 @@ export default function Topbar({
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const handleAction = onAdd || onInvite;
   const { user } = useAuth();
-  const { sidebarCollapsed, setSidebarCollapsed } = useLayout();
+  const { sidebarCollapsed, mobileSidebarOpen, toggleMobileSidebar } = useLayout();
   const initials = user?.name ? user.name[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'U');
 
   const toggleMobileMenu = () => {
-    setSidebarCollapsed(prev => !prev);
+    toggleMobileSidebar();
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+    }
   };
 
   return (
@@ -30,7 +36,11 @@ export default function Topbar({
       {/* Mobile Menu Toggle */}
       <button
         id="mobile-sidebar-toggle"
-        onClick={toggleMobileMenu}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleMobileMenu();
+        }}
         className="md:hidden p-2 text-theme-text hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
         aria-label="Open menu"
       >
@@ -86,6 +96,19 @@ export default function Topbar({
             {addButtonText}
           </button>
         )}
+        
+        {/* Logout Button - Desktop */}
+        <button
+          onClick={handleLogout}
+          className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+          aria-label="Logout"
+          title="Logout"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
+        
         <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold text-lg shadow">
           <span>{initials}</span>
         </div>
@@ -107,6 +130,18 @@ export default function Topbar({
 
         {/* Theme Toggle - Mobile */}
         <ThemeToggle variant="button" />
+
+        {/* Logout Button - Mobile */}
+        <button
+          onClick={handleLogout}
+          className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+          aria-label="Logout"
+          title="Logout"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
 
         {/* User Avatar - Mobile */}
         <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold text-sm shadow">
