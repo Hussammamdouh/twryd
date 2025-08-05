@@ -4,8 +4,10 @@ import { put } from '../../utils/api';
 import { useToast } from '../Common/ToastContext';
 import Spinner from './Spinner';
 import Modal from '../Common/Modal';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function EditDiscountModal({ open, client, onClose, onSuccess }) {
+  const { t } = useSupplierTranslation();
   const [discount, setDiscount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -22,7 +24,7 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
     e.preventDefault();
     
     if (!discount || discount < 0 || discount > 100) {
-      setError('Please enter a valid discount percentage (0-100)');
+      setError(t('client_discounts.please_enter_valid_discount'));
       return;
     }
     
@@ -39,12 +41,12 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
         token,
       });
       
-      toast.show('Discount updated successfully', 'success');
+      toast.show(t('client_discounts.discount_updated_successfully'), 'success');
       onClose();
       onSuccess?.();
     } catch (err) {
-      setError(err.message || 'Failed to update discount');
-      toast.show(err.message || 'Failed to update discount', 'error');
+      setError(err.message || t('client_discounts.failed_to_update_discount'));
+      toast.show(err.message || t('client_discounts.failed_to_update_discount'), 'error');
     } finally {
       setLoading(false);
     }
@@ -62,30 +64,30 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
   const clientData = client.client || client;
 
   return (
-    <Modal open={open} onClose={handleClose} title="Edit Client Discount">
+    <Modal open={open} onClose={handleClose} title={t('client_discounts.edit_client_discount')}>
       <form className="flex flex-col gap-4 sm:gap-6" onSubmit={handleSubmit} noValidate>
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Client</label>
-          <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface border border-theme-border rounded-lg text-theme-text text-sm sm:text-base">
-            {clientData.name || clientData.company_name || 'N/A'} ({clientData.email || clientData.client_email || clientData.contact || 'No email'})
-          </div>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('client_discounts.client')}</label>
+                      <div className="px-3 sm:px-4 py-2 sm:py-3 bg-theme-surface border border-theme-border rounded-lg text-theme-text text-sm sm:text-base">
+              {clientData.name || clientData.company_name || 'N/A'} ({clientData.email || clientData.client_email || clientData.contact || t('client_discounts.no_email')})
+            </div>
         </div>
         
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Discount Percentage</label>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('client_discounts.discount_percentage_label')}</label>
           <input
             type="number"
             min="0"
             max="100"
             step="0.01"
             className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error ? 'border-red-400' : ''}`}
-            placeholder="Enter discount percentage (0-100)"
+            placeholder={t('client_discounts.discount_percentage_placeholder')}
             value={discount}
             onChange={(e) => setDiscount(e.target.value)}
             disabled={loading}
             required
           />
-          <p className="text-xs text-theme-text-muted mt-1">Enter a value between 0 and 100</p>
+          <p className="text-xs text-theme-text-muted mt-1">{t('client_discounts.discount_percentage_help')}</p>
         </div>
         
         {error && (
@@ -100,7 +102,7 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
             onClick={handleClose}
             className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
           >
-            Cancel
+            {t('profile.cancel')}
           </button>
           <button
             type="submit"
@@ -110,10 +112,10 @@ export default function EditDiscountModal({ open, client, onClose, onSuccess }) 
             {loading ? (
               <>
                 <Spinner size={16} />
-                <span>Updating...</span>
+                <span>{t('client_discounts.updating')}</span>
               </>
             ) : (
-              'Update Discount'
+              t('client_discounts.update_discount')
             )}
           </button>
         </div>

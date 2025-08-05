@@ -7,6 +7,7 @@ import Modal from '../../UI/Common/Modal';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../../UI/supplier/StatusBadge';
 import Pagination from '../../UI/supplier/Pagination';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 // Helper function to format date
 const formatDate = (dateString) => {
@@ -29,43 +30,10 @@ const formatCurrency = (amount) => {
   return parseFloat(amount).toFixed(2);
 };
 
-// Helper function to get status badge
-const getStatusBadge = (status, dueDate) => {
-  const today = new Date();
-  const due = new Date(dueDate);
-  
-  if (status === 'paid') {
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-        Paid
-      </span>
-    );
-  }
-  
-  if (status === 'overdue') {
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
-        Overdue
-      </span>
-    );
-  }
-  
-  if (due < today) {
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
-        Overdue
-      </span>
-    );
-  }
-  
-  return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-      Pending
-    </span>
-  );
-};
+
 
 export default function SupplierInstallments() {
+  const { t } = useSupplierTranslation();
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [installments, setInstallments] = useState([]);
@@ -88,10 +56,46 @@ export default function SupplierInstallments() {
   const toast = useToast();
   const navigate = useNavigate();
 
+  // Helper function to get status badge
+  const getStatusBadge = (status, dueDate) => {
+    const today = new Date();
+    const due = new Date(dueDate);
+    
+    if (status === 'paid') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+          {t('installments.paid')}
+        </span>
+      );
+    }
+    
+    if (status === 'overdue') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+          {t('installments.overdue')}
+        </span>
+      );
+    }
+    
+    if (due < today) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+          {t('installments.overdue')}
+        </span>
+      );
+    }
+    
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+        {t('installments.pending_status')}
+      </span>
+    );
+  };
+
   // Handle 401 errors
   const handleAuthError = (error) => {
     if (error.message.includes('Session expired') || error.message.includes('Unauthorized') || error.status === 401) {
-      toast.show('Session expired. Please log in again.', 'error');
+      toast.show(t('installments.session_expired'), 'error');
       logout();
       navigate('/login-supplier');
     } else {
@@ -157,14 +161,14 @@ export default function SupplierInstallments() {
       
       // Check if token exists
       if (!token) {
-        toast.show('Please log in to continue', 'error');
+        toast.show(t('installments.please_log_in'), 'error');
         navigate('/login-supplier');
         return;
       }
       
       // Validate form data
       if (!formData.installments || formData.installments.length === 0) {
-        toast.show('Please add at least one installment', 'error');
+        toast.show(t('installments.please_add_installment'), 'error');
         return;
       }
       
@@ -183,7 +187,7 @@ export default function SupplierInstallments() {
       });
       
       if (res.success) {
-        toast.show('Installment plan created successfully', 'success');
+        toast.show(t('installments.installment_plan_created'), 'success');
         setModalOpen(false);
         
         // Update the has_installments flag for this order
@@ -198,7 +202,7 @@ export default function SupplierInstallments() {
         // Fetch the new installments for viewing
         fetchInstallments(selectedOrder.id);
       } else {
-        toast.show(res.message || 'Failed to create installment plan', 'error');
+        toast.show(res.message || t('installments.failed_to_create_plan'), 'error');
       }
     } catch (err) {
       console.error('Failed to create installment plan:', err);
@@ -215,7 +219,7 @@ export default function SupplierInstallments() {
       
       // Validate form data
       if (!formData.installments || formData.installments.length === 0) {
-        toast.show('Please add at least one installment', 'error');
+        toast.show(t('installments.please_add_installment'), 'error');
         return;
       }
       
@@ -234,7 +238,7 @@ export default function SupplierInstallments() {
       });
       
       if (res.success) {
-        toast.show('Installment plan updated successfully', 'success');
+        toast.show(t('installments.installment_plan_updated'), 'success');
         setModalOpen(false);
         
         // Update the has_installments flag for this order
@@ -249,7 +253,7 @@ export default function SupplierInstallments() {
         // Refresh the installments
         fetchInstallments(selectedOrder.id);
       } else {
-        toast.show(res.message || 'Failed to update installment plan', 'error');
+        toast.show(res.message || t('installments.failed_to_update_plan'), 'error');
       }
     } catch (err) {
       console.error('Failed to update installment plan:', err);
@@ -267,11 +271,11 @@ export default function SupplierInstallments() {
       });
       
       if (res.success) {
-        toast.show('Installment marked as paid', 'success');
+        toast.show(t('installments.installment_marked_paid'), 'success');
         // Refresh installments
         fetchInstallments(selectedOrder.id);
       } else {
-        toast.show(res.message || 'Failed to mark installment as paid', 'error');
+        toast.show(res.message || t('installments.failed_to_mark_paid'), 'error');
       }
     } catch (err) {
       console.error('Failed to mark installment as paid:', err);
@@ -287,11 +291,11 @@ export default function SupplierInstallments() {
       });
       
       if (res.success) {
-        toast.show('Installment marked as overdue', 'success');
+        toast.show(t('installments.installment_marked_overdue'), 'success');
         // Refresh installments
         fetchInstallments(selectedOrder.id);
       } else {
-        toast.show(res.message || 'Failed to mark installment as overdue', 'error');
+        toast.show(res.message || t('installments.failed_to_mark_overdue'), 'error');
       }
     } catch (err) {
       console.error('Failed to mark installment as overdue:', err);
@@ -398,7 +402,7 @@ export default function SupplierInstallments() {
     if (token) {
       fetchOrders();
     } else {
-      toast.show('Please log in to access this page', 'error');
+      toast.show(t('installments.please_log_in_access'), 'error');
       navigate('/login-supplier');
     }
   }, [token, navigate]);
@@ -429,20 +433,20 @@ export default function SupplierInstallments() {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Installments Management</h1>
-                  <p className="text-blue-100 text-sm sm:text-lg mt-1">Manage client payment plans and track installments</p>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{t('installments.title')}</h1>
+                  <p className="text-blue-100 text-sm sm:text-lg mt-1">{t('installments.subtitle')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl px-3 sm:px-6 py-3 sm:py-4 text-center">
                   <div className="text-2xl sm:text-3xl font-bold">{orders.length}</div>
-                  <div className="text-blue-100 text-xs sm:text-sm">Total Orders</div>
+                  <div className="text-blue-100 text-xs sm:text-sm">{t('installments.total_orders')}</div>
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl px-3 sm:px-6 py-3 sm:py-4 text-center">
                   <div className="text-2xl sm:text-3xl font-bold">
                     {orders.filter(order => order.has_installments).length}
                   </div>
-                  <div className="text-blue-100 text-xs sm:text-sm">With Installments</div>
+                  <div className="text-blue-100 text-xs sm:text-sm">{t('installments.with_installments')}</div>
                 </div>
               </div>
             </div>
@@ -454,7 +458,7 @@ export default function SupplierInstallments() {
               <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
               </svg>
-              <h2 className="text-lg sm:text-xl font-semibold text-theme-text">Filters & Search</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-theme-text">{t('installments.filters_and_search')}</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="relative">
@@ -462,11 +466,11 @@ export default function SupplierInstallments() {
                   <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  Search Orders
+                  {t('installments.search_orders')}
                 </label>
                 <input
                   type="text"
-                  placeholder="Order ID, client name, email..."
+                  placeholder={t('installments.search_placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
@@ -477,18 +481,18 @@ export default function SupplierInstallments() {
                   <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Status
+                  {t('installments.status')}
                 </label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                 >
-                  <option value="all">All Statuses</option>
-                  <option value="pending">Pending</option>
-                  <option value="processing">Processing</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="all">{t('installments.all_statuses')}</option>
+                  <option value="pending">{t('installments.pending')}</option>
+                  <option value="processing">{t('installments.processing')}</option>
+                  <option value="delivered">{t('installments.delivered')}</option>
+                  <option value="cancelled">{t('installments.cancelled')}</option>
                 </select>
               </div>
               <div>
@@ -496,14 +500,14 @@ export default function SupplierInstallments() {
                   <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  Client
+                  {t('installments.client')}
                 </label>
                 <select
                   value={clientFilter}
                   onChange={(e) => setClientFilter(e.target.value)}
                   className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                 >
-                  <option value="">All Clients</option>
+                  <option value="">{t('installments.all_clients')}</option>
                   {uniqueClients.map(client => (
                     <option key={client} value={client}>{client}</option>
                   ))}
@@ -521,7 +525,7 @@ export default function SupplierInstallments() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  Clear Filters
+                  {t('installments.clear_filters')}
                 </button>
               </div>
             </div>
@@ -535,10 +539,10 @@ export default function SupplierInstallments() {
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
-                  Orders ({paginatedOrders.length})
+                  {t('installments.orders')} ({paginatedOrders.length})
                 </h2>
                 <div className="text-xs sm:text-sm text-theme-text-secondary">
-                  Showing {paginatedOrders.length} of {filteredOrders.length} orders
+                  {t('installments.showing_orders', { count: paginatedOrders.length, total: filteredOrders.length })}
                 </div>
               </div>
             </div>
@@ -550,9 +554,9 @@ export default function SupplierInstallments() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-theme-text mb-2">No orders found</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-theme-text mb-2">{t('installments.no_orders_found')}</h3>
                 <p className="text-theme-text-secondary max-w-md mx-auto text-sm sm:text-base">
-                  Try adjusting your search criteria or filters to find the orders you're looking for.
+                  {t('installments.no_orders_message')}
                 </p>
               </div>
             ) : (
@@ -570,14 +574,14 @@ export default function SupplierInstallments() {
                         </div>
                         <div>
                           <h3 className="text-base sm:text-lg font-semibold text-theme-text">
-                            Order #{order.id?.slice(-8) || order.id}
+                            {t('installments.order_id', { id: order.id?.slice(-8) || order.id })}
                           </h3>
                           <div className="flex items-center gap-2 mt-1">
                             <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             <p className="text-xs sm:text-sm text-theme-text-secondary">
-                              {order.client_name} • {order.client_email}
+                              {order.client_name || t('installments.unknown_client')} • {order.client_email || t('installments.no_email')}
                             </p>
                           </div>
                         </div>
@@ -610,7 +614,7 @@ export default function SupplierInstallments() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          {expandedOrders.has(order.id) ? 'Hide Installments' : 'View Installments'}
+                          {expandedOrders.has(order.id) ? t('installments.hide_installments') : t('installments.view_installments')}
                         </button>
                         
                         {!order.has_installments && (
@@ -621,7 +625,7 @@ export default function SupplierInstallments() {
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
-                            Create Installment Plan
+                            {t('installments.create_installment_plan')}
                           </button>
                         )}
                         
@@ -633,7 +637,7 @@ export default function SupplierInstallments() {
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
-                            Edit Installment Plan
+                            {t('installments.edit_installment_plan')}
                           </button>
                         )}
                       </div>
@@ -646,7 +650,7 @@ export default function SupplierInstallments() {
                           <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <h4 className="text-base sm:text-lg font-semibold text-theme-text">Installment Details</h4>
+                          <h4 className="text-base sm:text-lg font-semibold text-theme-text">{t('installments.installment_details')}</h4>
                         </div>
                         
                         {installments.length === 0 ? (
@@ -656,7 +660,7 @@ export default function SupplierInstallments() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                             </div>
-                            <p className="text-theme-text-secondary text-sm sm:text-base">No installments found for this order.</p>
+                            <p className="text-theme-text-secondary text-sm sm:text-base">{t('installments.no_installments_found')}</p>
                           </div>
                         ) : (
                           <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-600">
@@ -666,16 +670,16 @@ export default function SupplierInstallments() {
                                 <thead className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
                                   <tr>
                                     <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                      Due Date
+                                      {t('installments.due_date')}
                                     </th>
                                     <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                      Amount
+                                      {t('installments.amount')}
                                     </th>
                                     <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                      Status
+                                      {t('installments.status')}
                                     </th>
                                     <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                      Actions
+                                      {t('installments.actions')}
                                     </th>
                                   </tr>
                                 </thead>
@@ -715,7 +719,7 @@ export default function SupplierInstallments() {
                                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                               </svg>
-                                              Mark Paid
+                                              {t('installments.mark_paid')}
                                             </button>
                                           )}
                                           {installment.status !== 'overdue' && (
@@ -726,7 +730,7 @@ export default function SupplierInstallments() {
                                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                               </svg>
-                                              Mark Overdue
+                                              {t('installments.mark_overdue')}
                                             </button>
                                           )}
                                         </div>
@@ -777,7 +781,7 @@ export default function SupplierInstallments() {
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                           </svg>
-                                          Mark Paid
+                                          {t('installments.mark_paid')}
                                         </button>
                                       )}
                                       {installment.status !== 'overdue' && (
@@ -788,7 +792,7 @@ export default function SupplierInstallments() {
                                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                           </svg>
-                                          Mark Overdue
+                                          {t('installments.mark_overdue')}
                                         </button>
                                       )}
                                     </div>
@@ -819,7 +823,7 @@ export default function SupplierInstallments() {
           <Modal
             isOpen={modalOpen}
             onClose={() => setModalOpen(false)}
-            title={modalType === 'create' ? 'Create Installment Plan' : 'Edit Installment Plan'}
+            title={modalType === 'create' ? t('installments.create_installment_plan_title') : t('installments.edit_installment_plan_title')}
           >
             {modalType === 'view' ? (
               <div className="space-y-4">
@@ -863,7 +867,7 @@ export default function SupplierInstallments() {
                     <div key={index} className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 items-end">
                       <div className="flex-1">
                         <label className="block text-sm font-medium text-theme-text mb-1">
-                          Due Date
+                          {t('installments.due_date')}
                         </label>
                         <input
                           type="date"
@@ -875,7 +879,7 @@ export default function SupplierInstallments() {
                       </div>
                       <div className="flex-1">
                         <label className="block text-sm font-medium text-theme-text mb-1">
-                          Amount
+                          {t('installments.amount')}
                         </label>
                         <input
                           type="number"
@@ -893,7 +897,7 @@ export default function SupplierInstallments() {
                           onClick={() => removeInstallmentRow(index)}
                           className="px-3 py-2 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-sm sm:text-base"
                         >
-                          Remove
+                          {t('installments.remove')}
                         </button>
                       )}
                     </div>
@@ -905,7 +909,7 @@ export default function SupplierInstallments() {
                   onClick={addInstallmentRow}
                   className="w-full px-4 py-3 border-2 border-dashed border-theme-border rounded-lg text-theme-text-secondary hover:text-theme-text hover:border-theme-border-dark transition-colors duration-200 text-sm sm:text-base"
                 >
-                  + Add Installment
+                  {t('installments.add_installment')}
                 </button>
                 
                 <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 pt-4">
@@ -916,7 +920,7 @@ export default function SupplierInstallments() {
                     }}
                     className="theme-button-secondary flex-1 sm:flex-none py-2 sm:py-3 px-4 rounded-lg text-sm sm:text-base"
                   >
-                    Cancel
+                    {t('installments.cancel')}
                   </button>
                   <button
                     type="button"
@@ -930,7 +934,7 @@ export default function SupplierInstallments() {
                     disabled={submitting}
                     className="theme-button flex-1 sm:flex-none py-2 sm:py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
-                    {submitting ? 'Saving...' : (modalType === 'create' ? 'Create Plan' : 'Update Plan')}
+                    {submitting ? t('installments.saving') : (modalType === 'create' ? t('installments.create_plan') : t('installments.update_plan'))}
                   </button>
                 </div>
               </div>

@@ -7,6 +7,7 @@ import InviteClientModal from '../../UI/supplier/InviteClientModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { get } from '../../utils/api';
 import { useLayout } from '../../hooks/useLayout';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function SupplierInvitations() {
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -20,6 +21,7 @@ export default function SupplierInvitations() {
   const [status, setStatus] = useState('');
   const { token } = useAuth();
   const { sidebarCollapsed } = useLayout();
+  const { t } = useSupplierTranslation();
 
   // Refetch invitations
   const fetchInvitations = async () => {
@@ -67,12 +69,14 @@ export default function SupplierInvitations() {
     <div className="min-h-screen bg-theme-bg">
       <Sidebar />
       <Topbar
-        title="Client Invitations"
+        title={t('invitations.title')}
         search={search}
         onSearch={setSearch}
         status={status}
         onStatusChange={setStatus}
         onInvite={() => setInviteOpen(true)}
+        addButtonText={t('invitations.invite_new_client')}
+        searchPlaceholder={t('invitations.search_placeholder')}
       />
       <main className={`pt-16 md:pt-20 px-4 sm:px-8 pb-8 transition-all duration-300 ${sidebarCollapsed ? 'ml-0 md:ml-16' : 'ml-0 md:ml-64'}`}>
         <div className="max-w-5xl mx-auto">

@@ -7,6 +7,7 @@ import { useToast } from '../../UI/Common/ToastContext';
 import Modal from '../../UI/Common/Modal';
 import ConfirmActionModal from '../../UI/supplier/ConfirmActionModal';
 import Pagination from "../../UI/supplier/Pagination";
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 // --- Add/Edit Product Modal ---
 function ProductFormModal({ open, onClose, onSubmit, initialData, categories, isEdit }) {
@@ -22,6 +23,7 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const toast = useToast();
+  const { t } = useSupplierTranslation();
 
   useEffect(() => {
     if (open) {
@@ -41,21 +43,21 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
   function validateField(name, value) {
     switch (name) {
       case 'name':
-        if (!value) return 'Name is required.';
+        if (!value) return t('products.name_required');
         return '';
       case 'price':
-        if (!value) return 'Price is required.';
-        if (isNaN(value) || Number(value) < 0) return 'Price must be a positive number.';
+        if (!value) return t('products.price_required');
+        if (isNaN(value) || Number(value) < 0) return t('products.price_positive');
         return '';
       case 'discount':
-        if (value === '') return 'Discount is required.';
-        if (isNaN(value) || Number(value) < 0 || Number(value) > 100) return 'Discount must be 0-100.';
+        if (value === '') return t('products.discount_required');
+        if (isNaN(value) || Number(value) < 0 || Number(value) > 100) return t('products.discount_range');
         return '';
       case 'description':
-        if (!value) return 'Description is required.';
+        if (!value) return t('products.description_required');
         return '';
       case 'category_id':
-        if (!value) return 'Category is required.';
+        if (!value) return t('products.category_required');
         return '';
       default:
         return '';
@@ -93,44 +95,42 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateAll()) {
-      toast.show('Please fix the errors in the form.', 'error');
+      toast.show(t('products.please_fix_errors'), 'error');
       return;
     }
     setLoading(true);
     try {
       await onSubmit(form);
-      toast.show(isEdit ? 'Product updated!' : 'Product added!', 'success');
+      toast.show(isEdit ? t('products.product_updated') : t('products.product_added'), 'success');
       onClose();
     } catch (err) {
-      toast.show(err.message || 'Failed to submit', 'error');
+      toast.show(err.message || t('products.failed_to_submit'), 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Product' : 'Add New Product'} className="max-w-lg">
+    <Modal open={open} onClose={onClose} title={isEdit ? t('products.edit_product') : t('products.add_new_product')} size="large">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-6" noValidate>
         {/* Product Name */}
         <div>
-          <label className="block text-sm font-medium mb-2 text-theme-text">Product Name</label>
+          <label className="block text-sm font-medium mb-2 text-theme-text">{t('products.product_name')}</label>
           <input 
             name="name" 
             value={form.name} 
             onChange={handleChange} 
             required 
             className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
-            placeholder="Enter product name"
+            placeholder={t('products.product_name_placeholder')}
           />
           {formErrors.name && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.name}</div>}
         </div>
         
-
-        
-        {/* Price and Discount Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* Price and Discount */}
+        <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2 text-theme-text">Price</label>
+            <label className="block text-sm font-medium mb-2 text-theme-text">{t('products.price')}</label>
             <input 
               name="price" 
               type="number" 
@@ -140,12 +140,12 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
               onChange={handleChange} 
               required 
               className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
-              placeholder="0.00"
+              placeholder={t('products.price_placeholder')}
             />
             {formErrors.price && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.price}</div>}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2 text-theme-text">Discount (%)</label>
+            <label className="block text-sm font-medium mb-2 text-theme-text">{t('products.discount')}</label>
             <input 
               name="discount" 
               type="number" 
@@ -155,7 +155,7 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
               onChange={handleChange} 
               required 
               className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
-              placeholder="0"
+              placeholder={t('products.discount_placeholder')}
             />
             {formErrors.discount && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.discount}</div>}
           </div>
@@ -163,37 +163,35 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
         
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium mb-2 text-theme-text">Description</label>
+          <label className="block text-sm font-medium mb-2 text-theme-text">{t('products.description')}</label>
           <textarea 
             name="description" 
             value={form.description} 
             onChange={handleChange} 
             required 
-            rows="3"
+            rows="4"
             className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base resize-none" 
-            placeholder="Enter product description"
+            placeholder={t('products.description_placeholder')}
           />
           {formErrors.description && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.description}</div>}
         </div>
         
-
-        
         {/* Product Image URL */}
         <div>
-          <label className="block text-sm font-medium mb-2 text-theme-text">Product Image URL</label>
+          <label className="block text-sm font-medium mb-2 text-theme-text">{t('products.product_image_url')}</label>
           <input 
             name="product_url" 
             value={form.product_url} 
             onChange={handleChange} 
             className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
-            placeholder="https://example.com/image.jpg"
+            placeholder={t('products.product_image_url_placeholder')}
           />
-          <p className="text-xs text-theme-text-secondary mt-1">Optional: Provide a URL to an image of your product</p>
+          <p className="text-xs text-theme-text-secondary mt-1">{t('products.product_image_url_help')}</p>
         </div>
         
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium mb-2 text-theme-text">Category</label>
+          <label className="block text-sm font-medium mb-2 text-theme-text">{t('products.category')}</label>
           <select 
             name="category_id" 
             value={form.category_id} 
@@ -201,19 +199,19 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
             required 
             className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
           >
-            <option value="">Select category</option>
+            <option value="">{t('products.select_category')}</option>
             {categories && categories.length > 0 ? (
               categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))
             ) : (
-              <option value="" disabled>No categories available</option>
+              <option value="" disabled>{t('products.no_categories_available')}</option>
             )}
           </select>
           {formErrors.category_id && <div className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.category_id}</div>}
           {categories && categories.length === 0 && (
             <div className="text-yellow-500 text-xs sm:text-sm mt-1 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-              No categories found. Please contact admin to set up product categories.
+              {t('products.no_categories_found')}
             </div>
           )}
         </div>
@@ -229,19 +227,28 @@ function ProductFormModal({ open, onClose, onSubmit, initialData, categories, is
             className="w-4 h-4 focus:ring-2 focus:ring-primary-400 rounded" 
           />
           <label htmlFor="is_active" className="text-sm sm:text-base text-theme-text cursor-pointer">
-            Product is active and visible to clients
+            {t('products.product_active_status')}
           </label>
         </div>
         
-        {/* Submit Button */}
-        <button 
-          type="submit" 
-          disabled={loading} 
-          className="theme-button w-full py-3 sm:py-4 font-bold rounded-lg transition disabled:opacity-60 mt-2 flex items-center justify-center gap-2 text-sm sm:text-base"
-        >
-          {loading && <Spinner size={20} />}
-          {loading ? 'Processing...' : (isEdit ? 'Save Changes' : 'Add Product')}
-        </button>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
+          >
+            {t('profile.cancel')}
+          </button>
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className="theme-button flex-1 py-2 sm:py-3 px-4 rounded-lg disabled:opacity-60 transition text-sm sm:text-base flex items-center justify-center gap-2"
+          >
+            {loading && <Spinner size={16} />}
+            {loading ? t('products.processing') : (isEdit ? t('products.save_changes') : t('products.add_product'))}
+          </button>
+        </div>
       </form>
     </Modal>
   );
@@ -265,6 +272,7 @@ export default function Products() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { token, user } = useAuth();
   const toast = useToast();
+  const { t } = useSupplierTranslation();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [recentlyUpdated, setRecentlyUpdated] = useState({});
@@ -282,7 +290,7 @@ export default function Products() {
       setProducts(productsData);
       setTotalPages(res.data?.last_page || res.data?.products?.last_page || 1);
     } catch (err) {
-      setError(err.message || 'Failed to load products');
+      setError(err.message || t('products.error_loading_products'));
     } finally {
       setLoading(false);
     }
@@ -338,7 +346,7 @@ export default function Products() {
       
       // Update the products list with the real data from server
       setProducts(products => [res.data, ...products.filter(p => p.id !== tempId)]);
-      toast.show('Product added!', 'success');
+      toast.show(t('products.product_added'), 'success');
     } catch (err) {
       // Revert optimistic update on error
       setProducts(prevProducts);
@@ -369,7 +377,7 @@ export default function Products() {
         token, 
         data: updateData 
       });
-      toast.show('Product updated!', 'success');
+      toast.show(t('products.product_updated'), 'success');
     } catch (err) {
       // Revert optimistic update on error
       setProducts(prevProducts);
@@ -390,7 +398,7 @@ export default function Products() {
         setRecentlyUpdated(prev => ({ ...prev, [deleteTarget.id]: false }));
         setActionResult(prev => ({ ...prev, [deleteTarget.id]: undefined }));
       }, 2000);
-      toast.show('Product deleted!', 'success');
+      toast.show(t('products.product_deleted'), 'success');
       setDeleteModalOpen(false);
       setDeleteTarget(null);
     } catch (err) {
@@ -422,7 +430,7 @@ export default function Products() {
         setRecentlyUpdated(prev => ({ ...prev, [product.id]: false }));
         setActionResult(prev => ({ ...prev, [product.id]: undefined }));
       }, 2000);
-      toast.show('Product status updated!', 'success');
+      toast.show(t('products.product_status_updated'), 'success');
     } catch (err) {
       setProducts(prevProducts);
       setActionResult(prev => ({ ...prev, [product.id]: 'error' }));
@@ -430,7 +438,7 @@ export default function Products() {
         setRecentlyUpdated(prev => ({ ...prev, [product.id]: false }));
         setActionResult(prev => ({ ...prev, [product.id]: undefined }));
       }, 2000);
-      toast.show(err.message || 'Failed to update status', 'error');
+      toast.show(err.message || t('products.failed_to_update_status'), 'error');
     }
   };
 
@@ -450,7 +458,15 @@ export default function Products() {
   
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-theme-text">My Products</h1>
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold mb-2 text-primary-700 tracking-tight drop-shadow flex items-center gap-3">
+          <svg className="w-6 h-6 sm:w-8 sm:h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          {t('products.title')}
+        </h1>
+        <p className="text-theme-text-secondary text-sm sm:text-base">{t('products.subtitle')}</p>
+      </div>
       
       {/* Search and Filters */}
       <div className="space-y-4 mb-6">
@@ -458,7 +474,7 @@ export default function Products() {
         <div className="w-full">
           <input
             type="text"
-            placeholder="Search by name or SKU..."
+            placeholder={t('products.search_by_name_or_sku')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg w-full text-sm sm:text-base"
@@ -474,7 +490,7 @@ export default function Products() {
             className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
             aria-label="Filter by category"
           >
-            <option value="">All Categories</option>
+            <option value="">{t('products.all_categories')}</option>
             {categories.map(cat => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
@@ -485,9 +501,9 @@ export default function Products() {
             className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
             aria-label="Filter by status"
           >
-            <option value="">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="">{t('products.all_statuses')}</option>
+            <option value="active">{t('products.active')}</option>
+            <option value="inactive">{t('products.inactive')}</option>
           </select>
         </div>
         
@@ -495,12 +511,12 @@ export default function Products() {
         <div className="w-full">
           <button
             onClick={() => { setEditData(null); setModalOpen(true); }}
-            className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold w-full sm:w-auto flex items-center justify-center gap-2"
+            className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold w-full sm:w-auto flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Add Product
+            {t('products.add_product')}
           </button>
         </div>
       </div>
@@ -513,7 +529,7 @@ export default function Products() {
       ) : error ? (
         <div className="flex justify-center py-8 sm:py-12 text-red-500 text-center px-4">
           <div>
-            <div className="text-lg font-medium mb-2">Error Loading Products</div>
+            <div className="text-lg font-medium mb-2">{t('products.error_loading_products')}</div>
             <div className="text-sm text-theme-text-secondary">{error}</div>
           </div>
         </div>
@@ -550,9 +566,9 @@ export default function Products() {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteProduct}
-        title="Delete Product"
-        message={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
-        confirmText="Delete Product"
+        title={t('products.delete_product')}
+        message={t('products.delete_product_confirmation', { name: deleteTarget?.name })}
+        confirmText={t('products.delete_product')}
         confirmColor="red"
         loading={deleteLoading}
       />

@@ -4,14 +4,16 @@ import { get, post, put, del } from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Modal from '../../UI/Common/Modal';
 import FileUpload from '../../UI/Common/FileUpload';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 const STATUS_STYLES = {
-  active: 'bg-green-100 text-green-700 border-green-300',
-  inactive: 'bg-gray-100 text-gray-500 border-gray-300',
-  suspended: 'bg-red-100 text-red-700 border-red-300',
+  active: 'bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-600',
+  inactive: 'bg-gray-100 text-gray-500 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600',
+  suspended: 'bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-600',
 };
 
 function DriverFormModal({ open, onClose, onSubmit, initialData, loading, warehouses }) {
+  const { t } = useSupplierTranslation();
   const [form, setForm] = useState(
     initialData || { name: '', name_ar: '', type: '', type_ar: '', phone: '', car_name: '', car_number: '', license_number: '', warehouse: '', status: 'active', license_file: null }
   );
@@ -31,136 +33,139 @@ function DriverFormModal({ open, onClose, onSubmit, initialData, loading, wareho
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={initialData ? 'Edit Delivery Person' : 'Add New Delivery Person'} size="large">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
+    <Modal open={open} onClose={onClose} title={initialData ? t('delivery_personnel.edit_delivery_person') : t('delivery_personnel.add_new_delivery_person')} size="large">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-6">
         {/* Basic Information */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Full Name (English) *</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.full_name_english')} *</label>
             <input 
               name="name" 
-              placeholder="Enter full name in English" 
+              placeholder={t('delivery_personnel.full_name_english_placeholder')} 
               value={form.name} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
               required 
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Full Name (Arabic) *</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.full_name_arabic')} *</label>
             <input 
               name="name_ar" 
-              placeholder="أدخل الاسم الكامل بالعربية" 
+              placeholder={t('delivery_personnel.full_name_arabic_placeholder')} 
               value={form.name_ar} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
               required 
               dir="rtl"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* Type Information */}
+        <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Type (English) *</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.type_english')} *</label>
             <input 
               name="type" 
-              placeholder="Driver, Delivery Person, etc." 
+              placeholder={t('delivery_personnel.type_english_placeholder')} 
               value={form.type} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
               required 
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Type (Arabic) *</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.type_arabic')} *</label>
             <input 
               name="type_ar" 
-              placeholder="سائق، موظف توصيل، إلخ" 
+              placeholder={t('delivery_personnel.type_arabic_placeholder')} 
               value={form.type_ar} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
               required 
               dir="rtl"
             />
           </div>
         </div>
         
+        {/* Contact Information */}
         <div>
-          <label className="block text-sm font-medium text-theme-text mb-1">Phone Number *</label>
+          <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.phone_number')} *</label>
           <input 
             name="phone" 
-            placeholder="Enter phone number" 
+            placeholder={t('delivery_personnel.phone_number_placeholder')} 
             value={form.phone} 
             onChange={handleChange} 
-            className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+            className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
             required 
           />
         </div>
         
         {/* Vehicle Information */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Car Name/Model</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.car_name_model')}</label>
             <input 
               name="car_name" 
-              placeholder="Car name or model" 
+              placeholder={t('delivery_personnel.car_name_model_placeholder')} 
               value={form.car_name} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Car Number/Plate</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.car_number_plate')}</label>
             <input 
               name="car_number" 
-              placeholder="License plate number" 
+              placeholder={t('delivery_personnel.car_number_plate_placeholder')} 
               value={form.car_number} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
             />
           </div>
         </div>
         
-        {/* License and Assignment */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* License and Status */}
+        <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">License Number</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.license_number')}</label>
             <input 
               name="license_number" 
-              placeholder="Driver license number" 
+              placeholder={t('delivery_personnel.license_number_placeholder')} 
               value={form.license_number} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm" 
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base" 
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-theme-text mb-1">Status</label>
+            <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.status')}</label>
             <select 
               name="status" 
               value={form.status} 
               onChange={handleChange} 
-              className="theme-input w-full px-3 py-2 rounded-lg text-sm"
+              className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
+              <option value="active">{t('delivery_personnel.active')}</option>
+              <option value="inactive">{t('delivery_personnel.inactive')}</option>
+              <option value="suspended">{t('delivery_personnel.suspended')}</option>
             </select>
           </div>
         </div>
         
+        {/* Warehouse Assignment */}
         <div>
-          <label className="block text-sm font-medium text-theme-text mb-1">Assigned Warehouse</label>
+          <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.assigned_warehouse')}</label>
           <select 
             name="warehouse" 
             value={form.warehouse} 
             onChange={handleChange} 
-            className="theme-input w-full px-3 py-2 rounded-lg text-sm"
+            className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
           >
-            <option value="">Select Warehouse</option>
+            <option value="">{t('delivery_personnel.select_warehouse')}</option>
             {warehouses?.length > 0 ? (
               warehouses.map(warehouse => (
                 <option key={warehouse.id} value={warehouse.id}>
@@ -168,47 +173,49 @@ function DriverFormModal({ open, onClose, onSubmit, initialData, loading, wareho
                 </option>
               ))
             ) : (
-              <option value="" disabled>No warehouses available</option>
+              <option value="" disabled>{t('delivery_personnel.no_warehouses_available')}</option>
             )}
           </select>
           {warehouses?.length === 0 && (
             <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-              No warehouses found. Please create warehouses first in the Warehouses section.
+              {t('delivery_personnel.no_warehouses_found_message')}
             </p>
           )}
         </div>
         
+        {/* License File Upload */}
         <div>
-          <label className="block text-sm font-medium text-theme-text mb-1">License File</label>
+          <label className="block text-sm font-medium text-theme-text mb-2">{t('delivery_personnel.license_file')}</label>
           <FileUpload
             name="license_file"
             accept=".pdf,.jpg,.jpeg,.png"
             onChange={handleChange}
-            label="Upload License File"
+            label={t('delivery_personnel.upload_license_file')}
             required={false}
           />
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="theme-button-secondary flex-1 py-2 px-4 rounded-lg transition text-sm"
+            className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
           >
-            Cancel
+            {t('delivery_personnel.cancel')}
           </button>
           <button 
             type="submit" 
             disabled={loading} 
-            className="theme-button flex-1 py-2 px-4 rounded-lg transition disabled:opacity-60 shadow flex items-center justify-center gap-2 text-sm"
+            className="theme-button flex-1 py-2 sm:py-3 px-4 rounded-lg transition disabled:opacity-60 shadow flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Saving...</span>
+                <span>{t('delivery_personnel.saving')}</span>
               </>
             ) : (
-              initialData ? 'Save Changes' : 'Add Delivery Person'
+              initialData ? t('delivery_personnel.save_changes') : t('delivery_personnel.add_delivery_person')
             )}
           </button>
         </div>
@@ -218,16 +225,17 @@ function DriverFormModal({ open, onClose, onSubmit, initialData, loading, wareho
 }
 
 function ConfirmDeleteModal({ open, onClose, onConfirm, driverName, loading }) {
+  const { t } = useSupplierTranslation();
   return (
-    <Modal open={open} onClose={onClose} title="Delete Delivery Person">
+    <Modal open={open} onClose={onClose} title={t('delivery_personnel.delete_delivery_person')}>
       <div className="space-y-4">
         <div className="text-center">
           <div className="w-12 h-12 mx-auto mb-3 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
             <FiTrash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
-          <h3 className="text-lg font-bold mb-2 text-red-700 dark:text-red-400">Delete Delivery Person</h3>
+          <h3 className="text-lg font-bold mb-2 text-red-700 dark:text-red-400">{t('delivery_personnel.delete_delivery_person')}</h3>
           <p className="text-theme-text text-sm">
-            Are you sure you want to delete <span className="font-semibold">{driverName}</span>? This action cannot be undone.
+            {t('delivery_personnel.delete_delivery_person_confirmation', { name: driverName })}
           </p>
         </div>
         
@@ -236,7 +244,7 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, driverName, loading }) {
             onClick={onClose} 
             className="theme-button-secondary flex-1 px-4 py-2 rounded-lg text-sm"
           >
-            Cancel
+            {t('delivery_personnel.cancel')}
           </button>
           <button 
             onClick={onConfirm} 
@@ -244,7 +252,7 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, driverName, loading }) {
             className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 shadow text-sm flex items-center justify-center gap-2"
           >
             {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
-          {loading ? 'Deleting...' : 'Delete'}
+          {loading ? t('delivery_personnel.deleting') : t('delivery_personnel.delete')}
         </button>
         </div>
       </div>
@@ -254,6 +262,7 @@ function ConfirmDeleteModal({ open, onClose, onConfirm, driverName, loading }) {
 
 export default function ShippingPeople() {
   const { token, user } = useAuth();
+  const { t } = useSupplierTranslation();
   const [drivers, setDrivers] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -283,7 +292,7 @@ export default function ShippingPeople() {
       }
       setDrivers(driversArr);
     } catch (err) {
-      setError(err.message || 'Failed to load drivers');
+      setError(err.message || t('delivery_personnel.failed_to_load_drivers'));
     } finally {
       setLoading(false);
     }
@@ -398,7 +407,7 @@ export default function ShippingPeople() {
       setDeleteTarget(null);
     } catch (err) {
       setDrivers(prevDrivers);
-      setError(err.message || 'Failed to delete driver');
+      setError(err.message || t('delivery_personnel.failed_to_delete_driver'));
     } finally {
       setDeleteLoading(false);
     }
@@ -426,9 +435,9 @@ export default function ShippingPeople() {
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold mb-2 text-primary-700 tracking-tight drop-shadow flex items-center gap-3">
           <FiUserPlus className="text-primary-400 w-6 h-6 sm:w-8 sm:h-8" /> 
-          Delivery Personnel
+          {t('delivery_personnel.title')}
       </h1>
-        <p className="text-theme-text-secondary text-sm sm:text-base">Manage your delivery drivers and personnel</p>
+        <p className="text-theme-text-secondary text-sm sm:text-base">{t('delivery_personnel.subtitle')}</p>
       </div>
 
       {/* Search and Filters */}
@@ -439,7 +448,7 @@ export default function ShippingPeople() {
             <FiSearch className="text-theme-text-muted mr-2 w-4 h-4 sm:w-5 sm:h-5" />
           <input
             type="text"
-            placeholder="Search by name or phone number..."
+            placeholder={t('delivery_personnel.search_by_name_or_phone')}
             value={search}
             onChange={e => setSearch(e.target.value)}
               className="bg-transparent outline-none px-2 py-1 min-w-[180px] w-full focus:ring-2 focus:ring-primary-400 rounded text-theme-text text-sm sm:text-base"
@@ -456,7 +465,7 @@ export default function ShippingPeople() {
             className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
           aria-label="Filter by warehouse"
         >
-          <option value="">All Warehouses</option>
+          <option value="">{t('delivery_personnel.all_warehouses')}</option>
           {warehouseOptions.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
         <select
@@ -465,10 +474,10 @@ export default function ShippingPeople() {
             className="theme-input px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
           aria-label="Filter by status"
         >
-          <option value="">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="suspended">Suspended</option>
+          <option value="">{t('delivery_personnel.all_statuses')}</option>
+          <option value="active">{t('delivery_personnel.active')}</option>
+          <option value="inactive">{t('delivery_personnel.inactive')}</option>
+          <option value="suspended">{t('delivery_personnel.suspended')}</option>
         </select>
         </div>
         
@@ -479,7 +488,7 @@ export default function ShippingPeople() {
             className="theme-button w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold shadow text-sm sm:text-base"
         >
             <FiUserPlus className="w-4 h-4 sm:w-5 sm:h-5" /> 
-            Add New Delivery Person
+            {t('delivery_personnel.add_new_delivery_person')}
         </button>
         </div>
       </div>
@@ -494,17 +503,17 @@ export default function ShippingPeople() {
       {/* Desktop Table */}
       <div className="hidden md:block theme-card p-4 sm:p-6 overflow-x-auto">
         {loading ? (
-          <div className="flex justify-center py-8 sm:py-12 text-primary-600 font-bold text-lg">Loading...</div>
+          <div className="flex justify-center py-8 sm:py-12 text-primary-600 font-bold text-lg">{t('delivery_personnel.loading')}</div>
         ) : (
         <table className="min-w-full text-sm">
           <thead>
             <tr className="theme-table-header text-primary-700">
-              <th className="py-3 px-3 text-left font-bold">Agent Name</th>
-              <th className="py-3 px-3 text-left font-bold">Phone Number</th>
-              <th className="py-3 px-3 text-left font-bold">Vehicle Info</th>
-              <th className="py-3 px-3 text-left font-bold">Assigned Warehouse</th>
-              <th className="py-3 px-3 text-left font-bold">Status</th>
-              <th className="py-3 px-3 text-right font-bold">Actions</th>
+              <th className="py-3 px-3 text-left font-bold">{t('delivery_personnel.agent_name')}</th>
+              <th className="py-3 px-3 text-left font-bold">{t('delivery_personnel.phone_number')}</th>
+              <th className="py-3 px-3 text-left font-bold">{t('delivery_personnel.vehicle_info')}</th>
+              <th className="py-3 px-3 text-left font-bold">{t('delivery_personnel.assigned_warehouse')}</th>
+              <th className="py-3 px-3 text-left font-bold">{t('delivery_personnel.status')}</th>
+              <th className="py-3 px-3 text-right font-bold">{t('delivery_personnel.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -512,33 +521,33 @@ export default function ShippingPeople() {
               <tr key={driver.id} className="border-b border-theme-border last:border-b-0 hover:bg-theme-surface transition">
                 <td className="py-3 px-3 font-semibold text-theme-text">{driver.name}</td>
                 <td className="py-3 px-3 text-theme-text">{driver.phone}</td>
-                <td className="py-3 px-3 text-theme-text">{[driver.car_name, driver.car_number].filter(Boolean).join(', ')}</td>
+                <td className="py-3 px-3 text-theme-text">{[driver.car_name, driver.car_number].filter(Boolean).join(', ') || t('delivery_personnel.no_vehicle_info')}</td>
                 <td className="py-3 px-3 text-theme-text">
-                  {warehouses.find(w => w.id === driver.warehouse)?.name || driver.warehouse || 'Not Assigned'}
+                  {warehouses.find(w => w.id === driver.warehouse)?.name || driver.warehouse || t('delivery_personnel.not_assigned')}
                 </td>
                 <td className="py-3 px-3">
                   <span className={`inline-block px-3 py-1 rounded-full border text-xs font-bold shadow-sm ${STATUS_STYLES[driver.status] || STATUS_STYLES.inactive} dark:bg-opacity-30`}>
-                    {driver.status ? (driver.status.charAt(0).toUpperCase() + driver.status.slice(1)) : 'Inactive'}
+                    {driver.status ? t(`delivery_personnel.${driver.status}`) : t('delivery_personnel.inactive')}
                   </span>
                 </td>
                 <td className="py-3 px-3 text-right flex gap-2 justify-end items-center">
-                  <button onClick={() => handleEdit(driver)} title="Edit" className="p-2 rounded-full hover:bg-primary-100 text-primary-600 transition" aria-label="Edit"><FiEdit2 /></button>
-                  <button onClick={() => handleDelete(driver)} title="Delete" className="p-2 rounded-full hover:bg-red-100 text-red-600 transition" aria-label="Delete"><FiTrash2 /></button>
+                  <button onClick={() => handleEdit(driver)} title={t('delivery_personnel.edit')} className="p-2 rounded-full hover:bg-primary-100 text-primary-600 transition" aria-label={t('delivery_personnel.edit')}><FiEdit2 /></button>
+                  <button onClick={() => handleDelete(driver)} title={t('delivery_personnel.delete')} className="p-2 rounded-full hover:bg-red-100 text-red-600 transition" aria-label={t('delivery_personnel.delete')}><FiTrash2 /></button>
                   {driver.status === 'active' && (
-                    <button onClick={() => handleStatusAction(driver, 'suspended')} title="Suspend" className="p-2 rounded-full hover:bg-orange-100 text-orange-500 transition" aria-label="Suspend"><FiPause /></button>
+                    <button onClick={() => handleStatusAction(driver, 'suspended')} title={t('delivery_personnel.suspend')} className="p-2 rounded-full hover:bg-orange-100 text-orange-500 transition" aria-label={t('delivery_personnel.suspend')}><FiPause /></button>
                   )}
                   {driver.status === 'inactive' && (
-                    <button onClick={() => handleStatusAction(driver, 'active')} title="Reactivate" className="p-2 rounded-full hover:bg-green-100 text-green-600 transition" aria-label="Reactivate"><FiPlay /></button>
+                    <button onClick={() => handleStatusAction(driver, 'active')} title={t('delivery_personnel.activate')} className="p-2 rounded-full hover:bg-green-100 text-green-600 transition" aria-label={t('delivery_personnel.activate')}><FiPlay /></button>
                   )}
                   {driver.status === 'suspended' && (
-                    <button onClick={() => handleStatusAction(driver, 'active')} title="Reactivate" className="p-2 rounded-full hover:bg-green-100 text-green-600 transition" aria-label="Reactivate"><FiPlay /></button>
+                    <button onClick={() => handleStatusAction(driver, 'active')} title={t('delivery_personnel.activate')} className="p-2 rounded-full hover:bg-green-100 text-green-600 transition" aria-label={t('delivery_personnel.activate')}><FiPlay /></button>
                   )}
                 </td>
               </tr>
             ))}
             {pagedDrivers.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-theme-text-muted">No delivery personnel found.</td>
+                <td colSpan={6} className="py-12 text-center text-theme-text-muted">{t('delivery_personnel.no_delivery_personnel_found')}</td>
               </tr>
             )}
           </tbody>
@@ -549,7 +558,7 @@ export default function ShippingPeople() {
       {/* Mobile Cards */}
       <div className="md:hidden space-y-4">
         {loading ? (
-          <div className="flex justify-center py-8 sm:py-12 text-primary-600 font-bold text-lg">Loading...</div>
+          <div className="flex justify-center py-8 sm:py-12 text-primary-600 font-bold text-lg">{t('delivery_personnel.loading')}</div>
         ) : (
           <>
             {pagedDrivers.map(driver => (
@@ -561,59 +570,59 @@ export default function ShippingPeople() {
                       <div className="text-xs font-medium text-theme-text-secondary mb-1">Agent Name</div>
                       <div className="text-sm font-medium text-theme-text">{driver.name}</div>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[driver.status] || STATUS_STYLES.inactive} dark:bg-opacity-30`}>
-                      {driver.status ? (driver.status.charAt(0).toUpperCase() + driver.status.slice(1)) : 'Inactive'}
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${STATUS_STYLES[driver.status] || STATUS_STYLES.inactive}`}>
+                      {driver.status ? t(`delivery_personnel.${driver.status}`) : t('delivery_personnel.inactive')}
                     </span>
                   </div>
 
                   {/* Phone Number */}
                   <div>
-                    <div className="text-xs font-medium text-theme-text-secondary mb-1">Phone Number</div>
+                    <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('delivery_personnel.phone_number')}</div>
                     <div className="text-sm text-theme-text">{driver.phone}</div>
                   </div>
 
                   {/* Vehicle Info */}
                   <div>
-                    <div className="text-xs font-medium text-theme-text-secondary mb-1">Vehicle Info</div>
+                    <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('delivery_personnel.vehicle_info')}</div>
                     <div className="text-sm text-theme-text">
-                      {[driver.car_name, driver.car_number].filter(Boolean).join(', ') || 'No vehicle info'}
+                      {[driver.car_name, driver.car_number].filter(Boolean).join(', ') || t('delivery_personnel.no_vehicle_info')}
                     </div>
                   </div>
 
                   {/* Assigned Warehouse */}
                   <div>
-                    <div className="text-xs font-medium text-theme-text-secondary mb-1">Assigned Warehouse</div>
+                    <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('delivery_personnel.assigned_warehouse')}</div>
                     <div className="text-sm text-theme-text">
-                      {warehouses.find(w => w.id === driver.warehouse)?.name || driver.warehouse || 'Not Assigned'}
+                      {warehouses.find(w => w.id === driver.warehouse)?.name || driver.warehouse || t('delivery_personnel.not_assigned')}
                     </div>
                   </div>
 
                   {/* Actions */}
                   <div className="pt-3 border-t border-theme-border">
-                    <div className="text-xs font-medium text-theme-text-secondary mb-2">Actions</div>
+                    <div className="text-xs font-medium text-theme-text-secondary mb-2">{t('delivery_personnel.actions')}</div>
                     <div className="flex flex-wrap gap-2">
                       <button 
                         onClick={() => handleEdit(driver)} 
                         className="px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-lg text-sm font-bold hover:bg-blue-200 dark:hover:bg-blue-800 transition flex items-center gap-2"
                       >
                         <FiEdit2 className="w-4 h-4" />
-                        Edit
+                        {t('delivery_personnel.edit')}
                       </button>
                       <button 
                         onClick={() => handleDelete(driver)} 
                         className="px-3 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg text-sm font-bold hover:bg-red-200 dark:hover:bg-red-800 transition flex items-center gap-2"
                       >
                         <FiTrash2 className="w-4 h-4" />
-                        Delete
+                        {t('delivery_personnel.delete')}
                       </button>
                       {driver.status === 'active' && (
                         <button 
                           onClick={() => handleStatusAction(driver, 'suspended')} 
                           className="px-3 py-2 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-lg text-sm font-bold hover:bg-orange-200 dark:hover:bg-orange-900/50 transition flex items-center gap-2"
                         >
-                          <FiPause className="w-4 h-4" />
-                          Suspend
-                        </button>
+                                                  <FiPause className="w-4 h-4" />
+                        {t('delivery_personnel.suspend')}
+                      </button>
                       )}
                       {(driver.status === 'inactive' || driver.status === 'suspended') && (
                         <button 
@@ -621,7 +630,7 @@ export default function ShippingPeople() {
                           className="px-3 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-sm font-bold hover:bg-green-200 dark:hover:bg-green-900/50 transition flex items-center gap-2"
                         >
                           <FiPlay className="w-4 h-4" />
-                          Activate
+                          {t('delivery_personnel.activate')}
                         </button>
                       )}
                     </div>
@@ -636,8 +645,8 @@ export default function ShippingPeople() {
                 <div className="flex flex-col items-center gap-3">
                   <FiUserPlus className="w-12 h-12 text-theme-text-muted" />
                   <div>
-                    <p className="text-lg font-medium">No delivery personnel found</p>
-                    <p className="text-sm">Get started by adding your first delivery person</p>
+                    <p className="text-lg font-medium">{t('delivery_personnel.no_delivery_personnel_found')}</p>
+                    <p className="text-sm">{t('delivery_personnel.no_delivery_personnel_message')}</p>
                   </div>
                 </div>
               </div>
@@ -654,15 +663,15 @@ export default function ShippingPeople() {
             disabled={page === 1}
             className="theme-button-secondary px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold disabled:opacity-60 shadow text-sm sm:text-base"
           >
-            Previous
+            {t('delivery_personnel.previous')}
           </button>
-          <span className="text-sm sm:text-base font-semibold text-theme-text">Page {page} of {totalPages}</span>
+          <span className="text-sm sm:text-base font-semibold text-theme-text">{t('delivery_personnel.page_of', { current: page, total: totalPages })}</span>
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold disabled:opacity-60 shadow text-sm sm:text-base"
           >
-            Next
+            {t('delivery_personnel.next')}
           </button>
         </div>
       )}

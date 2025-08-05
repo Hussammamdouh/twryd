@@ -5,8 +5,10 @@ import AddDiscountModal from '../../UI/supplier/AddDiscountModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { get, del } from '../../utils/api';
 import { useLayout } from '../../hooks/useLayout';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function ClientDiscounts() {
+  const { t } = useSupplierTranslation();
   const [addDiscountOpen, setAddDiscountOpen] = useState(false);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);

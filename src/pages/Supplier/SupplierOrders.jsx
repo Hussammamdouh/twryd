@@ -7,10 +7,12 @@ import Spinner from '../../UI/supplier/Spinner';
 import StatusBadge from '../../UI/supplier/StatusBadge';
 import ConfirmActionModal from '../../UI/supplier/ConfirmActionModal';
 import Pagination from '../../UI/supplier/Pagination';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function SupplierOrders() {
   const { token } = useAuth();
   const toast = useToast();
+  const { t } = useSupplierTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -34,7 +36,7 @@ export default function SupplierOrders() {
       setOrders(ordersData);
       setTotalPages(res.data?.last_page || res.data?.orders?.last_page || 1);
     } catch (err) {
-      toast.show(err.message || 'Failed to load orders', 'error');
+      toast.show(err.message || t('orders.failed_to_load_orders'), 'error');
       setOrders([]);
     } finally {
       setLoading(false);
@@ -100,7 +102,11 @@ export default function SupplierOrders() {
       }
       
       await patch(endpoint, { token, data });
-      toast.show(`Order ${action} successful!`, 'success');
+      if (action === 'cancel') {
+        toast.show(t('orders.order_cancelled_successfully'), 'success');
+      } else {
+        toast.show(t('orders.order_updated_successfully'), 'success');
+      }
       setRecentlyUpdated(prev => ({ ...prev, [orderId]: true }));
       setActionResult(prev => ({ ...prev, [orderId]: 'success' }));
       setTimeout(() => {
@@ -109,7 +115,11 @@ export default function SupplierOrders() {
       }, 2000);
       fetchOrders(); // Refresh orders
     } catch (err) {
-      toast.show(err.message || `Failed to ${action} order`, 'error');
+      if (action === 'cancel') {
+        toast.show(err.message || t('orders.failed_to_cancel_order'), 'error');
+      } else {
+        toast.show(err.message || t('orders.failed_to_update_order'), 'error');
+      }
       setRecentlyUpdated(prev => ({ ...prev, [orderId]: true }));
       setActionResult(prev => ({ ...prev, [orderId]: 'error' }));
       setTimeout(() => {
@@ -205,13 +215,13 @@ export default function SupplierOrders() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-theme-text mb-2" id="orders-heading">Orders Management</h1>
-              <p className="text-theme-text-secondary text-sm sm:text-base">Manage and track all client orders</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-theme-text mb-2" id="orders-heading">{t('orders.title')}</h1>
+              <p className="text-theme-text-secondary text-sm sm:text-base">{t('orders.subtitle')}</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 sm:px-4 py-2">
                 <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{orders.length}</div>
-                <div className="text-xs sm:text-sm text-theme-text-secondary">Total Orders</div>
+                <div className="text-xs sm:text-sm text-theme-text-secondary">{t('orders.total_orders')}</div>
               </div>
             </div>
           </div>
@@ -220,37 +230,37 @@ export default function SupplierOrders() {
           <div className="theme-card p-4 sm:p-6 mb-6 sm:mb-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-theme-text mb-2">Search Orders</label>
+                <label className="block text-sm font-semibold text-theme-text mb-2">{t('orders.search_orders')}</label>
                 <input
                   type="text"
-                  placeholder="Search by order ID, client name or email..."
+                  placeholder={t('orders.search_placeholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-theme-text mb-2">Status</label>
+                <label className="block text-sm font-semibold text-theme-text mb-2">{t('orders.status')}</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                 >
-                  <option value="">All Statuses</option>
-                  <option value="pending">Pending</option>
-                  <option value="processing">Processing</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="">{t('orders.all_statuses')}</option>
+                  <option value="pending">{t('orders.pending')}</option>
+                  <option value="processing">{t('orders.processing')}</option>
+                  <option value="delivered">{t('orders.delivered')}</option>
+                  <option value="cancelled">{t('orders.cancelled')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-theme-text mb-2">Client</label>
+                <label className="block text-sm font-semibold text-theme-text mb-2">{t('orders.client')}</label>
                 <select
                   value={clientFilter}
                   onChange={(e) => setClientFilter(e.target.value)}
                   className="theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base"
                 >
-                  <option value="">All Clients</option>
+                  <option value="">{t('orders.all_clients')}</option>
                   {uniqueClients.map(client => (
                     <option key={client.id} value={client.id}>
                       {client.name || client.email}
@@ -267,7 +277,7 @@ export default function SupplierOrders() {
                   }}
                   className="theme-button-secondary w-full py-2 sm:py-3 px-4 rounded-lg text-sm sm:text-base"
                 >
-                  Clear Filters
+                  {t('orders.clear_filters')}
                 </button>
               </div>
             </div>
@@ -276,7 +286,7 @@ export default function SupplierOrders() {
           {/* Orders List */}
           <div role="region" aria-labelledby="orders-heading">
             {filteredOrders.length === 0 ? (
-              <div className="text-center py-12 sm:py-16 text-theme-text-secondary">No orders found.</div>
+              <div className="text-center py-12 sm:py-16 text-theme-text-secondary">{t('orders.no_orders_found')}</div>
             ) : (
               <div className="space-y-4 sm:space-y-6">
                 {filteredOrders.map((order) => (
@@ -298,7 +308,7 @@ export default function SupplierOrders() {
                             </div>
                             <div>
                               <h3 className="text-lg sm:text-xl font-bold text-theme-text">
-                                Order #{order.order_number || order.id}
+                                {t('orders.order')} #{order.order_number || order.id}
                               </h3>
                               <p className="text-xs sm:text-sm text-theme-text-secondary flex items-center gap-1">
                                 <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -310,7 +320,7 @@ export default function SupplierOrders() {
                           </div>
                           <span className={`px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-2 ${getStatusColor(order.status)}`} aria-label={`Order status: ${order.status || 'Unknown'}`}> 
                             {getStatusIcon(order.status)}
-                            {order.status || 'Unknown'}
+                            {order.status ? t(`orders.${order.status}`) : 'Unknown'}
                           </span>
                         </div>
                         <div className="text-right flex items-center gap-2">
@@ -345,25 +355,25 @@ export default function SupplierOrders() {
                             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            Client Information
+                            {t('orders.client_information')}
                           </h4>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
                             <div>
-                              <span className="text-blue-700 dark:text-blue-300 font-medium">Name:</span>
+                              <span className="text-blue-700 dark:text-blue-300 font-medium">{t('orders.name')}:</span>
                               <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client.name}</span>
                             </div>
                             <div>
-                              <span className="text-blue-700 dark:text-blue-300 font-medium">Email:</span>
+                              <span className="text-blue-700 dark:text-blue-300 font-medium">{t('orders.email')}:</span>
                               <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client.email}</span>
                             </div>
                             {order.client.phone && (
                               <div>
-                                <span className="text-blue-700 dark:text-blue-300 font-medium">Phone:</span>
+                                <span className="text-blue-700 dark:text-blue-300 font-medium">{t('orders.phone')}:</span>
                                 <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client.phone}</span>
                               </div>
                             )}
                             <div>
-                              <span className="text-blue-700 dark:text-blue-300 font-medium">Client ID:</span>
+                              <span className="text-blue-700 dark:text-blue-300 font-medium">{t('orders.client_id')}:</span>
                               <span className="text-blue-900 dark:text-blue-100 ml-2">{order.client_id}</span>
                             </div>
                           </div>
@@ -381,14 +391,14 @@ export default function SupplierOrders() {
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
-                              Hide Products
+                              {t('orders.hide_products')}
                             </>
                           ) : (
                             <>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
-                              Show Products
+                              {t('orders.show_products')}
                             </>
                           )}
                         </button>
@@ -401,11 +411,11 @@ export default function SupplierOrders() {
                             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
-                            Order Items
+                            {t('orders.order_items')}
                           </h4>
                           <div className="space-y-3 sm:space-y-4" role="list" aria-labelledby={`order-items-heading-${order.id}`}> 
                             {order.items?.map((item) => (
-                              <div key={item.id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-600" tabIndex={0} aria-label={`Product: ${item.product?.name || item.name || 'Unknown Product'}, Quantity: ${item.quantity || 0}`}> 
+                              <div key={item.id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-600" tabIndex={0} aria-label={`Product: ${item.product?.name || item.name || t('orders.unknown_product')}, Quantity: ${item.quantity || 0}`}> 
                                 <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                   <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -413,10 +423,10 @@ export default function SupplierOrders() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <h5 className="font-semibold text-theme-text text-sm sm:text-lg truncate">
-                                    {item.product?.name || item.name || 'Unknown Product'}
+                                    {item.product?.name || item.name || t('orders.unknown_product')}
                                   </h5>
                                   <p className="text-xs sm:text-sm text-theme-text-secondary">
-                                    Qty: {item.quantity || 0} × ${parseFloat(item.unit_price || 0).toFixed(2)}
+                                    {t('orders.quantity')}: {item.quantity || 0} × ${parseFloat(item.unit_price || 0).toFixed(2)}
                                   </p>
                                 </div>
                                 <div className="text-right flex-shrink-0">
@@ -442,7 +452,7 @@ export default function SupplierOrders() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-                            View Details
+                            {t('orders.view_details')}
                           </Link>
                           {order.status === 'pending' && (
                             <button
@@ -456,14 +466,14 @@ export default function SupplierOrders() {
                                   <svg className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                   </svg>
-                                  Processing...
+                                  {t('orders.processing_action')}
                                 </>
                               ) : (
                                 <>
                                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                   </svg>
-                                  Start Processing
+                                  {t('orders.start_processing')}
                                 </>
                               )}
                             </button>
@@ -480,14 +490,14 @@ export default function SupplierOrders() {
                                   <svg className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                   </svg>
-                                  Marking as Delivered...
+                                  {t('orders.marking_as_delivered')}
                                 </>
                               ) : (
                                 <>
                                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                   </svg>
-                                  Mark as Delivered
+                                  {t('orders.mark_as_delivered')}
                                 </>
                               )}
                             </button>
@@ -504,14 +514,14 @@ export default function SupplierOrders() {
                                   <svg className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                   </svg>
-                                  Cancelling...
+                                  {t('orders.cancelling')}
                                 </>
                               ) : (
                                 <>
                                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                   </svg>
-                                  Cancel Order
+                                  {t('orders.cancel_order')}
                                 </>
                               )}
                             </button>
@@ -533,9 +543,9 @@ export default function SupplierOrders() {
             isOpen={confirmModal.isOpen}
             onClose={() => setConfirmModal({ isOpen: false, orderId: null, action: null })}
             onConfirm={handleConfirmAction}
-            title="Cancel Order"
-            message="Are you sure you want to cancel this order? This action cannot be undone."
-            confirmText="Cancel Order"
+            title={t('orders.cancel_order')}
+            message={t('orders.cancel_order_confirmation')}
+            confirmText={t('orders.cancel_order')}
             confirmColor="red"
             loading={actionLoading[confirmModal.orderId]}
           />

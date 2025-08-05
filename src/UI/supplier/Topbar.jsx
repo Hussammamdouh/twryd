@@ -3,6 +3,7 @@ import ThemeToggle from '../../components/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
 import LanguageSwitcher from '../Common/LanguageSwitcher';
 import { useLayout } from '../../hooks/useLayout';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function Topbar({ 
   title, 
@@ -18,7 +19,8 @@ export default function Topbar({
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const handleAction = onAdd || onInvite;
   const { user } = useAuth();
-  const { sidebarCollapsed, mobileSidebarOpen, toggleMobileSidebar } = useLayout();
+  const { sidebarCollapsed, toggleMobileSidebar } = useLayout();
+  const { t } = useSupplierTranslation();
   const initials = user?.name ? user.name[0].toUpperCase() : (user?.email ? user.email[0].toUpperCase() : 'U');
 
   const toggleMobileMenu = () => {
@@ -26,8 +28,9 @@ export default function Topbar({
   };
 
   const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      logout();
+    if (window.confirm(t('sidebar.logout_confirmation'))) {
+      // Logout functionality would be implemented here
+      console.log('Logout clicked');
     }
   };
 
@@ -80,12 +83,12 @@ export default function Topbar({
           onChange={e => onStatusChange?.(e.target.value)}
           aria-label="Filter by status"
         >
-          <option value="">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="accepted">Accepted</option>
-          <option value="declined">Declined</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
+          <option value="">{t('invitations.all_statuses')}</option>
+          <option value="pending">{t('invitations.pending')}</option>
+          <option value="accepted">{t('invitations.accepted')}</option>
+          <option value="declined">{t('invitations.declined')}</option>
+          <option value="active">{t('invitations.active')}</option>
+          <option value="inactive">{t('invitations.inactive')}</option>
         </select>
         {handleAction && (
           <button
@@ -178,12 +181,12 @@ export default function Topbar({
               onChange={e => onStatusChange?.(e.target.value)}
               aria-label="Filter by status"
             >
-              <option value="">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="accepted">Accepted</option>
-              <option value="declined">Declined</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="">{t('invitations.all_statuses')}</option>
+              <option value="pending">{t('invitations.pending')}</option>
+              <option value="accepted">{t('invitations.accepted')}</option>
+              <option value="declined">{t('invitations.declined')}</option>
+              <option value="active">{t('invitations.active')}</option>
+              <option value="inactive">{t('invitations.inactive')}</option>
             </select>
 
             {/* Action Button */}

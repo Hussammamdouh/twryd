@@ -6,6 +6,7 @@ import { useToast } from '../Common/ToastContext';
 import ConfirmActionModal from './ConfirmActionModal';
 import Spinner from './Spinner';
 import EditDiscountModal from './EditDiscountModal';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 // Helper function to format date
 const formatDate = (dateString) => {
@@ -23,6 +24,7 @@ const formatDate = (dateString) => {
 };
 
 export default function ClientDiscountsTable({ clients, loading, onAction, onAdd, onRemoveDiscount, recentlyUpdated = {}, actionResult = {}, rowLoading = {} }) {
+  const { t } = useSupplierTranslation();
   const { token } = useAuth();
   const [confirm, setConfirm] = useState({ open: false, type: '', client: null });
   const [editModal, setEditModal] = useState({ open: false, client: null });
@@ -36,11 +38,11 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
         const clientId = clientData.id || client.id;
         
         await del(`/api/supplier-management/clients/${clientId}/default-discount`, { token });
-        toast.show('Discount removed successfully', 'success');
+        toast.show(t('client_discounts.discount_removed_successfully'), 'success');
       }
       onAction?.();
     } catch (err) {
-      toast.show(err.message || 'Action failed', 'error');
+      toast.show(err.message || t('client_discounts.action_failed'), 'error');
     } finally {
       setConfirm({ open: false, type: '', client: null });
     }
@@ -62,12 +64,12 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
         <svg className="w-12 h-12 mb-2 text-blue-200 dark:text-blue-900" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3zm0 9c-4.418 0-8-1.79-8-4V7a4 4 0 014-4h8a4 4 0 014 4v6c0 2.21-3.582 4-8 4z" />
         </svg>
-        <div className="text-lg font-semibold text-center">No clients found.</div>
+        <div className="text-lg font-semibold text-center">{t('client_discounts.no_clients_found')}</div>
         <button
           className="theme-button px-4 py-2 rounded-lg font-bold shadow w-full sm:w-auto"
           onClick={onAdd}
         >
-          + Add New Discount
+          {t('client_discounts.add_new_discount')}
         </button>
       </div>
     );
@@ -80,12 +82,12 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
         <table className="min-w-full text-sm bg-white dark:bg-gray-900 rounded-lg shadow-md" role="table" aria-label="Client Discounts Table">
           <thead className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200" role="rowgroup">
             <tr className="h-12" role="row">
-              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Client Name</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Discount Percentage</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Start Date</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Expiry Date</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Status</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">Actions</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">{t('client_discounts.client_name')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">{t('client_discounts.discount_percentage')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">{t('client_discounts.start_date')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">{t('client_discounts.expiry_date')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">{t('client_discounts.status')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold border-b border-gray-200 dark:border-gray-700" role="columnheader">{t('client_discounts.actions')}</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-900" role="rowgroup">
@@ -109,12 +111,12 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                         {clientData.name || clientData.company_name || 'N/A'}
                       </div>
                       <div className="text-gray-500 dark:text-gray-300 text-xs">
-                        {clientData.email || clientData.client_email || clientData.contact || 'No email'}
+                        {clientData.email || clientData.client_email || clientData.contact || t('client_discounts.no_email')}
                       </div>
                     </div>
                   </td>
                   <td className="px-4 md:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                    {client.default_discount ? `${client.default_discount}%` : 'No discount'}
+                    {client.default_discount ? `${client.default_discount}%` : t('client_discounts.no_discount')}
                   </td>
                   <td className="px-4 md:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                     {formatDate(client.discount_start_date || client.created_at)}
@@ -136,7 +138,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                       tabIndex={0}
                       aria-label={`Edit discount for ${clientData.name || clientData.company_name || 'N/A'}`}
                     >
-                      Edit
+                      {t('client_discounts.edit')}
                     </button>
                     <button
                       className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded shadow text-xs font-bold hover:bg-red-200 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-150"
@@ -149,7 +151,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                         <svg className="w-4 h-4 animate-spin text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                      ) : 'Delete'}
+                      ) : t('client_discounts.delete')}
                     </button>
                     {actionResult[clientId] === 'success' && !rowLoading[clientId] && (
                       <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -194,20 +196,20 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                   {clientData.name || clientData.company_name || 'N/A'}
                 </h3>
                 <p className="text-sm text-theme-text-secondary">
-                  {clientData.email || clientData.client_email || clientData.contact || 'No email'}
+                  {clientData.email || clientData.client_email || clientData.contact || t('client_discounts.no_email')}
                 </p>
               </div>
 
               {/* Discount Details */}
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-xs text-theme-text-muted mb-1">Discount</p>
+                  <p className="text-xs text-theme-text-muted mb-1">{t('client_discounts.discount_percentage')}</p>
                   <p className="text-sm font-medium text-theme-text">
-                    {client.default_discount ? `${client.default_discount}%` : 'No discount'}
+                    {client.default_discount ? `${client.default_discount}%` : t('client_discounts.no_discount')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-theme-text-muted mb-1">Status</p>
+                  <p className="text-xs text-theme-text-muted mb-1">{t('client_discounts.status')}</p>
                   <StatusBadge 
                     status={client.default_discount && client.default_discount > 0 ? 'active' : 'inactive'} 
                     aria-label={client.default_discount && client.default_discount > 0 ? 'Active' : 'Inactive'}
@@ -218,13 +220,13 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
               {/* Dates */}
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-xs text-theme-text-muted mb-1">Start Date</p>
+                  <p className="text-xs text-theme-text-muted mb-1">{t('client_discounts.start_date')}</p>
                   <p className="text-sm text-theme-text">
                     {formatDate(client.discount_start_date || client.created_at)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-theme-text-muted mb-1">Expiry Date</p>
+                  <p className="text-xs text-theme-text-muted mb-1">{t('client_discounts.expiry_date')}</p>
                   <p className="text-sm text-theme-text">
                     {formatDate(client.discount_expiry_date)}
                   </p>
@@ -239,7 +241,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                   disabled={rowLoading[clientId]}
                   aria-label={`Edit discount for ${clientData.name || clientData.company_name || 'N/A'}`}
                 >
-                  Edit
+                  {t('client_discounts.edit')}
                 </button>
                 <button
                   className="flex-1 px-3 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg shadow text-sm font-bold hover:bg-red-200 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-150"
@@ -251,7 +253,7 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
                     <svg className="w-4 h-4 animate-spin text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                  ) : 'Delete'}
+                  ) : t('client_discounts.delete')}
                 </button>
               </div>
 
@@ -277,9 +279,9 @@ export default function ClientDiscountsTable({ clients, loading, onAction, onAdd
         isOpen={confirm.open}
         onClose={closeConfirm}
         onConfirm={() => handleAction(confirm.type, confirm.client)}
-        title="Remove Discount"
-        message="Are you sure you want to remove this client's discount? This action cannot be undone."
-        confirmText="Remove Discount"
+        title={t('client_discounts.remove_discount')}
+        message={t('client_discounts.remove_discount_confirmation')}
+        confirmText={t('client_discounts.remove_discount')}
         confirmColor="red"
         loading={rowLoading[confirm.client?.id]}
       />

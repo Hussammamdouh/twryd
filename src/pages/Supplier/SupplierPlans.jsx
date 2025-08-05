@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 import { get } from '../../utils/api';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import Spinner from '../../UI/supplier/Spinner';
@@ -9,7 +9,7 @@ import Spinner from '../../UI/supplier/Spinner';
 export default function SupplierPlans() {
   const { token } = useAuth();
   const toast = useToast();
-  const { t } = useLanguage();
+  const { t } = useSupplierTranslation();
   
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ export default function SupplierPlans() {
       setPlans(response.data?.plans || response.data || []);
     } catch (err) {
       console.error('Failed to fetch plans:', err);
-      toast.show(t('messages.failed_to_load'), 'error');
+      toast.show(t('subscriptions.failed_to_load_plans'), 'error');
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ export default function SupplierPlans() {
       setShowPlanDetails(true);
     } catch (err) {
       console.error('Failed to fetch plan details:', err);
-      toast.show(t('messages.failed_to_load'), 'error');
+      toast.show(t('subscriptions.failed_to_load_plans'), 'error');
     }
   };
 
@@ -62,10 +62,10 @@ export default function SupplierPlans() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t('supplier_subscriptions.available_plans')}
+            {t('subscriptions.available_plans')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            {t('supplier_subscriptions.plans_description')}
+            {t('subscriptions.plans_description')}
           </p>
         </div>
       </div>
@@ -79,10 +79,10 @@ export default function SupplierPlans() {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            {t('supplier_subscriptions.no_plans_available')}
+            {t('subscriptions.no_plans_available')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            {t('supplier_subscriptions.no_plans_description')}
+            {t('subscriptions.no_plans_description')}
           </p>
         </div>
       ) : (
@@ -100,7 +100,7 @@ export default function SupplierPlans() {
                   </h3>
                   {plan.is_custom && (
                     <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 text-xs font-medium rounded-full">
-                      {t('supplier_subscriptions.custom_plan')}
+                      {t('subscriptions.custom_plan')}
                     </span>
                   )}
                 </div>
@@ -111,7 +111,7 @@ export default function SupplierPlans() {
                     ${plan.price_per_month}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    {t('supplier_subscriptions.per_month')}
+                    {t('subscriptions.per_month')}
                   </div>
                 </div>
 
@@ -122,7 +122,7 @@ export default function SupplierPlans() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('supplier_subscriptions.max_clients', { count: plan.max_clients })}
+                      {t('subscriptions.max_clients', { count: plan.max_clients })}
                     </span>
                   </div>
                   {plan.description && (
@@ -143,7 +143,7 @@ export default function SupplierPlans() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
-                  {t('supplier_subscriptions.view_details')}
+                  {t('subscriptions.view_details')}
                 </button>
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function SupplierPlans() {
                   </h3>
                   {selectedPlan.is_custom && (
                     <span className="inline-block mt-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 text-sm font-medium rounded-full">
-                      {t('supplier_subscriptions.custom_plan')}
+                      {t('subscriptions.custom_plan')}
                     </span>
                   )}
                 </div>
@@ -188,7 +188,7 @@ export default function SupplierPlans() {
                     ${selectedPlan.price_per_month}
                   </div>
                   <div className="text-lg text-gray-600 dark:text-gray-400">
-                    {t('supplier_subscriptions.per_month')}
+                    {t('subscriptions.per_month')}
                   </div>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export default function SupplierPlans() {
               {selectedPlan.description && (
                 <div>
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {t('supplier_subscriptions.description')}
+                    {t('subscriptions.description')}
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400">
                     {selectedPlan.description}
@@ -208,7 +208,7 @@ export default function SupplierPlans() {
               {/* Features */}
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  {t('supplier_subscriptions.features')}
+                  {t('subscriptions.features')}
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
@@ -218,7 +218,7 @@ export default function SupplierPlans() {
                       </svg>
                     </div>
                     <span className="text-gray-700 dark:text-gray-300">
-                      {t('supplier_subscriptions.max_clients', { count: selectedPlan.max_clients })}
+                      {t('subscriptions.max_clients', { count: selectedPlan.max_clients })}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -228,7 +228,7 @@ export default function SupplierPlans() {
                       </svg>
                     </div>
                     <span className="text-gray-700 dark:text-gray-300">
-                      {t('supplier_subscriptions.full_platform_access')}
+                      {t('subscriptions.full_platform_access')}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -238,7 +238,7 @@ export default function SupplierPlans() {
                       </svg>
                     </div>
                     <span className="text-gray-700 dark:text-gray-300">
-                      {t('supplier_subscriptions.priority_support')}
+                      {t('subscriptions.priority_support')}
                     </span>
                   </div>
                 </div>
@@ -251,7 +251,7 @@ export default function SupplierPlans() {
                 onClick={handleClosePlanDetails}
                 className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                {t('common.close')}
+                {t('subscriptions.close')}
               </button>
               <button
                 onClick={() => {
@@ -261,7 +261,7 @@ export default function SupplierPlans() {
                 }}
                 className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               >
-                {t('supplier_subscriptions.request_subscription')}
+                {t('subscriptions.request_subscription')}
               </button>
             </div>
           </div>

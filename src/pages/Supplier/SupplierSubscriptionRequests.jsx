@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../UI/Common/ToastContext';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 import { get, post } from '../../utils/api';
 import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
 import Spinner from '../../UI/supplier/Spinner';
@@ -10,7 +10,7 @@ import FileUpload from '../../UI/Common/FileUpload';
 export default function SupplierSubscriptionRequests({ onRefresh }) {
   const { token } = useAuth();
   const toast = useToast();
-  const { t } = useLanguage();
+  const { t } = useSupplierTranslation();
   
   const [requests, setRequests] = useState([]);
   const [plans, setPlans] = useState([]);
@@ -45,7 +45,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
       setHasPendingRequest(pendingRes.data?.has_pending || false);
     } catch (err) {
       console.error('Failed to fetch data:', err);
-      toast.show(t('messages.failed_to_load'), 'error');
+      toast.show(t('subscriptions.failed_to_load_requests'), 'error');
     } finally {
       setLoading(false);
     }
@@ -119,7 +119,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
       setCalculatedPrice(response.data);
     } catch (err) {
       console.error('Failed to calculate price:', err);
-      toast.show(t('messages.failed_to_calculate_price'), 'error');
+      toast.show(t('subscriptions.failed_to_calculate_price'), 'error');
     }
   };
 
@@ -133,15 +133,15 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
     const errors = {};
     
     if (!formData.plan_id) {
-      errors.plan_id = t('supplier_subscriptions.plan_required');
+      errors.plan_id = t('subscriptions.plan_required');
     }
     
     if (!formData.months_requested || formData.months_requested < 1) {
-      errors.months_requested = t('supplier_subscriptions.months_required');
+      errors.months_requested = t('subscriptions.months_required');
     }
     
     if (!formData.payment_proof) {
-      errors.payment_proof = t('supplier_subscriptions.payment_proof_required');
+      errors.payment_proof = t('subscriptions.payment_proof_required');
     }
     
     setFormErrors(errors);
@@ -152,7 +152,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
     e.preventDefault();
     
     if (!validateForm()) {
-      toast.show(t('messages.please_fix_errors'), 'error');
+      toast.show(t('subscriptions.please_fix_errors'), 'error');
       return;
     }
     
@@ -173,13 +173,13 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
         }
       });
       
-      toast.show(t('supplier_subscriptions.request_created_success'), 'success');
+      toast.show(t('subscriptions.request_created_success'), 'success');
       handleCloseCreateForm();
       fetchData();
       if (onRefresh) onRefresh();
     } catch (err) {
       console.error('Failed to create request:', err);
-      toast.show(err.message || t('messages.operation_failed'), 'error');
+      toast.show(err.message || t('subscriptions.operation_failed'), 'error');
     } finally {
       setSubmitting(false);
     }
@@ -192,7 +192,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
       setShowRequestDetails(true);
     } catch (err) {
       console.error('Failed to fetch request details:', err);
-      toast.show(t('messages.failed_to_load'), 'error');
+      toast.show(t('subscriptions.failed_to_load_requests'), 'error');
     }
   };
 
@@ -239,10 +239,10 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t('supplier_subscriptions.subscription_requests')}
+            {t('subscriptions.subscription_requests')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            {t('supplier_subscriptions.requests_description')}
+            {t('subscriptions.requests_description')}
           </p>
         </div>
         {!hasPendingRequest && (
@@ -253,7 +253,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            {t('supplier_subscriptions.create_request')}
+            {t('subscriptions.create_request')}
           </button>
         )}
       </div>
@@ -267,10 +267,10 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
             </svg>
             <div>
               <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                {t('supplier_subscriptions.pending_request_warning')}
+                {t('subscriptions.pending_request_warning')}
               </h3>
               <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                {t('supplier_subscriptions.pending_request_description')}
+                {t('subscriptions.pending_request_description')}
               </p>
             </div>
           </div>
@@ -286,10 +286,10 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            {t('supplier_subscriptions.no_requests')}
+            {t('subscriptions.no_requests')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {t('supplier_subscriptions.no_requests_description')}
+            {t('subscriptions.no_requests_description')}
           </p>
           {!hasPendingRequest && (
             <button
@@ -299,7 +299,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              {t('supplier_subscriptions.create_first_request')}
+              {t('subscriptions.create_first_request')}
             </button>
           )}
         </div>
@@ -319,10 +319,10 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {request.plan?.name || t('supplier_subscriptions.unknown_plan')}
+                      {request.plan?.name || t('subscriptions.unknown_plan')}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('supplier_subscriptions.requested_for')} {request.months_requested} {t('supplier_subscriptions.months')}
+                      {t('subscriptions.requested_for')} {request.months_requested} {t('subscriptions.months')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-500">
                       {formatDate(request.created_at)}
@@ -331,13 +331,13 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
-                    {t(`supplier_subscriptions.status_${request.status}`)}
+                    {t(`subscriptions.status_${request.status}`)}
                   </span>
                   <button
                     onClick={() => handleViewRequestDetails(request.id)}
                     className="px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                   >
-                    {t('supplier_subscriptions.view_details')}
+                    {t('subscriptions.view_details')}
                   </button>
                 </div>
               </div>
@@ -354,7 +354,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {t('supplier_subscriptions.create_subscription_request')}
+                  {t('subscriptions.create_subscription_request')}
                 </h3>
                 <button
                   onClick={handleCloseCreateForm}
@@ -372,7 +372,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               {/* Plan Selection */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {t('supplier_subscriptions.select_plan')} <span className="text-red-500">*</span>
+                  {t('subscriptions.select_plan')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="plan_id"
@@ -384,7 +384,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                       : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
                   }`}
                 >
-                  <option value="">{t('supplier_subscriptions.choose_plan')}</option>
+                  <option value="">{t('subscriptions.choose_plan')}</option>
                   {plans.map(plan => (
                     <option key={plan.id} value={plan.id}>
                       {plan.name} - ${plan.price_per_month}/month
@@ -399,7 +399,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               {/* Months Requested */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {t('supplier_subscriptions.months_requested')} <span className="text-red-500">*</span>
+                  {t('subscriptions.months_requested')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -423,13 +423,13 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               {calculatedPrice && (
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">
-                    {t('supplier_subscriptions.calculated_price')}
+                    {t('subscriptions.calculated_price')}
                   </h4>
                   <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
                     ${calculatedPrice.total_price}
                   </div>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    {t('supplier_subscriptions.price_breakdown', { 
+                    {t('subscriptions.price_breakdown', { 
                       monthly: calculatedPrice.monthly_price, 
                       months: formData.months_requested 
                     })}
@@ -440,19 +440,19 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               {/* Payment Proof Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  {t('supplier_subscriptions.payment_proof')} <span className="text-red-500">*</span>
+                  {t('subscriptions.payment_proof')} <span className="text-red-500">*</span>
                 </label>
                 <FileUpload
                   onFileSelect={handleFileChange}
                   acceptedTypes={['image/*', 'application/pdf']}
                   maxSize={5} // 5MB
-                  placeholder={t('supplier_subscriptions.upload_payment_proof')}
+                  placeholder={t('subscriptions.upload_payment_proof')}
                 />
                 {formErrors.payment_proof && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.payment_proof}</p>
                 )}
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  {t('supplier_subscriptions.payment_proof_help')}
+                  {t('subscriptions.payment_proof_help')}
                 </p>
               </div>
             </form>
@@ -463,7 +463,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                 onClick={handleCloseCreateForm}
                 className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                {t('common.cancel')}
+                {t('subscriptions.cancel')}
               </button>
               <button
                 onClick={handleSubmit}
@@ -477,7 +477,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
-                {t('supplier_subscriptions.submit_request')}
+                {t('subscriptions.submit_request')}
               </button>
             </div>
           </div>
@@ -492,7 +492,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {t('supplier_subscriptions.request_details')}
+                  {t('subscriptions.request_details')}
                 </h3>
                 <button
                   onClick={handleCloseRequestDetails}
@@ -510,7 +510,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               {/* Status */}
               <div className="flex items-center gap-3">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedRequest.status)}`}>
-                  {t(`supplier_subscriptions.status_${selectedRequest.status}`)}
+                  {t(`subscriptions.status_${selectedRequest.status}`)}
                 </span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   {formatDate(selectedRequest.created_at)}
@@ -521,23 +521,23 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {t('supplier_subscriptions.request_information')}
+                    {t('subscriptions.request_information')}
                   </h4>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.request_id')}</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.request_id')}</span>
                       <span className="font-medium text-gray-900 dark:text-white">{selectedRequest.id}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.plan')}</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.plan')}</span>
                       <span className="font-medium text-gray-900 dark:text-white">{selectedRequest.plan?.name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.months_requested')}</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.months_requested')}</span>
                       <span className="font-medium text-gray-900 dark:text-white">{selectedRequest.months_requested}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.total_amount')}</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.total_amount')}</span>
                       <span className="font-medium text-gray-900 dark:text-white">${selectedRequest.total_amount}</span>
                     </div>
                   </div>
@@ -547,7 +547,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                 {selectedRequest.payment_proof && (
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {t('supplier_subscriptions.payment_proof')}
+                      {t('subscriptions.payment_proof')}
                     </h4>
                     <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                       <a
@@ -559,7 +559,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                         </svg>
-                        {t('supplier_subscriptions.view_payment_proof')}
+                        {t('subscriptions.view_payment_proof')}
                       </a>
                     </div>
                   </div>
@@ -570,7 +570,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
               {selectedRequest.admin_notes && (
                 <div className="space-y-4">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {t('supplier_subscriptions.admin_notes')}
+                    {t('subscriptions.admin_notes')}
                   </h4>
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <p className="text-gray-700 dark:text-gray-300">{selectedRequest.admin_notes}</p>
@@ -585,7 +585,7 @@ export default function SupplierSubscriptionRequests({ onRefresh }) {
                 onClick={handleCloseRequestDetails}
                 className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
               >
-                {t('common.close')}
+                {t('subscriptions.close')}
               </button>
             </div>
           </div>

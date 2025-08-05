@@ -4,6 +4,7 @@ import { post } from '../../utils/api';
 import { useToast } from '../Common/ToastContext';
 import Spinner from './Spinner';
 import Modal from '../Common/Modal';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^01[0-9]{9}$|^\+?[0-9]{10,15}$/; // Egyptian or international
@@ -15,10 +16,11 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
   const [success, setSuccess] = useState('');
   const { token } = useAuth();
   const toast = useToast();
+  const { t } = useSupplierTranslation();
 
   function validateContact(value) {
-    if (!value) return 'Contact is required.';
-    if (!EMAIL_REGEX.test(value) && !PHONE_REGEX.test(value)) return 'Enter a valid email or phone number.';
+    if (!value) return t('invitations.contact_required');
+    if (!EMAIL_REGEX.test(value) && !PHONE_REGEX.test(value)) return t('invitations.invalid_contact');
     return '';
   }
 
@@ -44,7 +46,7 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
           token,
         });
       } else {
-        throw new Error('Invalid contact format');
+        throw new Error(t('invitations.invalid_contact_format'));
       }
       // Store the contact information locally for display purposes
       if (response.data?.invitation?.id) {
@@ -59,10 +61,10 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
       // Generate the frontend invitation URL
       const invitationToken = response.data?.invitation?.token;
       if (!invitationToken) {
-        throw new Error('No invitation token received from server');
+        throw new Error(t('invitations.no_invitation_token'));
       }
-      setSuccess(`Invitation link generated successfully! Share this link with ${contact}:`);
-      toast.show('Invitation link generated successfully!', 'success');
+      setSuccess(t('invitations.invitation_generated_with_contact', { contact }));
+      toast.show(t('invitations.invitation_generated'), 'success');
       setContact('');
       setTimeout(() => {
         setSuccess('');
@@ -70,31 +72,31 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
         onSuccess?.();
       }, 10000);
     } catch (err) {
-      setError(err.message || 'Failed to generate invitation');
-      toast.show(err.message || 'Failed to generate invitation', 'error');
+      setError(err.message || t('invitations.failed_to_generate'));
+      toast.show(err.message || t('invitations.failed_to_generate'), 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Invite New Client">
+    <Modal open={open} onClose={onClose} title={t('invitations.invite_new_client_title')}>
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div>
           <label htmlFor="contact-input" className="block text-sm font-medium text-theme-text mb-2">
-            Client Contact Information
+            {t('invitations.client_contact_information')}
           </label>
           <input
             id="contact-input"
             type="text"
             className="w-full border rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700 text-sm sm:text-base"
-            placeholder="Enter client email or phone number"
+            placeholder={t('invitations.contact_placeholder')}
             value={contact}
             onChange={e => setContact(e.target.value)}
             disabled={loading}
           />
           <p className="text-xs text-theme-text-secondary mt-1">
-            Enter a valid email address or phone number to invite a new client.
+            {t('invitations.contact_help')}
           </p>
         </div>
         
@@ -117,7 +119,7 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
             onClick={onClose} 
             disabled={loading}
           >
-            Cancel
+            {t('profile.cancel')}
           </button>
           <button 
             type="submit" 
@@ -125,7 +127,7 @@ export default function InviteClientModal({ open, onClose, onSuccess }) {
             disabled={loading}
           >
             {loading && <Spinner size={16} color="border-white" />}
-            {loading ? 'Generating...' : 'Generate Invitation Link'}
+            {loading ? t('invitations.generating') : t('invitations.generate_invitation_link')}
           </button>
         </div>
       </form>

@@ -4,8 +4,10 @@ import { put } from '../../utils/api';
 import { useToast } from '../Common/ToastContext';
 import Spinner from './Spinner';
 import Modal from '../Common/Modal';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function AddProductDiscountModal({ open, onClose, onSuccess, products, clients }) {
+  const { t } = useSupplierTranslation();
   const [selectedProduct, setSelectedProduct] = useState('');
   const [selectedClient, setSelectedClient] = useState('');
   const [discount, setDiscount] = useState('');
@@ -18,17 +20,17 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
     e.preventDefault();
     
     if (!selectedProduct) {
-      setError('Please select a product');
+      setError(t('product_discounts.please_select_product'));
       return;
     }
     
     if (!selectedClient) {
-      setError('Please select a client');
+      setError(t('product_discounts.please_select_client'));
       return;
     }
     
     if (!discount || discount < 0 || discount > 100) {
-      setError('Please enter a valid discount percentage (0-100)');
+      setError(t('product_discounts.please_enter_valid_discount'));
       return;
     }
     
@@ -41,15 +43,15 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
         token,
       });
       
-      toast.show('Product discount added successfully', 'success');
+      toast.show(t('product_discounts.discount_added_successfully'), 'success');
       setSelectedProduct('');
       setSelectedClient('');
       setDiscount('');
       onClose();
       onSuccess?.();
     } catch (err) {
-      setError(err.message || 'Failed to add product discount');
-      toast.show(err.message || 'Failed to add product discount', 'error');
+      setError(err.message || t('product_discounts.failed_to_add_discount'));
+      toast.show(err.message || t('product_discounts.failed_to_add_discount'), 'error');
     } finally {
       setLoading(false);
     }
@@ -64,10 +66,10 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
   };
 
   return (
-    <Modal open={open} onClose={handleClose} title="Add Product Discount">
+    <Modal open={open} onClose={handleClose} title={t('product_discounts.add_new_discount_title')}>
       <form className="flex flex-col gap-4 sm:gap-6" onSubmit={handleSubmit} noValidate>
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Select Product</label>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('product_discounts.select_product')}</label>
           <select
             className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && !selectedProduct ? 'border-red-400' : ''}`}
             value={selectedProduct}
@@ -75,7 +77,7 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
             disabled={loading}
             required
           >
-            <option value="">Choose a product...</option>
+            <option value="">{t('product_discounts.choose_product')}</option>
             {products?.length > 0 ? (
               products.map((product) => (
                 <option key={product.id} value={product.id}>
@@ -83,18 +85,18 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
                 </option>
               ))
             ) : (
-              <option value="" disabled>No products available</option>
+              <option value="" disabled>{t('product_discounts.no_products_available')}</option>
             )}
           </select>
           {products?.length === 0 && (
             <p className="text-xs sm:text-sm text-orange-600 dark:text-orange-400 mt-1 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-              No products found. Please create products first.
+              {t('product_discounts.no_products_found_message')}
             </p>
           )}
         </div>
         
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Select Client</label>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('product_discounts.select_client')}</label>
           <select
             className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && !selectedClient ? 'border-red-400' : ''}`}
             value={selectedClient}
@@ -102,7 +104,7 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
             disabled={loading}
             required
           >
-            <option value="">Choose a client...</option>
+            <option value="">{t('product_discounts.choose_client')}</option>
             {clients?.length > 0 ? (
               clients.map((client) => {
                 // The actual client data is nested under the 'client' property
@@ -120,31 +122,31 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
                 );
               })
             ) : (
-              <option value="" disabled>No clients available</option>
+              <option value="" disabled>{t('product_discounts.no_clients_available')}</option>
             )}
           </select>
           {clients?.length === 0 && (
             <p className="text-xs sm:text-sm text-orange-600 dark:text-orange-400 mt-1 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-              No clients found. Please invite clients first.
+              {t('product_discounts.no_clients_found_message')}
             </p>
           )}
         </div>
         
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Discount Percentage</label>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('product_discounts.discount_percentage_label')}</label>
           <input
             type="number"
             min="0"
             max="100"
             step="0.01"
             className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && (!discount || discount < 0 || discount > 100) ? 'border-red-400' : ''}`}
-            placeholder="Enter discount percentage (0-100)"
+            placeholder={t('product_discounts.discount_percentage_placeholder')}
             value={discount}
             onChange={(e) => setDiscount(e.target.value)}
             disabled={loading}
             required
           />
-          <p className="text-xs text-theme-text-muted mt-1">Enter a value between 0 and 100</p>
+          <p className="text-xs text-theme-text-muted mt-1">{t('product_discounts.discount_percentage_help')}</p>
         </div>
         
         {error && (
@@ -159,7 +161,7 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
             onClick={handleClose}
             className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
           >
-            Cancel
+            {t('profile.cancel')}
           </button>
           <button
             type="submit"
@@ -169,10 +171,10 @@ export default function AddProductDiscountModal({ open, onClose, onSuccess, prod
             {loading ? (
               <>
                 <Spinner size={16} />
-                <span>Adding...</span>
+                <span>{t('product_discounts.adding')}</span>
               </>
             ) : (
-              'Add Discount'
+              t('product_discounts.add_discount')
             )}
           </button>
         </div>

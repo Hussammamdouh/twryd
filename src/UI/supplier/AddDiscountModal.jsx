@@ -4,8 +4,10 @@ import { put } from '../../utils/api';
 import { useToast } from '../Common/ToastContext';
 import Spinner from './Spinner';
 import Modal from '../Common/Modal';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 export default function AddDiscountModal({ open, onClose, onSuccess, clients }) {
+  const { t } = useSupplierTranslation();
   const [selectedClient, setSelectedClient] = useState('');
   const [discount, setDiscount] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,12 +19,12 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
     e.preventDefault();
     
     if (!selectedClient) {
-      setError('Please select a client');
+      setError(t('client_discounts.please_select_client'));
       return;
     }
     
     if (!discount || discount < 0 || discount > 100) {
-      setError('Please enter a valid discount percentage (0-100)');
+      setError(t('client_discounts.please_enter_valid_discount'));
       return;
     }
     
@@ -35,14 +37,14 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
         token,
       });
       
-      toast.show('Discount added successfully', 'success');
+      toast.show(t('client_discounts.discount_added_successfully'), 'success');
       setSelectedClient('');
       setDiscount('');
       onClose();
       onSuccess?.();
     } catch (err) {
-      setError(err.message || 'Failed to add discount');
-      toast.show(err.message || 'Failed to add discount', 'error');
+      setError(err.message || t('client_discounts.failed_to_add_discount'));
+      toast.show(err.message || t('client_discounts.failed_to_add_discount'), 'error');
     } finally {
       setLoading(false);
     }
@@ -56,10 +58,10 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
   };
 
   return (
-    <Modal open={open} onClose={handleClose} title="Add New Discount">
+    <Modal open={open} onClose={handleClose} title={t('client_discounts.add_new_discount_title')}>
       <form className="flex flex-col gap-4 sm:gap-6" onSubmit={handleSubmit} noValidate>
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Select Client</label>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('client_discounts.select_client')}</label>
           <select
             className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && !selectedClient ? 'border-red-400' : ''}`}
             value={selectedClient}
@@ -67,7 +69,7 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
             disabled={loading}
             required
           >
-            <option value="">Choose a client...</option>
+            <option value="">{t('client_discounts.choose_client')}</option>
             {clients?.length > 0 ? (
               clients.map((client) => {
                 // The actual client data is nested under the 'client' property
@@ -88,18 +90,18 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
                 );
               })
             ) : (
-              <option value="" disabled>No clients available</option>
+              <option value="" disabled>{t('client_discounts.no_clients_available')}</option>
             )}
           </select>
           {clients?.length === 0 && (
             <p className="text-xs sm:text-sm text-orange-600 dark:text-orange-400 mt-1 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-              No clients found. Please invite clients first.
+              {t('client_discounts.no_clients_found_message')}
             </p>
           )}
         </div>
         
         <div>
-          <label className="block text-theme-text mb-2 font-medium text-sm">Discount Percentage</label>
+          <label className="block text-theme-text mb-2 font-medium text-sm">{t('client_discounts.discount_percentage_label')}</label>
           <input
             type="number"
             min="0"
@@ -108,11 +110,11 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
             className={`theme-input w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-400 ${error && (!discount || discount < 0 || discount > 100) ? 'border-red-400' : ''}`}
             value={discount}
             onChange={(e) => setDiscount(e.target.value)}
-            placeholder="Enter discount percentage (0-100)"
+            placeholder={t('client_discounts.discount_percentage_placeholder')}
             disabled={loading}
             required
           />
-          <p className="text-xs text-theme-text-muted mt-1">Enter a value between 0 and 100</p>
+          <p className="text-xs text-theme-text-muted mt-1">{t('client_discounts.discount_percentage_help')}</p>
         </div>
         
         {error && (
@@ -127,7 +129,7 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
             onClick={handleClose}
             className="theme-button-secondary flex-1 py-2 sm:py-3 px-4 rounded-lg transition text-sm sm:text-base"
           >
-            Cancel
+            {t('profile.cancel')}
           </button>
           <button
             type="submit"
@@ -137,10 +139,10 @@ export default function AddDiscountModal({ open, onClose, onSuccess, clients }) 
             {loading ? (
               <>
                 <Spinner size={16} />
-                <span>Adding...</span>
+                <span>{t('client_discounts.adding')}</span>
               </>
             ) : (
-              'Add Discount'
+              t('client_discounts.add_discount')
             )}
           </button>
         </div>

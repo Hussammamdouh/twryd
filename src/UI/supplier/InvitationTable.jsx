@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../Common/ToastContext';
 import ConfirmModal from './ConfirmModal';
 import Spinner from './Spinner';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 
 // Helper function to format date
 const formatDate = (dateString) => {
@@ -28,6 +29,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
   const [rowLoading, setRowLoading] = useState({});
   const [confirm, setConfirm] = useState({ open: false, type: '', inv: null });
   const toast = useToast();
+  const { t } = useSupplierTranslation();
 
   // Helper function to get contact information
   const getContactInfo = (invitation) => {
@@ -54,7 +56,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
     }
     
     // If still no email found, return a more descriptive message
-    return 'Email not available';
+    return t('invitations.email_not_available');
   };
 
   const handleAction = async (type, inv) => {
@@ -70,19 +72,19 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
         } catch (error) {
           console.error('Error cleaning up localStorage:', error);
         }
-        toast.show('Invitation cancelled', 'success');
+        toast.show(t('invitations.invitation_cancelled'), 'success');
       } else if (type === 'suspend') {
         await post(`/api/supplier/invitations/clients/${inv.client_id}/suspend`, { token });
-        toast.show('Client suspended', 'success');
+        toast.show(t('invitations.client_suspended'), 'success');
       } else if (type === 'reactivate') {
         await post(`/api/supplier/invitations/clients/${inv.client_id}/reactivate`, { token });
-        toast.show('Client reactivated', 'success');
+        toast.show(t('invitations.client_reactivated'), 'success');
       } else if (type === 'resend') {
-        toast.show('Resend not implemented in API', 'info');
+        toast.show(t('invitations.resend_not_implemented'), 'info');
       }
       onAction?.();
     } catch (err) {
-      toast.show(err.message || 'Action failed', 'error');
+      toast.show(err.message || t('invitations.action_failed'), 'error');
     } finally {
       setRowLoading(l => ({ ...l, [inv.id]: false }));
       setConfirm({ open: false, type: '', inv: null });
@@ -92,9 +94,9 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
   const openConfirm = (type, inv) => setConfirm({ open: true, type, inv });
   const closeConfirm = () => setConfirm({ open: false, type: '', inv: null });
   const confirmMessage = {
-    cancel: 'Are you sure you want to cancel this invitation?',
-    suspend: 'Are you sure you want to suspend this client?',
-    reactivate: 'Are you sure you want to reactivate this client?'
+    cancel: t('invitations.cancel_confirmation'),
+    suspend: t('invitations.suspend_confirmation'),
+    reactivate: t('invitations.reactivate_confirmation')
   };
 
   if (loading) {
@@ -109,14 +111,14 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
     return (
       <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-theme-text-muted gap-4 px-4">
         <div className="text-center">
-          <div className="text-lg sm:text-xl font-medium mb-2">No invitations found.</div>
-          <p className="text-sm text-theme-text-secondary mb-4">Start by inviting new clients to connect with your business.</p>
+          <div className="text-lg sm:text-xl font-medium mb-2">{t('invitations.no_invitations_found')}</div>
+          <p className="text-sm text-theme-text-secondary mb-4">{t('invitations.no_invitations_message')}</p>
         </div>
         <button
           className="theme-button px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold shadow w-full sm:w-auto"
           onClick={onInvite}
         >
-          + Invite New Client
+          {t('invitations.invite_new_client')}
         </button>
       </div>
     );
@@ -133,7 +135,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          Invite New Client
+          {t('invitations.invite_new_client')}
         </button>
       </div>
 
@@ -142,10 +144,10 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
         <table className="min-w-full text-sm">
           <thead>
             <tr className="theme-table-header text-theme-text">
-              <th className="px-4 md:px-6 py-3 text-left font-semibold">Email</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold">Status</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold">Sent Date</th>
-              <th className="px-4 md:px-6 py-3 text-left font-semibold">Actions</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">{t('invitations.email')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">{t('invitations.status')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">{t('invitations.sent_date')}</th>
+              <th className="px-4 md:px-6 py-3 text-left font-semibold">{t('invitations.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -167,7 +169,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                       tabIndex={0}
                     >
                       {rowLoading[inv.id] && <Spinner size={16} color="border-white" />}
-                      Cancel
+                      {t('invitations.cancel')}
                     </button>
                   )}
                   {inv.status === 'accepted' && (
@@ -182,7 +184,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                       tabIndex={0}
                     >
                       {rowLoading[inv.id] && <Spinner size={16} color="border-current" />}
-                      {inv.relationship_status === 'suspended' ? 'Reactivate' : 'Suspend'}
+                      {inv.relationship_status === 'suspended' ? t('invitations.reactivate') : t('invitations.suspend')}
                     </button>
                   )}
                   {inv.status === 'declined' && (
@@ -192,7 +194,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                       disabled={rowLoading[inv.id]}
                       tabIndex={0}
                     >
-                      Resend
+                      {t('invitations.resend')}
                     </button>
                   )}
                 </td>
@@ -209,7 +211,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
             <div className="space-y-3">
               {/* Email */}
               <div>
-                <div className="text-xs font-medium text-theme-text-secondary mb-1">Email</div>
+                <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('invitations.email')}</div>
                 <div className="text-sm font-medium text-theme-text break-all">
                   {getContactInfo(inv)}
                 </div>
@@ -218,11 +220,11 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
               {/* Status and Date Row */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  <div className="text-xs font-medium text-theme-text-secondary mb-1">Status</div>
+                  <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('invitations.status')}</div>
                   <StatusBadge status={inv.status} />
                 </div>
                 <div>
-                  <div className="text-xs font-medium text-theme-text-secondary mb-1">Sent Date</div>
+                  <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('invitations.sent_date')}</div>
                   <div className="text-sm text-theme-text">
                     {formatDate(inv.created_at || inv.sent_at || inv.sentDate)}
                   </div>
@@ -231,7 +233,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
 
               {/* Actions */}
               <div className="pt-2 border-t border-theme-border">
-                <div className="text-xs font-medium text-theme-text-secondary mb-2">Actions</div>
+                <div className="text-xs font-medium text-theme-text-secondary mb-2">{t('invitations.actions')}</div>
                 <div className="flex flex-wrap gap-2">
                   {inv.status === 'pending' && (
                     <button
@@ -241,7 +243,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                       tabIndex={0}
                     >
                       {rowLoading[inv.id] && <Spinner size={16} color="border-white" />}
-                      Cancel Invitation
+                      {t('invitations.cancel_invitation')}
                     </button>
                   )}
                   {inv.status === 'accepted' && (
@@ -256,7 +258,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                       tabIndex={0}
                     >
                       {rowLoading[inv.id] && <Spinner size={16} color="border-current" />}
-                      {inv.relationship_status === 'suspended' ? 'Reactivate Client' : 'Suspend Client'}
+                      {inv.relationship_status === 'suspended' ? t('invitations.reactivate_client') : t('invitations.suspend_client')}
                     </button>
                   )}
                   {inv.status === 'declined' && (
@@ -266,7 +268,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                       disabled={rowLoading[inv.id]}
                       tabIndex={0}
                     >
-                      Resend Invitation
+                      {t('invitations.resend_invitation')}
                     </button>
                   )}
                 </div>

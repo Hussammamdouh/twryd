@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useToast } from '../../UI/Common/ToastContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { get } from '../../utils/api';
-import LoadingSkeleton from '../../UI/Common/LoadingSkeleton';
+import React, { useState } from 'react';
+import { useSupplierTranslation } from '../../hooks/useSupplierTranslation';
 import Spinner from '../../UI/supplier/Spinner';
 
 export default function SupplierCurrentSubscription({ subscriptionData, onRefresh }) {
-  const { token } = useAuth();
-  const toast = useToast();
-  const { t } = useLanguage();
+  const { t } = useSupplierTranslation();
   
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   // Extract data from the new API response structure
   const subscription = subscriptionData?.subscription;
@@ -82,10 +76,10 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
           </svg>
         </div>
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-          {t('supplier_subscriptions.no_active_subscription')}
+          {t('subscriptions.no_active_subscription')}
         </h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          {t('supplier_subscriptions.no_subscription_description')}
+          {t('subscriptions.no_subscription_description')}
         </p>
         <button
           onClick={() => {
@@ -97,7 +91,7 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          {t('supplier_subscriptions.browse_plans')}
+          {t('subscriptions.browse_plans')}
         </button>
       </div>
     );
@@ -109,10 +103,10 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t('supplier_subscriptions.current_subscription')}
+            {t('subscriptions.current_subscription')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            {t('supplier_subscriptions.subscription_details_description')}
+            {t('subscriptions.subscription_details_description')}
           </p>
         </div>
         <button
@@ -127,7 +121,7 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           )}
-          {t('common.refresh')}
+          {t('subscriptions.refresh')}
         </button>
       </div>
 
@@ -141,10 +135,10 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('supplier_subscriptions.status')}
+                {t('subscriptions.status')}
               </h3>
               <p className={`text-sm font-medium ${getStatusColor(status).split(' ')[0]}`}>
-                {t(`supplier_subscriptions.status_${status}`)}
+                {t(`subscriptions.status_${status}`)}
               </p>
             </div>
           </div>
@@ -160,10 +154,10 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('supplier_subscriptions.plan')}
+                {t('subscriptions.plan')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {plan?.name || t('supplier_subscriptions.no_plan')}
+                {plan?.name || t('subscriptions.no_plan')}
               </p>
             </div>
           </div>
@@ -179,10 +173,10 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('supplier_subscriptions.monthly_price')}
+                {t('subscriptions.price_per_month')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                ${plan?.price_per_month || 0} {t('supplier_subscriptions.per_month')}
+                ${plan?.price_per_month || 0} {t('subscriptions.per_month')}
               </p>
             </div>
           </div>
@@ -193,7 +187,7 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t('supplier_subscriptions.detailed_information')}
+            {t('subscriptions.detailed_information')}
           </h3>
         </div>
         <div className="p-6">
@@ -201,25 +195,25 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
             {/* Subscription Details */}
             <div className="space-y-4">
               <h4 className="text-md font-semibold text-gray-900 dark:text-white">
-                {t('supplier_subscriptions.subscription_details')}
+                {t('subscriptions.subscription_details')}
               </h4>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.subscription_id')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.subscription_id')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{subscription.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.start_date')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.start_date')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{formatDate(subscription.start_date)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.end_date')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.end_date')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{formatDate(subscription.end_date)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.remaining_days')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.remaining_days')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {remainingDays > 0 ? remainingDays : 0} {t('supplier_subscriptions.days')}
+                    {remainingDays > 0 ? remainingDays : 0} {t('subscriptions.days')}
                   </span>
                 </div>
               </div>
@@ -228,29 +222,29 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
             {/* Plan Details */}
             <div className="space-y-4">
               <h4 className="text-md font-semibold text-gray-900 dark:text-white">
-                {t('supplier_subscriptions.plan_details')}
+                {t('subscriptions.plan_details')}
               </h4>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.plan_name')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.plan_name')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{plan?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.max_clients')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.max_clients')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{plan?.max_clients}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.current_clients')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.current_clients')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{currentClientCount}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.remaining_slots')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.remaining_slots')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">{remainingSlots}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('supplier_subscriptions.price_per_month')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscriptions.price_per_month')}</span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    ${plan?.price_per_month || 0} {t('supplier_subscriptions.per_month')}
+                    ${plan?.price_per_month || 0} {t('subscriptions.per_month')}
                   </span>
                 </div>
               </div>
@@ -271,7 +265,7 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          {t('supplier_subscriptions.browse_other_plans')}
+          {t('subscriptions.browse_other_plans')}
         </button>
         <button
           onClick={() => {
@@ -283,7 +277,7 @@ export default function SupplierCurrentSubscription({ subscriptionData, onRefres
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          {t('supplier_subscriptions.request_renewal')}
+          {t('subscriptions.request_renewal')}
         </button>
       </div>
     </div>
