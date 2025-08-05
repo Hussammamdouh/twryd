@@ -5,19 +5,19 @@ const LanguageSwitcher = ({ className = '', size = 'default', variant = 'buttons
   const { currentLanguage, changeLanguage, t } = useLanguage();
 
   const sizeClasses = {
-    small: 'px-2 py-1 text-xs',
-    default: 'px-3 py-2 text-sm',
-    large: 'px-4 py-3 text-base'
+    small: 'px-3 py-1.5 text-xs',
+    default: 'px-4 py-2 text-sm',
+    large: 'px-5 py-3 text-base'
   };
 
   const buttonSize = sizeClasses[size] || sizeClasses.default;
 
-  // Modern dropdown variant
+  // Modern toggle variant (improved design)
   if (variant === 'dropdown') {
     return (
       <div className={`relative ${className}`}>
         <button
-          className={`${buttonSize} flex items-center gap-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm`}
+          className={`${buttonSize} flex items-center gap-2.5 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-gray-700 dark:hover:to-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg hover:scale-105 active:scale-95 shadow-md`}
           onClick={() => changeLanguage(currentLanguage === 'en' ? 'ar' : 'en')}
           title={currentLanguage === 'en' ? t('language.switch_to_arabic') : t('language.switch_to_english')}
           aria-label={currentLanguage === 'en' ? t('language.switch_to_arabic') : t('language.switch_to_english')}
@@ -25,10 +25,7 @@ const LanguageSwitcher = ({ className = '', size = 'default', variant = 'buttons
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
-          <span className="font-semibold">{currentLanguage === 'en' ? 'EN' : 'عربي'}</span>
-          <svg className="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          <span className="font-bold tracking-wide">{currentLanguage === 'en' ? 'EN' : 'عربي'}</span>
         </button>
       </div>
     );

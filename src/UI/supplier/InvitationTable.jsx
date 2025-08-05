@@ -126,19 +126,6 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
 
   return (
     <div className="space-y-4">
-      {/* Mobile Invite Button - Only show on mobile when there are invitations */}
-      <div className="md:hidden">
-        <button
-          className="theme-button px-4 py-3 rounded-lg font-bold shadow w-full flex items-center justify-center gap-2"
-          onClick={onInvite}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          {t('invitations.invite_new_client')}
-        </button>
-      </div>
-
       {/* Desktop Table */}
       <div className="hidden md:block theme-table overflow-x-auto rounded-lg shadow">
         <table className="min-w-full text-sm">
@@ -205,39 +192,39 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
       </div>
 
       {/* Mobile Cards */}
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-3">
         {invitations.map((inv) => (
-          <div key={inv.id || inv.email} className="theme-card p-4 sm:p-6">
+          <div key={inv.id || inv.email} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 max-w-full overflow-hidden">
             <div className="space-y-3">
               {/* Email */}
-              <div>
-                <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('invitations.email')}</div>
-                <div className="text-sm font-medium text-theme-text break-all">
+              <div className="min-w-0">
+                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{t('invitations.email')}</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white break-all overflow-hidden">
                   {getContactInfo(inv)}
                 </div>
               </div>
 
               {/* Status and Date Row */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('invitations.status')}</div>
+                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{t('invitations.status')}</div>
                   <StatusBadge status={inv.status} />
                 </div>
                 <div>
-                  <div className="text-xs font-medium text-theme-text-secondary mb-1">{t('invitations.sent_date')}</div>
-                  <div className="text-sm text-theme-text">
+                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{t('invitations.sent_date')}</div>
+                  <div className="text-sm text-gray-900 dark:text-white break-words">
                     {formatDate(inv.created_at || inv.sent_at || inv.sentDate)}
                   </div>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="pt-2 border-t border-theme-border">
-                <div className="text-xs font-medium text-theme-text-secondary mb-2">{t('invitations.actions')}</div>
-                <div className="flex flex-wrap gap-2">
+              <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">{t('invitations.actions')}</div>
+                <div className="flex flex-col gap-2">
                   {inv.status === 'pending' && (
                     <button
-                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow text-sm font-bold flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400 w-full sm:w-auto justify-center"
+                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow text-sm font-bold flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400 w-full"
                       onClick={() => openConfirm('cancel', inv)}
                       disabled={rowLoading[inv.id]}
                       tabIndex={0}
@@ -248,7 +235,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                   )}
                   {inv.status === 'accepted' && (
                     <button
-                      className={`px-3 py-2 rounded-lg shadow text-sm font-bold flex items-center gap-2 focus:outline-none focus:ring-2 w-full sm:w-auto justify-center ${
+                      className={`px-3 py-2 rounded-lg shadow text-sm font-bold flex items-center justify-center gap-2 focus:outline-none focus:ring-2 w-full ${
                         inv.relationship_status === 'suspended' 
                           ? 'bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-400 dark:bg-green-900/30 dark:text-green-300' 
                           : 'bg-orange-100 text-orange-700 hover:bg-orange-200 focus:ring-orange-400 dark:bg-orange-900/30 dark:text-orange-300'
@@ -263,7 +250,7 @@ export default function InvitationTable({ invitations, loading, onAction, onInvi
                   )}
                   {inv.status === 'declined' && (
                     <button
-                      className="px-3 py-2 bg-primary-100 text-primary-700 rounded-lg shadow text-sm font-bold hover:bg-primary-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-900/30 dark:text-primary-300 w-full sm:w-auto justify-center"
+                      className="px-3 py-2 bg-primary-100 text-primary-700 rounded-lg shadow text-sm font-bold hover:bg-primary-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:bg-primary-900/30 dark:text-primary-300 w-full"
                       onClick={() => handleAction('resend', inv)}
                       disabled={rowLoading[inv.id]}
                       tabIndex={0}

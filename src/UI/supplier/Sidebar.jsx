@@ -104,20 +104,11 @@ export default function Sidebar() {
       ) 
     },
     { 
-      name: t('sidebar.virtual_clients'), 
-      to: '/supplier/dashboard/virtual-client-management', 
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      ) 
-    },
-    { 
       name: t('sidebar.subscriptions'), 
       to: '/supplier/dashboard/subscriptions', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6zM4 5h6V4a1 1 0 00-1-1H5a1 1 0 00-1 1v1zM14 5h6V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v1zM4 13h6v-1a1 1 0 00-1-1H5a1 1 0 00-1 1v1zM14 13h6v-1a1 1 0 00-1-1h-4a1 1 0 00-1 1v1z" />
         </svg>
       ) 
     },
@@ -141,11 +132,11 @@ export default function Sidebar() {
     }
   }, [isMobile, closeMobileSidebar]);
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = () => {
     if (window.confirm(t('sidebar.logout_confirmation'))) {
       logout();
     }
-  }, [logout, t]);
+  };
 
   // Prevent body scroll when mobile sidebar is open
   useEffect(() => {
@@ -175,15 +166,15 @@ export default function Sidebar() {
         id="supplier-sidebar"
         className={`
           fixed left-0 top-0 z-50 h-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 
-          shadow-2xl border-r border-blue-500/20 transition-all duration-300 ease-in-out
+          shadow-2xl border-r border-blue-500/20 transition-all duration-300 ease-in-out flex flex-col
           ${isMobile 
             ? `w-72 transform ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
             : sidebarCollapsed ? 'w-20' : 'w-64'
           }
         `}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        {/* Header - Fixed */}
+        <div className="flex-shrink-0 flex items-center justify-between p-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,8 +213,8 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3">
+        {/* Navigation - Scrollable */}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 px-3 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
           <div className="space-y-2">
             {navItems.map((item) => (
               <NavLink
@@ -249,9 +240,9 @@ export default function Sidebar() {
           </div>
         </nav>
 
-        {/* User Section */}
+        {/* User Section - Fixed */}
         {user && (
-          <div className="p-4 border-t border-white/10">
+          <div className="flex-shrink-0 p-4 border-t border-white/10">
             {!sidebarCollapsed || isMobile ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
