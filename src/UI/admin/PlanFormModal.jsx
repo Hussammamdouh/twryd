@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useToast } from '../Common/ToastContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import Modal from '../Common/Modal';
 import Spinner from '../supplier/Spinner';
 
@@ -17,6 +18,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const { t } = useLanguage();
 
   // Initialize form data when editing
   useEffect(() => {
@@ -68,19 +70,19 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Plan name is required';
+      newErrors.name = t('plan_name_required');
     }
 
     if (!formData.name_ar.trim()) {
-      newErrors.name_ar = 'Arabic plan name is required';
+      newErrors.name_ar = t('arabic_plan_name_required');
     }
 
     if (!formData.price_per_month || parseFloat(formData.price_per_month) < 0) {
-      newErrors.price_per_month = 'Valid price is required';
+      newErrors.price_per_month = t('valid_price_required');
     }
 
     if (formData.max_clients && parseInt(formData.max_clients) < 1) {
-      newErrors.max_clients = 'Max clients must be at least 1';
+      newErrors.max_clients = t('max_clients_must_be_at_least_1');
     }
 
     setErrors(newErrors);
@@ -91,7 +93,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
     e.preventDefault();
     
     if (!validateForm()) {
-      toast.show('Please fix the errors', 'error');
+      toast.show(t('please_fix_errors'), 'error');
       return;
     }
 
@@ -120,23 +122,23 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
   };
 
   return (
-    <Modal open={open} onClose={handleClose} size="xl">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
+    <Modal open={open} onClose={handleClose} size="large">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto custom-scrollbar">
         {/* Enhanced Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white px-6 sm:px-8 py-6 sm:py-8 rounded-t-2xl">
+        <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white px-3 sm:px-4 lg:px-8 py-3 sm:py-4 lg:py-8 rounded-t-2xl shadow-lg">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-1">
-                  {isEdit ? 'Edit Plan' : 'Create New Plan'}
+                <h2 className="text-lg sm:text-xl lg:text-3xl font-bold mb-1">
+                  {isEdit ? t('edit_plan') : t('create_new_plan')}
                 </h2>
-                <p className="text-blue-100 text-sm sm:text-base">
-                  {isEdit ? 'Update plan details and settings' : 'Configure a new subscription plan for suppliers'}
+                <p className="text-blue-100 text-xs sm:text-sm lg:text-base leading-tight">
+                  {isEdit ? t('update_plan_details_and_settings') : t('configure_a_new_subscription_plan_for_suppliers')}
                 </p>
               </div>
             </div>
@@ -145,7 +147,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
               className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200 hover:scale-110"
               disabled={loading}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -153,23 +155,25 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
         </div>
 
         {/* Form Content */}
-        <div className="p-6 sm:p-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="p-3 sm:p-4 lg:p-8 pt-6 sm:pt-8 lg:pt-12 bg-gray-50/30 dark:bg-gray-800/30">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 lg:space-y-8">
             {/* Basic Information */}
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                  <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 p-3 sm:p-4 lg:p-8 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
+              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Basic Information</h3>
+                <h3 className="text-base sm:text-lg lg:text-2xl font-semibold text-gray-900 dark:text-white">
+                  {t('basic_information')}
+                </h3>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Plan Name (English) <span className="text-red-500">*</span>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t('plan_name_english')} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -177,12 +181,12 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base ${
                         errors.name 
                           ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
                           : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
-                      placeholder="Enter plan name in English"
+                      placeholder={t('enter_plan_name_in_english')}
                       disabled={loading}
                     />
                     {errors.name && (
@@ -194,7 +198,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                     )}
                   </div>
                   {errors.name && (
-                    <p className="text-red-500 text-sm flex items-center gap-2">
+                    <p className="text-red-500 text-xs sm:text-sm flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -203,9 +207,9 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                   )}
                 </div>
 
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Plan Name (Arabic) <span className="text-red-500">*</span>
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t('plan_name_arabic')} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -213,12 +217,12 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                       name="name_ar"
                       value={formData.name_ar}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base ${
                         errors.name_ar 
                           ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
                           : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
-                      placeholder="أدخل اسم الخطة بالعربية"
+                      placeholder={t('enter_arabic_plan_name')}
                       disabled={loading}
                       dir="rtl"
                     />
@@ -231,7 +235,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                     )}
                   </div>
                   {errors.name_ar && (
-                    <p className="text-red-500 text-sm flex items-center gap-2">
+                    <p className="text-red-500 text-xs sm:text-sm flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -240,31 +244,31 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                   )}
                 </div>
 
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Description (English)
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t('description_english')}
                   </label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500"
-                    placeholder="Enter plan description in English"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 text-sm sm:text-base"
+                    placeholder={t('enter_plan_description_in_english')}
                     rows="3"
                     disabled={loading}
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Description (Arabic)
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t('description_arabic')}
                   </label>
                   <textarea
                     name="description_ar"
                     value={formData.description_ar}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500"
-                    placeholder="أدخل وصف الخطة بالعربية"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 text-sm sm:text-base"
+                    placeholder={t('enter_arabic_plan_description')}
                     rows="3"
                     disabled={loading}
                     dir="rtl"
@@ -274,21 +278,23 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
             </div>
 
             {/* Plan Configuration */}
-            <div className="bg-gradient-to-br from-gray-50 to-green-50 dark:from-gray-800 dark:to-green-900/20 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                  <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gradient-to-br from-gray-50 to-green-50 dark:from-gray-800 dark:to-green-900/20 p-3 sm:p-4 lg:p-8 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
+              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Plan Configuration</h3>
+                <h3 className="text-base sm:text-lg lg:text-2xl font-semibold text-gray-900 dark:text-white">
+                  {t('plan_configuration')}
+                </h3>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Price per Month <span className="text-red-500">*</span>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t('price_per_month')} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -296,18 +302,18 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                       name="price_per_month"
                       value={formData.price_per_month}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 pr-16 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-16 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base ${
                         errors.price_per_month 
                           ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
                           : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
-                      placeholder="0.00"
+                      placeholder={t('enter_price_per_month')}
                       min="0"
                       step="0.01"
                       disabled={loading}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                      <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">USD</span>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm font-medium">USD</span>
                     </div>
                     {errors.price_per_month && (
                       <div className="absolute inset-y-0 right-12 flex items-center pr-3">
@@ -318,7 +324,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                     )}
                   </div>
                   {errors.price_per_month && (
-                    <p className="text-red-500 text-sm flex items-center gap-2">
+                    <p className="text-red-500 text-xs sm:text-sm flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -327,9 +333,9 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                   )}
                 </div>
 
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    Max Clients
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {t('max_clients')}
                   </label>
                   <div className="relative">
                     <input
@@ -337,12 +343,12 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                       name="max_clients"
                       value={formData.max_clients}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base ${
                         errors.max_clients 
                           ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
                           : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
-                      placeholder="Leave empty for unlimited"
+                      placeholder={t('leave_empty_for_unlimited')}
                       min="1"
                       disabled={loading}
                     />
@@ -355,32 +361,34 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                     )}
                   </div>
                   {errors.max_clients && (
-                    <p className="text-red-500 text-sm flex items-center gap-2">
+                    <p className="text-red-500 text-xs sm:text-sm flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       {errors.max_clients}
                     </p>
                   )}
-                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Leave empty for unlimited clients
+                    {t('leave_empty_for_unlimited_clients')}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Plan Settings */}
-            <div className="bg-gradient-to-br from-gray-50 to-purple-50 dark:from-gray-800 dark:to-purple-900/20 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                  <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gradient-to-br from-gray-50 to-purple-50 dark:from-gray-800 dark:to-purple-900/20 p-3 sm:p-4 lg:p-8 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-sm">
+              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Plan Settings</h3>
+                <h3 className="text-base sm:text-lg lg:text-2xl font-semibold text-gray-900 dark:text-white">
+                  {t('plan_settings')}
+                </h3>
               </div>
               
               <div className="space-y-4">
@@ -395,10 +403,10 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                   />
                   <div className="flex-1">
                     <label className="text-sm font-semibold text-gray-900 dark:text-white cursor-pointer">
-                      Custom Plan
+                      {t('custom_plan')}
                     </label>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                      Custom plans are created for specific suppliers and may have special pricing or features
+                      {t('custom_plans_are_created_for_specific_suppliers_and_may_have_special_pricing_or_features')}
                     </p>
                   </div>
                 </div>
@@ -414,10 +422,10 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                   />
                   <div className="flex-1">
                     <label className="text-sm font-semibold text-gray-900 dark:text-white cursor-pointer">
-                      Active Plan
+                      {t('active_plan')}
                     </label>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                      Active plans can be subscribed to by suppliers. Inactive plans are hidden from the marketplace
+                      {t('active_plans_can_be_subscribed_to_by_suppliers_inactive_plans_are_hidden_from_the_marketplace')}
                     </p>
                   </div>
                 </div>
@@ -425,21 +433,21 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
             </div>
 
             {/* Enhanced Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-600">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 lg:gap-4 pt-3 sm:pt-4 lg:pt-6 border-t border-gray-200 dark:border-gray-600">
               <button
                 type="button"
                 onClick={handleClose}
-                className="px-6 py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                className="px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm lg:text-base"
                 disabled={loading}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 type="submit"
-                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
+                className="px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 text-xs sm:text-sm lg:text-base"
                 disabled={loading}
               >
                 {loading ? (
@@ -449,7 +457,7 @@ export default function PlanFormModal({ open, onClose, onSubmit, initialData, is
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
-                {isEdit ? 'Update Plan' : 'Create Plan'}
+                {isEdit ? t('update_plan') : t('create_plan')}
               </button>
             </div>
           </form>

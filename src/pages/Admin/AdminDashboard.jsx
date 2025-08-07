@@ -12,16 +12,19 @@ import { get } from '../../utils/api';
 
 // Lazy load components for better performance
 const ProfileCard = React.lazy(() => import('../../UI/admin/ProfileCard'));
-const AdminsTable = React.lazy(() => import('../../UI/admin/AdminsTable'));
-const SuppliersTable = React.lazy(() => import('../../UI/admin/SuppliersTable'));
-const Categories = React.lazy(() => import('./Categories'));
+const AdminsManagement = React.lazy(() => import('./AdminsManagement'));
+const SuppliersManagement = React.lazy(() => import('./SuppliersManagement'));
+const CategoriesManagement = React.lazy(() => import('./CategoriesManagement'));
 const Governates = React.lazy(() => import('./Governates'));
-const Areas = React.lazy(() => import('./Areas'));
+const AreasManagement = React.lazy(() => import('./AreasManagement'));
 
 // Subscription Management Components
 const PlansManagement = React.lazy(() => import('./PlansManagement'));
-const SubscriptionsManagement = React.lazy(() => import('./SubscriptionsManagement'));
+const SubscriptionsManagement = React.lazy(() => import('./SubscriptionsManagement/SubscriptionsManagement'));
 const SubscriptionRequestsManagement = React.lazy(() => import('./SubscriptionRequestsManagement'));
+
+// Test Design Component
+const TestDesign = React.lazy(() => import('./TestDesign'));
 
 // Custom hook for safe language access
 const useSafeLanguage = () => {
@@ -36,9 +39,9 @@ const useSafeLanguage = () => {
 // Loading component for lazy-loaded routes
 const RouteLoading = () => (
   <div className="min-h-screen bg-theme-bg flex flex-col">
-    <Topbar title="Loading..." />
+    <Topbar title="Loading..." sidebarCollapsed={false} />
     <div className="flex-1 flex flex-row">
-      <Sidebar open={false} onClose={() => {}} />
+      <Sidebar open={false} onClose={() => {}} isCollapsed={false} />
       <main className="flex-1 transition-all duration-300 pt-16 md:pl-64 px-2 sm:px-4 md:px-8 relative z-0">
         <LoadingSkeleton type="dashboard" />
       </main>
@@ -143,156 +146,150 @@ const ProfileComponent = () => {
 };
 
 export default function AdminDashboard() {
-  const { token } = useAuth();
   const location = useLocation();
   const { t } = useSafeLanguage();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
 
   // Performance: Memoize title calculation
   const title = useMemo(() => {
     const path = location.pathname;
-    if (path.endsWith('/admins')) return t('nav.administrators');
-    if (path.endsWith('/suppliers')) return t('nav.suppliers');
-    if (path.endsWith('/categories')) return t('nav.categories');
-    if (path.endsWith('/governates')) return t('nav.governorates');
-    if (path.endsWith('/areas')) return t('nav.areas');
-    if (path.endsWith('/plans')) return 'Plans Management';
-    if (path.endsWith('/subscriptions')) return 'Subscriptions Management';
-    if (path.endsWith('/subscription-requests')) return 'Subscription Requests';
+    if (path.endsWith('/admin-dashboard/admins')) return t('nav.administrators');
+    if (path.endsWith('/admin-dashboard/suppliers')) return t('nav.suppliers');
+    if (path.endsWith('/admin-dashboard/categories')) return t('nav.categories');
+    if (path.endsWith('/admin-dashboard/governates')) return t('nav.governorates');
+    if (path.endsWith('/admin-dashboard/areas')) return t('nav.areas');
+    if (path.endsWith('/admin-dashboard/plans')) return 'Plans Management';
+    if (path.endsWith('/admin-dashboard/subscriptions')) return 'Subscriptions Management';
+    if (path.endsWith('/admin-dashboard/subscription-requests')) return 'Subscription Requests';
+    if (path.endsWith('/admin-dashboard/test-design')) return 'Design System Test';
     return t('nav.profile');
   }, [location.pathname, t]);
 
   // Performance: Memoize sidebar handlers
   const handleMenuClick = useCallback(() => setSidebarOpen(true), []);
   const handleSidebarClose = useCallback(() => setSidebarOpen(false), []);
+  const handleToggleCollapse = useCallback(() => setSidebarCollapsed(prev => !prev), []);
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-theme-bg flex flex-col">
+      <div className="min-h-screen bg-theme-bg">
         {/* Topbar always on top */}
-        <Topbar title={title} onMenuClick={handleMenuClick} />
-        <div className="flex-1 flex flex-row">
-          {/* Sidebar overlays on mobile, static on desktop */}
-          <Sidebar open={sidebarOpen} onClose={handleSidebarClose} />
-          {/* Main content area */}
-          <main className="flex-1 transition-all duration-300 pt-16 md:pl-64 px-2 sm:px-4 md:px-8 relative z-0 overflow-x-hidden">
-            <Suspense fallback={<RouteLoading />}>
-              <Routes>
-                <Route index element={<Navigate to="profile" replace />} />
-                <Route
-                  path="profile"
-                  element={
-                    <ErrorBoundary>
-                      <ProfileComponent />
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="admins"
-                  element={
-                    <ErrorBoundary>
+        <Topbar title={title} onMenuClick={handleMenuClick} sidebarCollapsed={sidebarCollapsed} />
+        
+        {/* Sidebar - Fixed position */}
+        <Sidebar 
+          open={sidebarOpen} 
+          onClose={handleSidebarClose} 
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={handleToggleCollapse}
+        />
+        
+        {/* Main content area - Positioned next to sidebar */}
+        <main className={`transition-all duration-300 pt-16 px-2 sm:px-4 md:px-8 relative z-0 overflow-x-hidden ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+          <Suspense fallback={<RouteLoading />}>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ErrorBoundary>
+                    <LayoutProvider>
                       <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
                         <div className="w-full max-w-7xl">
-                          <AdminsTable token={token} />
+                          <ProfileComponent />
                         </div>
                       </div>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="suppliers"
-                  element={
-                    <ErrorBoundary>
+                    </LayoutProvider>
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="admins"
+                element={
+                  <ErrorBoundary>
+                    <AdminsManagement />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="suppliers"
+                element={
+                  <ErrorBoundary>
+                    <SuppliersManagement />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="categories"
+                element={
+                  <ErrorBoundary>
+                    <CategoriesManagement />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="governates"
+                element={
+                  <ErrorBoundary>
+                    <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
+                      <div className="w-full max-w-7xl">
+                        <Governates />
+                      </div>
+                    </div>
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="areas"
+                element={
+                  <ErrorBoundary>
+                    <AreasManagement />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="plans"
+                element={
+                  <ErrorBoundary>
+                    <LayoutProvider>
                       <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
                         <div className="w-full max-w-7xl">
-                          <SuppliersTable token={token} />
+                          <PlansManagement />
                         </div>
                       </div>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="categories"
-                  element={
-                    <ErrorBoundary>
-                      <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
-                        <div className="w-full max-w-7xl">
-                          <Categories />
-                        </div>
-                      </div>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="governates"
-                  element={
-                    <ErrorBoundary>
-                      <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
-                        <div className="w-full max-w-7xl">
-                          <Governates />
-                        </div>
-                      </div>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="areas"
-                  element={
-                    <ErrorBoundary>
-                      <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
-                        <div className="w-full max-w-7xl">
-                          <Areas />
-                        </div>
-                      </div>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="plans"
-                  element={
-                    <ErrorBoundary>
-                      <LayoutProvider>
-                        <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
-                          <div className="w-full max-w-7xl">
-                            <PlansManagement />
-                          </div>
-                        </div>
-                      </LayoutProvider>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="subscriptions"
-                  element={
-                    <ErrorBoundary>
-                      <LayoutProvider>
-                        <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
-                          <div className="w-full max-w-7xl">
-                            <SubscriptionsManagement />
-                          </div>
-                        </div>
-                      </LayoutProvider>
-                    </ErrorBoundary>
-                  }
-                />
-                <Route
-                  path="subscription-requests"
-                  element={
-                    <ErrorBoundary>
-                      <LayoutProvider>
-                        <div className="flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4">
-                          <div className="w-full max-w-7xl">
-                            <SubscriptionRequestsManagement />
-                          </div>
-                        </div>
-                      </LayoutProvider>
-                    </ErrorBoundary>
-                  }
-                />
-              </Routes>
-            </Suspense>
-          </main>
-        </div>
+                    </LayoutProvider>
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="subscriptions"
+                element={
+                  <ErrorBoundary>
+                    <SubscriptionsManagement />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="subscription-requests"
+                element={
+                  <ErrorBoundary>
+                    <SubscriptionRequestsManagement />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="test-design"
+                element={
+                  <ErrorBoundary>
+                    <div className="w-full">
+                      <TestDesign />
+                    </div>
+                  </ErrorBoundary>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </main>
       </div>
     </ErrorBoundary>
   );
